@@ -36,7 +36,7 @@ async def api_chat_bot(request: ChatRequest):
         reply_text = response.text if hasattr(response, "text") else str(response)
         chat_history.append({"role": "assistant", "content": reply_text})
         sessions[session_id] = chat_history
-        return {"reply": reply_text, "session_id": session_id}
+        return {"reply": reply_text}
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

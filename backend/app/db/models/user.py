@@ -1,5 +1,6 @@
 from typing import Optional
 from app.db.base import Base
+from datetime import datetime
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Integer, DateTime, Date, Boolean, ForeignKey, func
 
@@ -9,7 +10,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     password: Mapped[str] = mapped_column(String(100), nullable=True)
-    created_at: Mapped[str] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     birthday: Mapped[Optional[str]] = mapped_column(Date, nullable=True)
@@ -38,7 +39,7 @@ class UserAddress(Base):
     state: Mapped[str] = mapped_column(String(100), nullable=False)
     postal_code: Mapped[str] = mapped_column(String(20), nullable=False)
     country: Mapped[str] = mapped_column(String(100), nullable=False)
-    user: Mapped["User"] = relationship("User", back_populates="addresses")
+    user: Mapped["User"] = relationship("User", back_populates="addresses", lazy="selectin")
 
 class UserPasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
@@ -47,4 +48,4 @@ class UserPasswordResetToken(Base):
     token: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     expires_at: Mapped[str] = mapped_column(DateTime(), nullable=False)
     used: Mapped[bool] = mapped_column(Boolean, default=False)
-    user: Mapped["User"] = relationship("User", back_populates="password_reset_token")
+    user: Mapped["User"] = relationship("User", back_populates="password_reset_token", lazy="selectin")

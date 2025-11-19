@@ -4,7 +4,7 @@ from app.db.session import AsyncSession
 from app.db.dependencies import get_db
 from app.db.models.user import User, UserAddress
 from app.crud.user import create_user, get_user
-from app.schemas.user import UserRegister, UserLogin, UserResetPasswordRequest, UserResetPassword, UserProfile, UserToken
+from app.schemas.user import UserRegister, UserLogin, UserResetPasswordRequest, UserResetPassword, UserProfile, UserToken, UserProfileOut
 from app.security.hash import verify_password
 from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS
 from authlib.integrations.starlette_client import OAuthError
@@ -22,7 +22,7 @@ router = APIRouter()
 load_dotenv()
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS")
 
-@router.post("/api/user/register", response_model=UserProfile, status_code=status.HTTP_201_CREATED)
+@router.post("/api/user/register", response_model=UserProfileOut, status_code=status.HTTP_201_CREATED)
 async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_db)):
     existing_user = await get_user(db=db, user_email=data.email)
     if existing_user:
@@ -66,7 +66,7 @@ async def api_user_login(data: UserLogin, response: Response, db: AsyncSession =
     )
     return UserToken(
         message="Login successful",
-        user=UserProfile.model_validate(user),
+        user=UserProfileOut.model_validate(user),
         access_token=jwt_token
     )
 
