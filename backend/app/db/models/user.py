@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 from app.db.base import Base
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Integer, DateTime, Date, Boolean, ForeignKey, func
@@ -14,13 +14,13 @@ class User(Base):
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     birthday: Mapped[Optional[str]] = mapped_column(Date, nullable=True)
     profile_image: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    addresses = relationship(
+    addresses: Mapped["UserAddress"] = relationship(
         "UserAddress",
         back_populates="user",
         cascade="all, delete-orphan",
         lazy="selectin"
     )
-    password_reset_token = relationship(
+    password_reset_token: Mapped["UserPasswordResetToken"] = relationship(
         "UserPasswordResetToken",
         back_populates="user",
         uselist=False,
