@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from app.db.init_db import create_table
 from starlette.middleware.sessions import SessionMiddleware
-from app.routes import user
+from app.routes import user, chatbot
 import os
 
 load_dotenv()
@@ -28,3 +28,4 @@ app.add_middleware(
 )
 
 app.include_router(user.router)
+app.include_router(chatbot.router)
