@@ -3,8 +3,9 @@ from app.db.models.user import User
 from app.db.session import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
+from typing import Optional
 
-async def create_user(db: AsyncSession, name:str, email:str, password:str | None) -> User:
+async def create_user(db: AsyncSession, name:str, email:str, password:Optional[str] = None) -> User:
     hashed_password = hash_password(password) if password else None
     new_user = User(name=name, email=email, password=hashed_password)
     db.add(new_user)
@@ -12,7 +13,7 @@ async def create_user(db: AsyncSession, name:str, email:str, password:str | None
     await db.refresh(new_user)
     return new_user
 
-async def get_user(db: AsyncSession, user_id:int | None = None, user_email: str | None = None) -> User | None:
+async def get_user(db: AsyncSession, user_id:Optional[int] = None, user_email:Optional[str] = None) -> Optional[User]:
     query = select(User).options(selectinload(User.addresses))
     if user_id is not None:
         query = query.where(User.id == user_id)
