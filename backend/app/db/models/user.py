@@ -15,7 +15,7 @@ class User(Base):
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     birthday: Mapped[Optional[str]] = mapped_column(Date, nullable=True)
     profile_image: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    addresses: Mapped["UserAddress"] = relationship(
+    addresses: Mapped[list["UserAddress"]] = relationship(
         "UserAddress",
         back_populates="user",
         cascade="all, delete-orphan",

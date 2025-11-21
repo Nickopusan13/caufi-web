@@ -40,6 +40,7 @@ class Product(Base):
     cart_items: Mapped[list["CartItem"]] = relationship(
         "CartItem", 
         back_populates="product", 
+        cascade="all, delete-orphan",
         lazy="selectin"
     )
     regular_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)

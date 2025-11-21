@@ -4,14 +4,14 @@ from app.db.session import AsyncSession
 from app.db.dependencies import get_db
 from app.db.models.user import User, UserAddress
 from app.crud.user import create_user, get_user
-from app.schemas.user import UserRegister, UserLogin, UserResetPasswordRequest, UserResetPassword, UserProfile, UserToken, UserProfileOut
+from app.schemas.user import UserRegister, UserLogin, UserResetPasswordRequest, UserResetPassword, UserProfile, UserToken, UserProfileOut, UserDeleteMany
 from app.security.hash import verify_password
 from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS
 from authlib.integrations.starlette_client import OAuthError
 from app.security.reset_password import save_token_forgot_password, get_user_reset_passsword, update_password
 from app.utils.email_service import send_mail
 from app.security.oauth import oauth
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from dotenv import load_dotenv
 import logging
 import secrets
@@ -103,7 +103,18 @@ async def api_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
     await db.commit()
     return
 
-@router.patch("/api/user/{user_id}", response_model=UserProfile, status_code=status.HTTP_200_OK)
+@router.delete("/api/user", status_code=status.HTTP_204_NO_CONTENT)
+async def api_delete_all_user(data: UserDeleteMany, db: AsyncSession = Depends(get_db)):
+    if not data.user_ids:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found."
+        )
+    await db.execute(delete(User).where(User.id.in_(data.user_ids)))
+    await db.commit()
+    return
+
+@router.patch("/api/user/{user_id}", response_model=UserProfileOut, status_code=status.HTTP_200_OK)
 async def api_update_user(user_id: int, data: UserProfile, db: AsyncSession = Depends(get_db)):
     user = await get_user(db=db, user_id=user_id)
     if not user:
@@ -111,7 +122,7 @@ async def api_update_user(user_id: int, data: UserProfile, db: AsyncSession = De
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found."
         )
-    for field, value in data.model_dump(exclude={'addresses'}).items():
+    for field, value in data.model_dump(exclude={'addresses', 'email'}).items():
         setattr(user, field, value)
     if data.addresses:
         user.addresses = [UserAddress(**addr.model_dump()) for addr in data.addresses]

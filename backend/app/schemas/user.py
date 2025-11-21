@@ -1,6 +1,7 @@
 from pydantic import EmailStr, Field
 from app.schemas.to_camel import BaseConfigModel 
 from datetime import date, datetime
+from typing import Optional
 
 class UserRegister(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
@@ -47,3 +48,6 @@ class UserResetPasswordRequest(BaseConfigModel):
 class UserResetPassword(BaseConfigModel):
     token: str = Field(min_length=1, max_length=255)
     new_password: str = Field(min_length=8, max_length=100)
+
+class UserDeleteMany(BaseConfigModel):
+    user_ids: list[int]

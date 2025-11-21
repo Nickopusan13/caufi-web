@@ -4,17 +4,21 @@ from pydantic import Field
 from decimal import Decimal
 
 class ProductMaterial(BaseConfigModel):
+    id: int | None = Field(default=None)
     material: str = Field(min_length=1, max_length=100)
 
 class ProductSize(BaseConfigModel):
+    id: int | None = Field(default=None)
     size: str = Field(min_length=1, max_length=255)
 
 class ProductImage(BaseConfigModel):
+    id: int | None = Field(default=None)
     image_url: str = Field(min_length=1, max_length=255)
-    image_size: int = Field(min_length=1)
-    image_name: int = Field(min_length=1, max_length=255)
+    image_size: int = Field(gt=0)
+    image_name: str = Field(min_length=1, max_length=255)
 
 class ProductColor(BaseConfigModel):
+    id: int | None = Field(default=None)
     color: str = Field(min_length=1, max_length=255)
     hex: str = Field(min_length=1, max_length=255)
 
@@ -35,11 +39,11 @@ class ProductData(BaseConfigModel):
     manufacturer: str = Field(min_length=1, max_length=255)
     description: str = Field(min_length=1)
     care_guide: str = Field(min_length=1)
-    slug: str = Field(min_length=1, max_length=255)
-    sku: str = Field(min_length=1, max_length=255)
 
 class ProductDataOut(ProductData):
     id: int = Field(gt=0)
+    slug: str = Field(min_length=1, max_length=255)
+    sku: str = Field(min_length=1, max_length=255)
     created_at: datetime
     updated_at: datetime
     is_active: bool
@@ -62,3 +66,6 @@ class CartOut(BaseConfigModel):
     updated_at: datetime
     cart_items: list[CartItemOut] = Field(default_factory=list)
     cart_total: Decimal = Field(default=0)
+
+class ProductDeleteMany(BaseConfigModel):
+    product_ids: list[int]
