@@ -99,4 +99,3 @@ async def api_update_product(product_id: int, data:ProductData, db: AsyncSession
     await db.commit()
     await db.refresh(product)
     return product
-    

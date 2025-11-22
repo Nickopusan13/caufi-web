@@ -13,15 +13,13 @@ class UserLogin(BaseConfigModel):
     password: str = Field(min_length=8, max_length=100)
 
 class UserAddress(BaseConfigModel):
+    id: int = Field(gt=0)
     address_line1: str = Field(min_length=1, max_length=255)
     address_line2: str | None = Field(default=None, min_length=1, max_length=255)
     city: str = Field(min_length=1, max_length=100)
     state: str = Field(min_length=1, max_length=100)
     postal_code: str = Field(min_length=1, max_length=20)
-    country: str = Field(min_length=1, max_length=100)
-
-class UserAddressOut(UserAddress):
-    id: int = Field(gt=0)
+    country: str = Field(min_length=1, max_length=100) 
     
 class UserProfile(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
@@ -35,7 +33,7 @@ class UserProfileOut(UserProfile):
     id: int = Field(gt=0)
     created_at: datetime
     is_active: bool
-    addresses: list[UserAddressOut] = Field(default_factory=list)
+    addresses: list[UserAddress] = Field(default_factory=list)
     
 class UserToken(BaseConfigModel):
     message: str
