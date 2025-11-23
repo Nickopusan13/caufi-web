@@ -6,7 +6,5 @@ import os
 load_dotenv()
 engine = create_async_engine(os.getenv("DB_URL"), echo=False)
 AsyncSessionLocal = sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False
+    bind=engine, class_=AsyncSession, expire_on_commit=False
 )

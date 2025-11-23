@@ -9,10 +9,13 @@ from app.routes import user, chatbot, product
 import os
 
 load_dotenv()
+
+
 @asynccontextmanager
-async def lifespan(app:FastAPI):
+async def lifespan(app: FastAPI):
     await create_table()
     yield
+
 
 app = FastAPI(title="Caufi Web Backend", lifespan=lifespan)
 app.add_middleware(
@@ -22,10 +25,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=os.getenv("SESSION_SECRET_KEY")
-)
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET_KEY"))
 
 app.include_router(user.router)
 app.include_router(chatbot.router)

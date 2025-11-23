@@ -4,7 +4,12 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.future import select
 from app.db.models.product import Product
 
-async def get_product(db: AsyncSession, product_id:Optional[int] = None, product_slug:Optional[int] = None) -> Optional[Product]:
+
+async def get_product(
+    db: AsyncSession,
+    product_id: Optional[int] = None,
+    product_slug: Optional[int] = None,
+) -> Optional[Product]:
     query = select(Product).options(
         selectinload(Product.material),
         selectinload(Product.sizes),

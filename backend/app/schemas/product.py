@@ -3,13 +3,16 @@ from datetime import datetime, date
 from pydantic import Field
 from decimal import Decimal
 
+
 class ProductMaterial(BaseConfigModel):
     id: int | None = Field(default=None)
     material: str = Field(min_length=1, max_length=100)
 
+
 class ProductSize(BaseConfigModel):
     id: int | None = Field(default=None)
     size: str = Field(min_length=1, max_length=255)
+
 
 class ProductImage(BaseConfigModel):
     id: int | None = Field(default=None)
@@ -17,10 +20,12 @@ class ProductImage(BaseConfigModel):
     image_size: int = Field(gt=0)
     image_name: str = Field(min_length=1, max_length=255)
 
+
 class ProductColor(BaseConfigModel):
     id: int | None = Field(default=None)
     color: str = Field(min_length=1, max_length=255)
     hex: str = Field(min_length=1, max_length=255)
+
 
 class ProductData(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
@@ -39,6 +44,9 @@ class ProductData(BaseConfigModel):
     manufacturer: str = Field(min_length=1, max_length=255)
     description: str = Field(min_length=1)
     care_guide: str = Field(min_length=1)
+    is_featured: bool = Field(default=False)
+    is_active: bool = Field(default=True)
+
 
 class ProductDataOut(ProductData):
     id: int = Field(gt=0)
@@ -46,7 +54,7 @@ class ProductDataOut(ProductData):
     sku: str = Field(min_length=1, max_length=255)
     created_at: datetime
     updated_at: datetime
-    is_active: bool
+
 
 class CartItem(BaseConfigModel):
     product_id: int = Field(gt=0)
@@ -54,10 +62,12 @@ class CartItem(BaseConfigModel):
     size: str | None = Field(default=None, max_length=50)
     color: str | None = Field(default=None, max_length=50)
 
+
 class CartItemOut(CartItem):
     id: int = Field(gt=0)
     price: Decimal = Field(gt=0)
     product: ProductDataOut
+
 
 class CartOut(BaseConfigModel):
     id: int = Field(gt=0)
@@ -66,6 +76,7 @@ class CartOut(BaseConfigModel):
     updated_at: datetime
     cart_items: list[CartItemOut] = Field(default_factory=list)
     cart_total: Decimal = Field(default=0)
+
 
 class ProductDeleteMany(BaseConfigModel):
     product_ids: list[int]

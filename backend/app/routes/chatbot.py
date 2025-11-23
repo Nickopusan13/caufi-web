@@ -16,7 +16,10 @@ instruction_path = os.path.join(BASE_DIR, "../config/chat_bot.txt")
 with open(instruction_path, "r", encoding="utf-8") as f:
     SYSTEM_INSTRUCTION = f.read()
 
-@router.post("/api/chat/bot", response_model=ChatResponse, status_code=status.HTTP_200_OK)
+
+@router.post(
+    "/api/chat/bot", response_model=ChatResponse, status_code=status.HTTP_200_OK
+)
 async def api_chat_bot(request: ChatRequest):
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
     session_id = request.session_id or str(uuid.uuid4())
