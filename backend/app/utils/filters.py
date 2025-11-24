@@ -1,5 +1,7 @@
 from sqlalchemy.orm import selectinload
 from app.db.models.product import Product, ProductColor, ProductSize
+from app.db.models.user import User
+from app.schemas.user import UserListFilters
 from app.schemas.product import ProductListFilters
 from sqlalchemy import select
 
@@ -36,4 +38,13 @@ def apply_product_filters(query, f: ProductListFilters):
         sizes = [s.strip().upper() for s in f.size.split(",") if s.strip()]
         if sizes:
             query = query.where(Product.sizes.any(ProductSize.size.in_(sizes)))
+    return query
+
+
+def apply_user_filters(query, f: UserListFilters):
+    if f.search:
+        term = f"%{f.search.strip()}%"
+        query = query.where((User.email.ilike(term)) | (User.name.ilike(term)))
+    if f.is_active is not None:
+        query = query.where(User.is_active.is_(f.is_active))
     return query

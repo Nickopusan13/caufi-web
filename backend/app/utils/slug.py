@@ -6,7 +6,9 @@ from typing import Optional
 import uuid
 
 
-async def get_slug(name: str, db: AsyncSession, product_id: Optional[int] = None) -> str:
+async def get_slug(
+    name: str, db: AsyncSession, product_id: Optional[int] = None
+) -> str:
     base_slug = slugify(name, lowercase=True, separator="-")
     if not base_slug:
         base_slug = "product"
@@ -15,8 +17,7 @@ async def get_slug(name: str, db: AsyncSession, product_id: Optional[int] = None
     while True:
         exists = await db.scalar(
             select(Product.id).where(
-                Product.slug == slug,
-                (Product.id != product_id) if product_id else True
+                Product.slug == slug, (Product.id != product_id) if product_id else True
             )
         )
         if not exists:

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Request, Query
 from typing import List
 from sqlalchemy.orm import selectinload
 from app.db.session import AsyncSession
@@ -14,6 +14,7 @@ from app.schemas.user import (
     UserToken,
     UserProfileOut,
     UserDeleteMany,
+    UserListFilters,
 )
 from app.security.hash import verify_password
 from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS
@@ -23,6 +24,7 @@ from app.security.reset_password import (
     get_user_reset_passsword,
     update_password,
 )
+from app.utils.filters import apply_user_filters
 from app.utils.email_service import send_mail
 from app.security.oauth import oauth
 from sqlalchemy import select, delete
@@ -99,10 +101,20 @@ async def api_user_logout(response: Response):
 
 
 @router.get(
-    "/api/users", response_model=List[UserProfile], status_code=status.HTTP_200_OK
+    "/api/users", response_model=List[UserProfileOut], status_code=status.HTTP_200_OK
 )
-async def api_get_all_user(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).options(selectinload(User.addresses)))
+async def api_get_all_user(
+    f: UserListFilters = Depends(),
+    db: AsyncSession = Depends(get_db),
+    page: int = Query(1, ge=1),
+    limit: int = Query(24, ge=1, le=100),
+):
+    query = select(User).options(selectinload(User.addresses))
+    query = apply_user_filters(query, f)
+    query = query.order_by(User.created_at.desc())
+    offset = (page - 1) * limit
+    query = query.offset(offset).limit(limit)
+    result = await db.execute(query)
     users = result.scalars().all()
     return users
 

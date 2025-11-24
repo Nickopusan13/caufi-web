@@ -23,6 +23,7 @@ class ProductColor(BaseConfigModel):
     color: str = Field(min_length=1, max_length=255)
     hex: str = Field(min_length=1, max_length=255)
 
+
 class ProductMaterialOut(BaseConfigModel):
     id: Optional[int] = Field(default=None)
     material: str = Field(min_length=1, max_length=100)
@@ -61,6 +62,7 @@ class ProductDataBase(BaseConfigModel):
     care_guide: str = Field(min_length=1)
     is_featured: bool = Field(default=False)
     is_active: bool = Field(default=True)
+
 
 class ProductData(ProductDataBase):
     material: list[ProductMaterial] = Field(default_factory=list)

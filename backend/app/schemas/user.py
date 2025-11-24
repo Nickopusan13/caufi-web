@@ -58,3 +58,8 @@ class UserResetPassword(BaseConfigModel):
 
 class UserDeleteMany(BaseConfigModel):
     user_ids: list[int]
+
+
+class UserListFilters(BaseConfigModel):
+    search: Optional[str] = None
+    is_active: Optional[bool] = None

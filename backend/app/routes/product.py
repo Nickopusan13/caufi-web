@@ -95,10 +95,13 @@ async def api_product_featured(
     status_code=status.HTTP_200_OK,
 )
 async def api_product_detail(identifier: str, db: AsyncSession = Depends(get_db)):
+    query = get_base_product_query()
     if identifier.isdigit():
-        product = await get_product(db=db, product_id=int(identifier))
+        query = query.where(Product.id == int(identifier))
     else:
-        product = await get_product(db=db, product_slug=identifier)
+        query = query.where(Product.slug == identifier)
+    result = await db.execute(query)
+    product = result.scalar_one_or_none()
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
