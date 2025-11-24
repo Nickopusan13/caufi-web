@@ -6,38 +6,52 @@ from decimal import Decimal
 
 
 class ProductMaterial(BaseConfigModel):
-    id: Optional[int] = Field(default=None)
     material: str = Field(min_length=1, max_length=100)
 
 
 class ProductSize(BaseConfigModel):
-    id: Optional[int] = Field(default=None)
     size: str = Field(min_length=1, max_length=255)
 
 
 class ProductImage(BaseConfigModel):
-    id: Optional[int] = Field(default=None)
     image_url: str = Field(min_length=1, max_length=255)
     image_size: int = Field(gt=0)
     image_name: str = Field(min_length=1, max_length=255)
 
 
 class ProductColor(BaseConfigModel):
+    color: str = Field(min_length=1, max_length=255)
+    hex: str = Field(min_length=1, max_length=255)
+
+class ProductMaterialOut(BaseConfigModel):
+    id: Optional[int] = Field(default=None)
+    material: str = Field(min_length=1, max_length=100)
+
+
+class ProductSizeOut(BaseConfigModel):
+    id: Optional[int] = Field(default=None)
+    size: str = Field(min_length=1, max_length=255)
+
+
+class ProductImageOut(BaseConfigModel):
+    id: Optional[int] = Field(default=None)
+    image_url: str = Field(min_length=1, max_length=255)
+    image_size: int = Field(gt=0)
+    image_name: str = Field(min_length=1, max_length=255)
+
+
+class ProductColorOut(BaseConfigModel):
     id: Optional[int] = Field(default=None)
     color: str = Field(min_length=1, max_length=255)
     hex: str = Field(min_length=1, max_length=255)
 
 
-class ProductData(BaseConfigModel):
-    name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
+class ProductDataBase(BaseConfigModel):
+    name: str = Field(min_length=1, max_length=100)
     stock: int = Field(gt=0)
     stock_type: str = Field(min_length=1, max_length=100)
     shipping_type: str = Field(min_length=1, max_length=100)
     motif: str = Field(min_length=1, max_length=100)
-    material: list[ProductMaterial] = Field(default_factory=list)
-    sizes: list[ProductSize] = Field(default_factory=list)
-    images: list[ProductImage] = Field(default_factory=list)
-    colors: list[ProductColor] = Field(default_factory=list)
     regular_price: Decimal = Field(gt=0)
     discount_price: Decimal | None = Field(default=None, ge=0)
     category: str = Field(min_length=1, max_length=255)
@@ -48,11 +62,21 @@ class ProductData(BaseConfigModel):
     is_featured: bool = Field(default=False)
     is_active: bool = Field(default=True)
 
+class ProductData(ProductDataBase):
+    material: list[ProductMaterial] = Field(default_factory=list)
+    sizes: list[ProductSize] = Field(default_factory=list)
+    images: list[ProductImage] = Field(default_factory=list)
+    colors: list[ProductColor] = Field(default_factory=list)
 
-class ProductDataOut(ProductData):
+
+class ProductDataOut(ProductDataBase):
     id: int = Field(gt=0)
     slug: str = Field(min_length=1, max_length=255)
     sku: str = Field(min_length=1, max_length=255)
+    material: list[ProductMaterialOut] = Field(default_factory=list)
+    sizes: list[ProductSizeOut] = Field(default_factory=list)
+    images: list[ProductImageOut] = Field(default_factory=list)
+    colors: list[ProductColorOut] = Field(default_factory=list)
     created_at: datetime
     updated_at: datetime
 
@@ -85,7 +109,7 @@ class ProductDeleteMany(BaseConfigModel):
 
 class ProductListFilters(BaseConfigModel):
     search: Optional[str] = None
-    category: Optional[int] = None
+    category: Optional[str] = None
     min_price: Optional[float] = None
     max_price: Optional[float] = None
     color: Optional[str] = None

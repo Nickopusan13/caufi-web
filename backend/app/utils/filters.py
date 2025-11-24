@@ -15,20 +15,19 @@ def get_base_product_query():
 
 
 def apply_product_filters(query, f: ProductListFilters):
-    if f.only_active:
-        query = query.where(Product.is_active.is_(True))
-
+    if f.only_active is not None:
+        query = query.where(Product.is_active.is_(f.only_active))
     if f.search:
         term = f"%{f.search.strip()}%"
         query = query.where(
             (Product.name.ilike(term)) | (Product.description.ilike(term))
         )
     if f.category is not None:
-        query = query.where(Product.category_id == f.category)
+        query = query.where(Product.category == f.category)
     if f.min_price is not None:
-        query = query.where(Product.price >= f.min_price)
+        query = query.where(Product.regular_price >= f.min_price)
     if f.max_price is not None:
-        query = query.where(Product.price <= f.max_price)
+        query = query.where(Product.regular_price <= f.max_price)
     if f.color:
         colors = [c.strip().lower() for c in f.color.split(",") if c.strip()]
         if colors:

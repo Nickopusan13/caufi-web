@@ -30,7 +30,7 @@ router = APIRouter()
 )
 async def api_product_add(data: ProductData, db: AsyncSession = Depends(get_db)):
     product_dict = data.model_dump(exclude={"material", "sizes", "images", "colors"})
-    product_dict["slug"] = get_slug(product_dict["name"])
+    product_dict["slug"] = await get_slug(product_dict["name"], db=db)
     product_dict["sku"] = get_sku()
     product = Product(**product_dict)
     product.colors = [ProductColor(**c.model_dump()) for c in data.colors]
@@ -117,7 +117,6 @@ async def api_delete_all_product(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Product not found."
         )
-    # Load the Product objects so SQLAlchemy ORM cascade rules run
     result = await db.execute(select(Product).where(Product.id.in_(data.product_ids)))
     products = result.scalars().all()
     if not products:
@@ -159,8 +158,8 @@ async def api_update_product(
             status_code=status.HTTP_404_NOT_FOUND, detail="Product not found."
         )
     product_dict = data.model_dump(exclude={"material", "sizes", "images", "colors"})
-    product.slug = get_slug(product_dict["name"])
-    product.sku = get_sku()
+    if product_dict.get("name") != product.name:
+        product.slug = get_slug(product_dict["name"])
     for field, value in product_dict.items():
         setattr(product, field, value)
     product.colors = [ProductColor(**c.model_dump()) for c in data.colors]
