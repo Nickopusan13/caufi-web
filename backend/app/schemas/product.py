@@ -1,28 +1,29 @@
 from app.schemas.to_camel import BaseConfigModel
-from datetime import datetime, date
+from typing import Optional
+from datetime import datetime
 from pydantic import Field
 from decimal import Decimal
 
 
 class ProductMaterial(BaseConfigModel):
-    id: int | None = Field(default=None)
+    id: Optional[int] = Field(default=None)
     material: str = Field(min_length=1, max_length=100)
 
 
 class ProductSize(BaseConfigModel):
-    id: int | None = Field(default=None)
+    id: Optional[int] = Field(default=None)
     size: str = Field(min_length=1, max_length=255)
 
 
 class ProductImage(BaseConfigModel):
-    id: int | None = Field(default=None)
+    id: Optional[int] = Field(default=None)
     image_url: str = Field(min_length=1, max_length=255)
     image_size: int = Field(gt=0)
     image_name: str = Field(min_length=1, max_length=255)
 
 
 class ProductColor(BaseConfigModel):
-    id: int | None = Field(default=None)
+    id: Optional[int] = Field(default=None)
     color: str = Field(min_length=1, max_length=255)
     hex: str = Field(min_length=1, max_length=255)
 
@@ -80,3 +81,13 @@ class CartOut(BaseConfigModel):
 
 class ProductDeleteMany(BaseConfigModel):
     product_ids: list[int]
+
+
+class ProductListFilters(BaseConfigModel):
+    search: Optional[str] = None
+    category: Optional[int] = None
+    min_price: Optional[float] = None
+    max_price: Optional[float] = None
+    color: Optional[str] = None
+    size: Optional[str] = None
+    only_active: bool = True

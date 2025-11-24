@@ -64,7 +64,7 @@ class Product(Base):
     care_guide: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     slug: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     sku: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
-    is_featured: Mapped[bool] = mapped_column(Booldefault=False)
+    is_featured: Mapped[bool] = mapped_column(Boolean(), default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

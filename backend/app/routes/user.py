@@ -122,7 +122,6 @@ async def api_get_user_profile(user_id: int, db: AsyncSession = Depends(get_db))
 @router.delete(
     "/api/user/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_model=UserProfileOut,
 )
 async def api_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
     user = await get_user(db=db, user_id=user_id)
@@ -138,7 +137,6 @@ async def api_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
 @router.delete(
     "/api/user",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_model=List[UserProfile],
 )
 async def api_delete_all_user(data: UserDeleteMany, db: AsyncSession = Depends(get_db)):
     if not data.user_ids:

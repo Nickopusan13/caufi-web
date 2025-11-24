@@ -18,7 +18,7 @@ class UserLogin(BaseConfigModel):
 class UserAddress(BaseConfigModel):
     id: int = Field(gt=0)
     address_line1: str = Field(min_length=1, max_length=255)
-    address_line2: str | None = Field(default=None, min_length=1, max_length=255)
+    address_line2: Optional[str] = Field(default=None, min_length=1, max_length=255)
     city: str = Field(min_length=1, max_length=100)
     state: str = Field(min_length=1, max_length=100)
     postal_code: str = Field(min_length=1, max_length=20)
@@ -28,9 +28,9 @@ class UserAddress(BaseConfigModel):
 class UserProfile(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
     email: EmailStr = Field(min_length=1, max_length=100)
-    phone_number: str | None = Field(default=None, min_length=1, max_length=20)
+    phone_number: Optional[str] = Field(default=None, min_length=1, max_length=20)
     birthday: date | None = Field(default=None)
-    profile_image: str | None = Field(default=None)
+    profile_image: Optional[str] = Field(default=None)
     addresses: list["UserAddress"] = Field(default_factory=list)
 
 

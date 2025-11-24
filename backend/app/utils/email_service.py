@@ -1,9 +1,7 @@
 import os
 import logging
-from fastapi import HTTPException, status
 from dotenv import load_dotenv
 from email.mime.text import MIMEText
-from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 import base64
 import pickle

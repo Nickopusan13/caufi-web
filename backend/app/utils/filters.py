@@ -1,7 +1,7 @@
 from sqlalchemy.orm import selectinload
 from app.db.models.product import Product, ProductColor, ProductSize
+from app.schemas.product import ProductListFilters
 from sqlalchemy import select
-from typing import Optional
 
 
 def get_base_product_query():
@@ -14,38 +14,27 @@ def get_base_product_query():
     return query
 
 
-def apply_product_filters(
-    query,
-    *,
-    search: Optional[str] = None,
-    category: Optional[int] = None,
-    min_price: Optional[float] = None,
-    max_price: Optional[float] = None,
-    color: Optional[str] = None,
-    size: Optional[str] = None,
-    only_active: bool = True,
-):
-    if only_active:
+def apply_product_filters(query, f: ProductListFilters):
+    if f.only_active:
         query = query.where(Product.is_active.is_(True))
 
-    if search:
-        term = f"%{search.strip()}%"
+    if f.search:
+        term = f"%{f.search.strip()}%"
         query = query.where(
             (Product.name.ilike(term)) | (Product.description.ilike(term))
         )
-    if category is not None:
-        query = query.where(Product.category_id == category)
-    if min_price is not None:
-        query = query.where(Product.price >= min_price)
-    if max_price is not None:
-        query = query.where(Product.price <= max_price)
-    if color:
-        colors = [c.strip().lower() for c in color.split(",") if c.strip()]
+    if f.category is not None:
+        query = query.where(Product.category_id == f.category)
+    if f.min_price is not None:
+        query = query.where(Product.price >= f.min_price)
+    if f.max_price is not None:
+        query = query.where(Product.price <= f.max_price)
+    if f.color:
+        colors = [c.strip().lower() for c in f.color.split(",") if c.strip()]
         if colors:
             query = query.where(Product.colors.any(ProductColor.color.in_(colors)))
-    if size:
-        sizes = [s.strip().upper() for s in size.split(",") if s.strip()]
+    if f.size:
+        sizes = [s.strip().upper() for s in f.size.split(",") if s.strip()]
         if sizes:
             query = query.where(Product.sizes.any(ProductSize.size.in_(sizes)))
-
     return query
