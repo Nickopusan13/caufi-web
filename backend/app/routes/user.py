@@ -161,28 +161,29 @@ async def api_delete_all_user(data: UserDeleteMany, db: AsyncSession = Depends(g
 
 
 @router.patch(
-    "/api/user/{user_id}", response_model=UserProfileOut, status_code=status.HTTP_200_OK
+    "/api/user/{user_id}",
+    response_model=UserProfileOut,
+    status_code=status.HTTP_200_OK,
 )
 async def api_update_user(
     user_id: int, data: UserProfile, db: AsyncSession = Depends(get_db)
 ):
     user = await get_user(db=db, user_id=user_id)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
-        )
-    for field, value in data.model_dump(exclude={"addresses", "email"}).items():
+        raise HTTPException(status_code=404, detail="User not found.")
+    payload = data.model_dump(exclude_unset=True, exclude={"addresses", "email"})
+    for field, value in payload.items():
         setattr(user, field, value)
-    if data.addresses:
-        user.addresses = [UserAddress(**addr.model_dump()) for addr in data.addresses]
-    db.add(user)
+    if data.addresses is not None:
+        user.addresses.clear()
+        for addr in data.addresses:
+            user.addresses.append(UserAddress(**addr.model_dump()))
     await db.commit()
     await db.refresh(user)
-    user = await db.execute(
+    result = await db.execute(
         select(User).options(selectinload(User.addresses)).where(User.id == user.id)
     )
-    user = user.scalar_one()
-    return user
+    return result.scalar_one()
 
 
 @router.get("/auth/login/google", status_code=status.HTTP_200_OK)

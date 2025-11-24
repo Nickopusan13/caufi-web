@@ -157,18 +157,30 @@ async def api_update_product(
 ):
     product = await get_product(db=db, product_id=product_id)
     if not product:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found."
-        )
-    product_dict = data.model_dump(exclude={"material", "sizes", "images", "colors"})
-    if product_dict.get("name") != product.name:
-        product.slug = get_slug(product_dict["name"])
-    for field, value in product_dict.items():
+        raise HTTPException(404, "Product not found.")
+    payload = data.model_dump(
+        exclude_unset=True, exclude={"colors", "sizes", "material", "images"}
+    )
+    if "name" in payload and payload["name"] != product.name:
+        product.slug = await get_slug(payload["name"], db=db)
+    for field, value in payload.items():
         setattr(product, field, value)
-    product.colors = [ProductColor(**c.model_dump()) for c in data.colors]
-    product.sizes = [ProductSize(**s.model_dump()) for s in data.sizes]
-    product.material = [ProductMaterial(**m.model_dump()) for m in data.material]
-    product.images = [ProductImage(**i.model_dump()) for i in data.images]
+    if data.colors is not None:
+        product.colors.clear()
+        for c in data.colors:
+            product.colors.append(ProductColor(**c.model_dump()))
+    if data.sizes is not None:
+        product.sizes.clear()
+        for s in data.sizes:
+            product.sizes.append(ProductSize(**s.model_dump()))
+    if data.material is not None:
+        product.material.clear()
+        for m in data.material:
+            product.material.append(ProductMaterial(**m.model_dump()))
+    if data.images is not None:
+        product.images.clear()
+        for i in data.images:
+            product.images.append(ProductImage(**i.model_dump()))
     await db.commit()
     await db.refresh(product)
     return product

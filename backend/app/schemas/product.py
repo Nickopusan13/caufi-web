@@ -83,25 +83,22 @@ class ProductDataOut(ProductDataBase):
     updated_at: datetime
 
 
-class CartItem(BaseConfigModel):
+class CartItemCreate(BaseConfigModel):
     product_id: int = Field(gt=0)
     quantity: int = Field(gt=0)
-    size: str | None = Field(default=None, max_length=50)
-    color: str | None = Field(default=None, max_length=50)
+    size: Optional[str] = Field(default=None, max_length=50)
+    color: Optional[str] = Field(default=None, max_length=50)
 
 
-class CartItemOut(CartItem):
+class CartItemOut(CartItemCreate):
     id: int = Field(gt=0)
     price: Decimal = Field(gt=0)
     product: ProductDataOut
 
 
 class CartOut(BaseConfigModel):
-    id: int = Field(gt=0)
-    user_id: int = Field(gt=0)
-    created_at: datetime
-    updated_at: datetime
     cart_items: list[CartItemOut] = Field(default_factory=list)
+    total_items: int = 0
     cart_total: Decimal = Field(default=0)
 
 

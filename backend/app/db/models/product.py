@@ -12,6 +12,7 @@ from sqlalchemy import (
     func,
     Text,
     Numeric,
+    UniqueConstraint,
 )
 
 
@@ -162,4 +163,9 @@ class CartItem(Base):
     )
     cart: Mapped["Cart"] = relationship(
         "Cart", back_populates="cart_items", lazy="selectin"
+    )
+    __table_args__ = (
+        UniqueConstraint(
+            "cart_id", "product_id", "size", "color", name="uix_cart_product_variant"
+        ),
     )
