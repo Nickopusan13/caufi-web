@@ -85,7 +85,7 @@ class ProductDataOut(ProductDataBase):
 
 class CartItemCreate(BaseConfigModel):
     product_id: int = Field(gt=0)
-    quantity: int = Field(gt=0)
+    quantity: int = Field(ge=0)
     size: Optional[str] = Field(default=None, max_length=50)
     color: Optional[str] = Field(default=None, max_length=50)
 

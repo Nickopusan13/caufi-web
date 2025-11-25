@@ -86,7 +86,9 @@ async def api_delete_cart(
         await db.execute(select(Cart).where(Cart.user_id == current_user.id))
     ).scalar_one_or_none()
     if not cart:
-        raise HTTPException(status_code=404, detail="Cart not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found"
+        )
     result = await db.execute(
         select(CartItem)
         .options(
@@ -105,13 +107,52 @@ async def api_delete_cart(
     return cart_item
 
 
-@router.patch(
-    "/api/cart/{cart_id}", response_model=CartOut, status_code=status.HTTP_200_OK
-)
-async def api_update_cart(
-    cart_id: int,
+@router.patch("/api/cart/update", response_model=CartOut)
+async def api_update_cart_item(
     data: CartItemCreate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    pass
+    cart = (
+        await db.execute(select(Cart).where(Cart.user_id == current_user.id))
+    ).scalar_one_or_none()
+    if not cart:
+        raise HTTPException(404, "Cart not found")
+    result = await db.execute(
+        select(CartItem).where(
+            CartItem.cart_id == cart.id,
+            CartItem.product_id == data.product_id,
+            CartItem.size == data.size,
+            CartItem.color == data.color,
+        )
+    )
+    cart_item = result.scalar_one_or_none()
+    if not cart_item:
+        raise HTTPException(404, "Item not in cart")
+    if data.size is not None and data.size != cart_item.size:
+        raise HTTPException(400, "Cannot change size. Remove and re-add the item.")
+    if data.color is not None and data.color != cart_item.color:
+        raise HTTPException(400, "Cannot change color. Remove and re-add the item.")
+    if data.quantity <= 0:
+        await db.delete(cart_item)
+    else:
+        cart_item.quantity = data.quantity
+    await db.commit()
+    result = await db.execute(
+        select(CartItem)
+        .options(
+            selectinload(CartItem.product).selectinload(Product.images),
+            selectinload(CartItem.product).selectinload(Product.colors),
+            selectinload(CartItem.product).selectinload(Product.sizes),
+            selectinload(CartItem.product).selectinload(Product.material),
+        )
+        .where(CartItem.cart_id == cart.id)
+        .order_by(CartItem.id)
+    )
+    cart_items = result.scalars().all()
+
+    return CartOut(
+        cart_items=cart_items,
+        total_items=sum(item.quantity for item in cart_items),
+        cart_total=sum(item.quantity * item.price for item in cart_items),
+    )
