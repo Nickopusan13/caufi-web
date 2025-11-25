@@ -28,7 +28,7 @@ from app.schemas.user import (
 )
 from app.security.hash import verify_password
 from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS, get_current_user
-from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_2
+from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
 from authlib.integrations.starlette_client import OAuthError
 from app.security.reset_password import (
     save_token_forgot_password,
@@ -116,7 +116,7 @@ async def add_images_to_profile(
     db: AsyncSession = Depends(get_db),
 ):
     uploaded_images = await upload_product_images(
-        file, folder=f"{current_user.id}", bucket=CLOUDFLARE_BUCKET_NAME_2
+        file, folder=f"profiles/{current_user.id}", bucket=CLOUDFLARE_BUCKET_NAME_1
     )
     new_url = uploaded_images[0]["image_url"]
     current_user.profile_image = new_url

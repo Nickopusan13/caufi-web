@@ -63,7 +63,7 @@ async def add_images_to_product(
             status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
         )
     uploaded_images = await upload_product_images(
-        files, folder=f"{product_id}", bucket=CLOUDFLARE_BUCKET_NAME_1
+        files, folder=f"products/{product_id}", bucket=CLOUDFLARE_BUCKET_NAME_1
     )
     if not uploaded_images:
         raise HTTPException(
