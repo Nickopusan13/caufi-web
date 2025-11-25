@@ -22,7 +22,9 @@ async def api_cart_add(
     current_user: User = Depends(get_current_user),
 ):
     if data.quantity <= 0:
-        raise HTTPException(400, "Quantity must be > 0")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Quantity must be > 0"
+        )
     cart = (
         await db.execute(select(Cart).where(Cart.user_id == current_user.id))
     ).scalar_one_or_none()
@@ -32,7 +34,10 @@ async def api_cart_add(
         await db.flush()
     product = await db.get(Product, data.product_id)
     if not product or not product.is_active:
-        raise HTTPException(404, "Product not found or unavailable")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Product not found or unavailable",
+        )
     item_id = await upsert_cart_item(db=db, cart_id=cart.id, product=product, data=data)
     await db.commit()
     result = await db.execute(
@@ -101,7 +106,9 @@ async def api_delete_cart(
     )
     cart_item = result.scalar_one_or_none()
     if not cart_item:
-        raise HTTPException(status_code=404, detail="Cart item not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Cart item not found"
+        )
     await db.delete(cart_item)
     await db.commit()
     return cart_item
@@ -117,7 +124,9 @@ async def api_update_cart_item(
         await db.execute(select(Cart).where(Cart.user_id == current_user.id))
     ).scalar_one_or_none()
     if not cart:
-        raise HTTPException(404, "Cart not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found"
+        )
     result = await db.execute(
         select(CartItem).where(
             CartItem.cart_id == cart.id,
@@ -128,11 +137,19 @@ async def api_update_cart_item(
     )
     cart_item = result.scalar_one_or_none()
     if not cart_item:
-        raise HTTPException(404, "Item not in cart")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Item not in cart"
+        )
     if data.size is not None and data.size != cart_item.size:
-        raise HTTPException(400, "Cannot change size. Remove and re-add the item.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change size. Remove and re-add the item.",
+        )
     if data.color is not None and data.color != cart_item.color:
-        raise HTTPException(400, "Cannot change color. Remove and re-add the item.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change color. Remove and re-add the item.",
+        )
     if data.quantity <= 0:
         await db.delete(cart_item)
     else:
