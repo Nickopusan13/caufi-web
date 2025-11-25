@@ -5,12 +5,13 @@ from app.db.models.product import (
     ProductSize,
 )
 from typing import List
-from fastapi import APIRouter, HTTPException, status, Depends, Query
+from fastapi import APIRouter, HTTPException, status, Depends, Query, UploadFile, File
 from app.schemas.product import (
     ProductDataOut,
     ProductData,
     ProductDeleteMany,
     ProductListFilters,
+    ProductImageOut,
 )
 from app.db.session import AsyncSession
 from app.db.dependencies import get_db
@@ -19,6 +20,8 @@ from app.utils.slug import get_slug, get_sku
 from app.crud.product import get_product
 from sqlalchemy import select
 from app.utils.filters import apply_product_filters, get_base_product_query
+from app.utils.r2_service import upload_product_images
+from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
 
 router = APIRouter()
 
@@ -41,6 +44,45 @@ async def api_product_add(data: ProductData, db: AsyncSession = Depends(get_db))
     await db.commit()
     await db.refresh(product)
     return product
+
+
+@router.post(
+    "/api/product/{product_id}/images",
+    response_model=List[ProductImageOut],
+    status_code=status.HTTP_201_CREATED,
+    summary="Add images to existing product",
+)
+async def add_images_to_product(
+    product_id: int,
+    files: List[UploadFile] = File(..., description="Select product images"),
+    db: AsyncSession = Depends(get_db),
+):
+    product = await db.get(Product, product_id)
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
+        )
+    uploaded_images = await upload_product_images(
+        files, folder=f"{product_id}", bucket=CLOUDFLARE_BUCKET_NAME_1
+    )
+    if not uploaded_images:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="No valid images uploaded"
+        )
+    new_images = [
+        ProductImage(
+            product_id=product_id,
+            image_url=img["image_url"],
+            image_size=img["image_size"],
+            image_name=img["image_name"],
+        )
+        for img in uploaded_images
+    ]
+    db.add_all(new_images)
+    await db.commit()
+    for img in new_images:
+        await db.refresh(img)
+    return new_images
 
 
 @router.get(
@@ -184,3 +226,6 @@ async def api_update_product(
     await db.commit()
     await db.refresh(product)
     return product
+
+
+# @router.post("/api/")

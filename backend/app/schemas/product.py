@@ -85,7 +85,7 @@ class ProductDataOut(ProductDataBase):
 
 class CartItemCreate(BaseConfigModel):
     product_id: int = Field(gt=0)
-    quantity: int = Field(ge=0)
+    quantity: int = Field(gt=0)
     size: Optional[str] = Field(default=None, max_length=50)
     color: Optional[str] = Field(default=None, max_length=50)
 
@@ -100,6 +100,13 @@ class CartOut(BaseConfigModel):
     cart_items: list[CartItemOut] = Field(default_factory=list)
     total_items: int = 0
     cart_total: Decimal = Field(default=0)
+
+
+class CartItemUpdate(BaseConfigModel):
+    product_id: int
+    quantity: int = Field(ge=0)
+    size: Optional[str] = Field(default=None, max_length=50)
+    color: Optional[str] = Field(default=None, max_length=50)
 
 
 class ProductDeleteMany(BaseConfigModel):

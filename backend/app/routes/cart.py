@@ -1,14 +1,13 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from app.db.session import AsyncSession
 from app.db.models.product import Cart, Product, CartItem
-from app.crud.user import get_user
 from app.db.models.user import User
 from app.crud.cart import upsert_cart_item
 from app.security.jwt import get_current_user
-from app.schemas.product import CartOut, CartItemOut, CartItemCreate
+from app.schemas.product import CartOut, CartItemOut, CartItemCreate, CartItemUpdate
 from app.db.dependencies import get_db
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 router = APIRouter()
 
@@ -37,6 +36,20 @@ async def api_cart_add(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Product not found or unavailable",
+        )
+    current_result = await db.execute(
+        select(CartItem.quantity).where(
+            CartItem.cart_id == cart.id,
+            CartItem.product_id == data.product_id,
+            CartItem.size == data.size,
+            CartItem.color == data.color,
+        )
+    )
+    current_qty = current_result.scalar_one_or_none() or 0
+    if current_qty + data.quantity > product.stock:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Not enough stock. Only {product.stock - current_qty} available.",
         )
     item_id = await upsert_cart_item(db=db, cart_id=cart.id, product=product, data=data)
     await db.commit()
@@ -80,10 +93,10 @@ async def api_cart_all(
 
 
 @router.delete(
-    "/api/cart/{cart_id}", response_model=CartItemOut, status_code=status.HTTP_200_OK
+    "/api/cart/{item_id}", response_model=CartItemOut, status_code=status.HTTP_200_OK
 )
 async def api_delete_cart(
-    cart_id: int,
+    item_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -102,7 +115,7 @@ async def api_delete_cart(
             selectinload(CartItem.product).selectinload(Product.sizes),
             selectinload(CartItem.product).selectinload(Product.material),
         )
-        .where(CartItem.id == cart_id, CartItem.cart_id == cart.id)
+        .where(CartItem.id == item_id, CartItem.cart_id == cart.id)
     )
     cart_item = result.scalar_one_or_none()
     if not cart_item:
@@ -114,9 +127,24 @@ async def api_delete_cart(
     return cart_item
 
 
+@router.delete("/api/cart", status_code=status.HTTP_204_NO_CONTENT)
+async def api_delete_all_cart(
+    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+):
+    cart = (
+        await db.execute(select(Cart).where(Cart.user_id == current_user.id))
+    ).scalar_one_or_none()
+    if not cart:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found"
+        )
+    await db.execute(delete(CartItem).where(CartItem.cart_id == cart.id))
+    await db.commit()
+
+
 @router.patch("/api/cart/update", response_model=CartOut)
 async def api_update_cart_item(
-    data: CartItemCreate,
+    data: CartItemUpdate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -153,6 +181,12 @@ async def api_update_cart_item(
     if data.quantity <= 0:
         await db.delete(cart_item)
     else:
+        product = await db.get(Product, data.product_id)
+        if data.quantity > product.stock:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Only {product.stock} in stock. Cannot set quantity to {data.quantity}.",
+            )
         cart_item.quantity = data.quantity
     await db.commit()
     result = await db.execute(
@@ -167,7 +201,6 @@ async def api_update_cart_item(
         .order_by(CartItem.id)
     )
     cart_items = result.scalars().all()
-
     return CartOut(
         cart_items=cart_items,
         total_items=sum(item.quantity for item in cart_items),

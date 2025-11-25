@@ -1,4 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response, Request, Query
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    status,
+    Response,
+    Request,
+    Query,
+    UploadFile,
+    File,
+)
 from typing import List
 from sqlalchemy.orm import selectinload
 from app.db.session import AsyncSession
@@ -17,13 +27,15 @@ from app.schemas.user import (
     UserListFilters,
 )
 from app.security.hash import verify_password
-from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS
+from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS, get_current_user
+from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_2
 from authlib.integrations.starlette_client import OAuthError
 from app.security.reset_password import (
     save_token_forgot_password,
     get_user_reset_passsword,
     update_password,
 )
+from app.utils.r2_service import upload_product_images
 from app.utils.filters import apply_user_filters
 from app.utils.email_service import send_mail
 from app.security.oauth import oauth
@@ -92,6 +104,24 @@ async def api_user_login(
         user=UserProfileOut.model_validate(user),
         access_token=jwt_token,
     )
+
+
+@router.post(
+    "/api/user/images",
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_images_to_profile(
+    file: List[UploadFile] = File(..., description="Select profile images"),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    uploaded_images = await upload_product_images(
+        file, folder=f"{current_user.id}", bucket=CLOUDFLARE_BUCKET_NAME_2
+    )
+    new_url = uploaded_images[0]["image_url"]
+    current_user.profile_image = new_url
+    await db.commit()
+    return new_url
 
 
 @router.post("/api/user/logout", status_code=status.HTTP_200_OK)

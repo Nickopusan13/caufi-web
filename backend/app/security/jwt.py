@@ -5,7 +5,6 @@ from fastapi.security import HTTPBearer
 from app.db.session import AsyncSession
 from app.db.dependencies import get_db
 from app.db.models.user import User
-from app.crud.user import get_user
 import logging
 import pendulum
 import os
