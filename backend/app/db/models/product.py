@@ -3,6 +3,7 @@ from decimal import Decimal
 from app.db.base import Base
 from datetime import datetime
 from sqlalchemy.orm import mapped_column, Mapped, relationship
+from app.db.models.user import OrderItem
 from sqlalchemy import (
     String,
     Integer,
@@ -50,6 +51,12 @@ class Product(Base):
     )
     cart_items: Mapped[list["CartItem"]] = relationship(
         "CartItem",
+        back_populates="product",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    order_items: Mapped[list["OrderItem"]] = relationship(
+        "OrderItem",
         back_populates="product",
         cascade="all, delete-orphan",
         lazy="selectin",

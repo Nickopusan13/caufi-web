@@ -46,13 +46,13 @@ import secrets
 import os
 
 logger = logging.getLogger(__name__)
-router = APIRouter()
+router = APIRouter(prefix="/api/user")
 load_dotenv()
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS")
 
 
 @router.post(
-    "/api/user/register",
+    "/register",
     response_model=UserProfileOut,
     status_code=status.HTTP_201_CREATED,
 )
@@ -77,7 +77,7 @@ async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_d
 
 
 @router.post(
-    "/api/user/login", response_model=UserToken, status_code=status.HTTP_200_OK
+    "/login", response_model=UserToken, status_code=status.HTTP_200_OK
 )
 async def api_user_login(
     data: UserLogin, response: Response, db: AsyncSession = Depends(get_db)
@@ -107,7 +107,7 @@ async def api_user_login(
 
 
 @router.post(
-    "/api/user/images",
+    "/upload/images",
     status_code=status.HTTP_201_CREATED,
 )
 async def add_images_to_profile(
@@ -131,7 +131,7 @@ async def api_user_logout(response: Response):
 
 
 @router.get(
-    "/api/users", response_model=List[UserProfileOut], status_code=status.HTTP_200_OK
+    "/get/all", response_model=List[UserProfileOut], status_code=status.HTTP_200_OK
 )
 async def api_get_all_user(
     f: UserListFilters = Depends(),
@@ -150,7 +150,7 @@ async def api_get_all_user(
 
 
 @router.get(
-    "/api/user/{user_id}", response_model=UserProfile, status_code=status.HTTP_200_OK
+    "/get/{user_id}", response_model=UserProfile, status_code=status.HTTP_200_OK
 )
 async def api_get_user_profile(user_id: int, db: AsyncSession = Depends(get_db)):
     user = await get_user(db=db, user_id=user_id)
@@ -162,7 +162,7 @@ async def api_get_user_profile(user_id: int, db: AsyncSession = Depends(get_db))
 
 
 @router.delete(
-    "/api/user/{user_id}",
+    "/delete/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def api_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
@@ -177,7 +177,7 @@ async def api_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.delete(
-    "/api/user",
+    "/delete/all",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def api_delete_all_user(data: UserDeleteMany, db: AsyncSession = Depends(get_db)):
@@ -191,7 +191,7 @@ async def api_delete_all_user(data: UserDeleteMany, db: AsyncSession = Depends(g
 
 
 @router.patch(
-    "/api/user/{user_id}",
+    "/update/{user_id}",
     response_model=UserProfileOut,
     status_code=status.HTTP_200_OK,
 )
@@ -268,7 +268,7 @@ async def google_oauth_callback(
     )
 
 
-@router.post("/api/reset/password-request", status_code=status.HTTP_201_CREATED)
+@router.post("/reset/password-request", status_code=status.HTTP_201_CREATED)
 async def api_reset_password_request(
     data: UserResetPasswordRequest, db: AsyncSession = Depends(get_db)
 ):
@@ -292,7 +292,7 @@ async def api_reset_password_request(
     )
 
 
-@router.post("/api/reset/password")
+@router.post("/reset/password")
 async def api_reset_password(
     data: UserResetPassword, db: AsyncSession = Depends(get_db)
 ):

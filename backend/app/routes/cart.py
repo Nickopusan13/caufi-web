@@ -9,11 +9,11 @@ from app.db.dependencies import get_db
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select, delete
 
-router = APIRouter()
+router = APIRouter(prefix="/api/cart")
 
 
 @router.post(
-    "/api/cart/add", response_model=CartItemOut, status_code=status.HTTP_201_CREATED
+    "/add", response_model=CartItemOut, status_code=status.HTTP_201_CREATED
 )
 async def api_cart_add(
     data: CartItemCreate,
@@ -67,7 +67,7 @@ async def api_cart_add(
     return cart_item
 
 
-@router.get("/api/cart/all", response_model=CartOut, status_code=status.HTTP_200_OK)
+@router.get("/get/all", response_model=CartOut, status_code=status.HTTP_200_OK)
 async def api_cart_all(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
@@ -93,7 +93,7 @@ async def api_cart_all(
 
 
 @router.delete(
-    "/api/cart/{item_id}", response_model=CartItemOut, status_code=status.HTTP_200_OK
+    "/delete/{item_id}", response_model=CartItemOut, status_code=status.HTTP_200_OK
 )
 async def api_delete_cart(
     item_id: int,
@@ -127,7 +127,7 @@ async def api_delete_cart(
     return cart_item
 
 
-@router.delete("/api/cart", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/delet/all", status_code=status.HTTP_204_NO_CONTENT)
 async def api_delete_all_cart(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
@@ -142,7 +142,7 @@ async def api_delete_all_cart(
     await db.commit()
 
 
-@router.patch("/api/cart/update", response_model=CartOut)
+@router.patch("/update", response_model=CartOut)
 async def api_update_cart_item(
     data: CartItemUpdate,
     current_user: User = Depends(get_current_user),

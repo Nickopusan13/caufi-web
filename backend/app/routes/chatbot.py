@@ -7,7 +7,7 @@ import uuid
 import os
 
 load_dotenv()
-router = APIRouter()
+router = APIRouter(prefix="/api")
 sessions = {}
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -18,7 +18,7 @@ with open(instruction_path, "r", encoding="utf-8") as f:
 
 
 @router.post(
-    "/api/chat/bot", response_model=ChatResponse, status_code=status.HTTP_200_OK
+    "/chat/bot", response_model=ChatResponse, status_code=status.HTTP_200_OK
 )
 async def api_chat_bot(request: ChatRequest):
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))

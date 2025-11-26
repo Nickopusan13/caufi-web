@@ -23,11 +23,11 @@ from app.utils.filters import apply_product_filters, get_base_product_query
 from app.utils.r2_service import upload_product_images
 from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
 
-router = APIRouter()
+router = APIRouter(prefix="/api/product")
 
 
 @router.post(
-    "/api/product/add",
+    "/add",
     response_model=ProductDataOut,
     status_code=status.HTTP_201_CREATED,
 )
@@ -47,7 +47,7 @@ async def api_product_add(data: ProductData, db: AsyncSession = Depends(get_db))
 
 
 @router.post(
-    "/api/product/{product_id}/images",
+    "/{product_id}/images",
     response_model=List[ProductImageOut],
     status_code=status.HTTP_201_CREATED,
     summary="Add images to existing product",
@@ -86,7 +86,7 @@ async def add_images_to_product(
 
 
 @router.get(
-    "/api/product", response_model=List[ProductDataOut], status_code=status.HTTP_200_OK
+    "/get/all", response_model=List[ProductDataOut], status_code=status.HTTP_200_OK
 )
 async def api_product_all(
     f: ProductListFilters = Depends(),
@@ -106,7 +106,7 @@ async def api_product_all(
 
 
 @router.get(
-    "/api/product/featured",
+    "/featured",
     response_model=List[ProductDataOut],
     status_code=status.HTTP_200_OK,
 )
@@ -132,7 +132,7 @@ async def api_product_featured(
 
 
 @router.get(
-    "/api/product/{identifier}",
+    "/get/{identifier}",
     response_model=ProductDataOut,
     status_code=status.HTTP_200_OK,
 )
@@ -152,7 +152,7 @@ async def api_product_detail(identifier: str, db: AsyncSession = Depends(get_db)
 
 
 @router.delete(
-    "/api/product",
+    "/delete/all",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def api_delete_all_product(
@@ -175,7 +175,7 @@ async def api_delete_all_product(
 
 
 @router.delete(
-    "/api/product/{product_id}",
+    "/delete/{product_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def api_delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
@@ -190,7 +190,7 @@ async def api_delete_product(product_id: int, db: AsyncSession = Depends(get_db)
 
 
 @router.patch(
-    "/api/product/{product_id}",
+    "/update/{product_id}",
     status_code=status.HTTP_200_OK,
     response_model=ProductDataOut,
 )
@@ -226,6 +226,3 @@ async def api_update_product(
     await db.commit()
     await db.refresh(product)
     return product
-
-
-# @router.post("/api/")

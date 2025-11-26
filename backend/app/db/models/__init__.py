@@ -1,4 +1,10 @@
-from app.db.models.user import User, UserAddress, UserPasswordResetToken
+from app.db.models.user import (
+    User,
+    UserAddress,
+    UserPasswordResetToken,
+    Order,
+    OrderItem,
+)
 from app.db.models.product import (
     Product,
     ProductColor,
@@ -20,4 +26,6 @@ __all__ = [
     "ProductSize",
     "Cart",
     "CartItem",
+    "Order",
+    "OrderItem",
 ]
