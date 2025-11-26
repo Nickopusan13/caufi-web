@@ -11,45 +11,55 @@ from app.schemas.order import OrderOut, OrderCreate
 
 router = APIRouter(prefix="/api/orders")
 
+
 @router.post("/create", status_code=status.HTTP_200_OK, response_model=OrderOut)
-async def api_order_create(payload: OrderCreate, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+async def api_order_create(
+    payload: OrderCreate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
     addr = await db.get(UserAddress, payload.address_id)
     if not addr or addr.user_id != current_user.id:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid Address"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Address"
         )
     order = Order(
         user_id=current_user.id,
         address_id=payload.address_id,
         total_amount=payload.total_amount,
-        status=OrderStatus.PENDING
+        status=OrderStatus.PENDING,
     )
     db.add(order)
     await db.flush()
     order_items = []
     for item in payload.items:
-        order_items.append(OrderItem(
-            order_id=order.id,
-            product_id=item.product_id,
-            quantity=item.quantity,
-            price_at_purchase=item.price_at_purchase
-        ))
+        order_items.append(
+            OrderItem(
+                order_id=order.id,
+                product_id=item.product_id,
+                quantity=item.quantity,
+                price_at_purchase=item.price_at_purchase,
+            )
+        )
     db.add_all(order_items)
     await db.commit()
     # Re-query and eager-load items -> product -> images, plus user and address
     from app.db.models.product import Product
+
     result = await db.execute(
         select(Order)
         .where(Order.id == order.id)
         .options(
             selectinload(Order.user),
             selectinload(Order.address),
-            selectinload(Order.items).selectinload(OrderItem.product).selectinload(Product.images),
+            selectinload(Order.items)
+            .selectinload(OrderItem.product)
+            .selectinload(Product.images),
         )
     )
     order_loaded = result.scalars().first()
     return OrderOut.model_validate(order_loaded)
+
 
 @router.post("/{order_id}/pay", status_code=status.HTTP_200_OK)
 async def api_order_pay(

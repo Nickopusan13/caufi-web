@@ -76,9 +76,7 @@ async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_d
         )
 
 
-@router.post(
-    "/login", response_model=UserToken, status_code=status.HTTP_200_OK
-)
+@router.post("/login", response_model=UserToken, status_code=status.HTTP_200_OK)
 async def api_user_login(
     data: UserLogin, response: Response, db: AsyncSession = Depends(get_db)
 ):

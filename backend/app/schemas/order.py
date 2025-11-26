@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Optional, List
 from decimal import Decimal
 
+
 class OrderItemCreate(BaseConfigModel):
     product_id: int = Field(gt=0)
     quantity: int = Field(gt=0)

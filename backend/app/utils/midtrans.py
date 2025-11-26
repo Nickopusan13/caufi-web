@@ -87,7 +87,9 @@ def create_midtrans_transaction(order_out: OrderOut):
             "pending": f"https://caufi.nickopusan.dev/order/pending?order_id={order_out.id}",
         },
         "expiry": {
-            "start_time": datetime.now(tz=timezone(timedelta(hours=7))).strftime("%Y-%m-%d %H:%M:%S %z"),
+            "start_time": datetime.now(tz=timezone(timedelta(hours=7))).strftime(
+                "%Y-%m-%d %H:%M:%S %z"
+            ),
             "unit": "day",
             "duration": 1,
         },

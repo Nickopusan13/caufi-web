@@ -12,9 +12,7 @@ from sqlalchemy import select, delete
 router = APIRouter(prefix="/api/cart")
 
 
-@router.post(
-    "/add", response_model=CartItemOut, status_code=status.HTTP_201_CREATED
-)
+@router.post("/add", response_model=CartItemOut, status_code=status.HTTP_201_CREATED)
 async def api_cart_add(
     data: CartItemCreate,
     db: AsyncSession = Depends(get_db),
