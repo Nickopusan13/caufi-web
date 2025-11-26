@@ -43,9 +43,7 @@ async def api_order_create(
         )
     db.add_all(order_items)
     await db.commit()
-    # Re-query and eager-load items -> product -> images, plus user and address
     from app.db.models.product import Product
-
     result = await db.execute(
         select(Order)
         .where(Order.id == order.id)

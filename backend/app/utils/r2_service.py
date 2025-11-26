@@ -31,7 +31,7 @@ async def upload_product_images(
         clean_name = re.sub(r"-+", "-", clean_name)
         clean_name = clean_name.strip("-_.")
         clean_name = clean_name or f"image-{idx + 1}"
-        unique_suffix = uuid.uuid4().hex[:8]  # short 8-char suffix
+        unique_suffix = uuid.uuid4().hex[:8]
         final_filename = f"{clean_name}-{unique_suffix}.{ext}"
         key = f"{folder}/{final_filename}"
         client.put_object(
@@ -56,3 +56,6 @@ async def upload_product_images(
 def delete_image_from_r2(key: str):
     client = get_r2_client()
     client.delete_object(Bucket=CLOUDFLARE_BUCKET_NAME_1, Key=key)
+
+def extract_r2_key(url: str) -> str:
+    return url.replace(f"{R2_PUBLIC_URL}/", "")

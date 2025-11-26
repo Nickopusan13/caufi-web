@@ -35,7 +35,7 @@ from app.security.reset_password import (
     get_user_reset_passsword,
     update_password,
 )
-from app.utils.r2_service import upload_product_images
+from app.utils.r2_service import upload_product_images, delete_image_from_r2, extract_r2_key
 from app.utils.filters import apply_user_filters
 from app.utils.email_service import send_mail
 from app.security.oauth import oauth
@@ -103,18 +103,23 @@ async def api_user_login(
         access_token=jwt_token,
     )
 
-
 @router.post(
     "/upload/images",
     status_code=status.HTTP_201_CREATED,
 )
 async def add_images_to_profile(
-    file: List[UploadFile] = File(..., description="Select profile images"),
+    file: List[UploadFile] = File(...),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if current_user.profile_image:
+        old_url = current_user.profile_image
+        old_key = extract_r2_key(old_url)
+        delete_image_from_r2(old_key)
     uploaded_images = await upload_product_images(
-        file, folder=f"profiles/{current_user.id}", bucket=CLOUDFLARE_BUCKET_NAME_1
+        file,
+        folder=f"profiles/{current_user.id}",
+        bucket=CLOUDFLARE_BUCKET_NAME_1,
     )
     new_url = uploaded_images[0]["image_url"]
     current_user.profile_image = new_url
