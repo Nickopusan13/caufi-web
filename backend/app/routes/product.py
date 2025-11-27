@@ -39,7 +39,6 @@ async def api_product_add(data: ProductData, db: AsyncSession = Depends(get_db))
     product.colors = [ProductColor(**c.model_dump()) for c in data.colors]
     product.sizes = [ProductSize(**s.model_dump()) for s in data.sizes]
     product.material = [ProductMaterial(**m.model_dump()) for m in data.material]
-    product.images = [ProductImage(**i.model_dump()) for i in data.images]
     db.add(product)
     await db.commit()
     await db.refresh(product)

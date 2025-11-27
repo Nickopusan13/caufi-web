@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import ThemeProvider from "@/components/ThemeProvider";
 import { Love_Ya_Like_A_Sister, Poppins, Inter, Kalam } from "next/font/google";
 import "./globals.css";
+import { Lenis } from "lenis/react";
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
+
+export const metadata: Metadata = {
+  title: "Caufi",
+  description: "Welcome to Caufi — Fashion for Everyone",
+};
 
 const loveYaLikeASister = Love_Ya_Like_A_Sister({
   subsets: ["latin"],
@@ -40,16 +47,18 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
-        className={`${loveYaLikeASister.variable} ${poppinsFont.variable} ${interFont.variable} antialiased h-full`}
+        className={`${loveYaLikeASister.variable} ${poppinsFont.variable} ${interFont.variable} ${kalamFont.variable} antialiased h-full`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <ReactQueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Lenis root>{children}</Lenis>
+          </ThemeProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

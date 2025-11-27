@@ -67,7 +67,7 @@ class ProductDataBase(BaseConfigModel):
 class ProductData(ProductDataBase):
     material: list[ProductMaterial] = Field(default_factory=list)
     sizes: list[ProductSize] = Field(default_factory=list)
-    images: list[ProductImage] = Field(default_factory=list)
+    images: Optional[list[ProductImage]] = None
     colors: list[ProductColor] = Field(default_factory=list)
 
 

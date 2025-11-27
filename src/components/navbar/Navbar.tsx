@@ -1,23 +1,60 @@
+"use client";
+
 import Link from "next/link";
-import { motion } from "motion/react";
-import { CiSearch } from "react-icons/ci";
 import { Input } from "../ui/input";
-import ModeToggle from "./components/ModeToggle";
 import MenuBar from "./components/MenuBar";
+import ModeToggle from "./components/ModeToggle";
 import SignRegBtn from "./components/SignRegBtn";
+import { FaSearch } from "react-icons/fa";
+import { useLenis } from "lenis/react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
+  const [hide, setHide] = useState(false);
+  useLenis(({ scroll, direction }) => {
+    if (direction === 1 && scroll > 100) {
+      setHide(true);
+    } else if (direction === -1) {
+      setHide(false);
+    }
+  });
   return (
-    <header className="fixed bg-zinc-600 z-100 w-full py-5 px-3 flex justify-center align-middle items-center">
-      <div className="flex">
-        <Link href="/">
-          <h1 className="font-bold text-3xl font-love">CAUFI.</h1>
-        </Link>
-      </div>
-      <Input />
-      <SignRegBtn />
-      <MenuBar />
-      <ModeToggle />
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-transform duration-500 ease-out",
+        hide ? "-translate-y-full" : "translate-y-0",
+        "bg-background/70 backdrop-blur-xl border-b border-border/10"
+      )}
+    >
+      <div className="absolute inset-0 bg-background backdrop-blur-xl" />
+      <nav className="relative flex items-center justify-around py-5 max-w-7xl mx-auto w-full">
+        <div className="flex items-center gap-8 flex-1 justify-center">
+          <Link href="/" className="flex items-center">
+            <h1 className="text-3xl font-black tracking-tighter bg-linear-to-r from-black to-black/70 dark:from-white dark:to-white/70 bg-clip-text text-transparent drop-shadow-lg">
+              CAUFI.
+            </h1>
+          </Link>
+          <div className="relative max-w-lg w-full">
+            <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="pl-11 pr-5 py-6 rounded-2xl bg-background/60 backdrop-blur-md border border-border/50 
+               placeholder:text-muted-foreground/70
+               focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary/50
+               transition-all duration-300 hover:bg-background/80"
+            />
+          </div>
+          <div className="hidden md:flex">
+            <MenuBar />
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <SignRegBtn />
+          <ModeToggle />
+        </div>
+      </nav>
     </header>
   );
 }
