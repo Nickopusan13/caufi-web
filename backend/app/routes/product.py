@@ -12,6 +12,7 @@ from app.schemas.product import (
     ProductDeleteMany,
     ProductListFilters,
     ProductImageOut,
+    ProductUpdate
 )
 from app.db.session import AsyncSession
 from app.db.dependencies import get_db
@@ -237,7 +238,7 @@ async def api_delete_product(
     response_model=ProductDataOut,
 )
 async def api_update_product(
-    product_id: int, data: ProductData, db: AsyncSession = Depends(get_db)
+    product_id: int, data: ProductUpdate, db: AsyncSession = Depends(get_db)
 ):
     product = await get_product(db=db, product_id=product_id)
     if not product:

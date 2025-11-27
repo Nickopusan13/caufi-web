@@ -82,6 +82,25 @@ class ProductDataOut(ProductDataBase):
     created_at: datetime
     updated_at: datetime
 
+class ProductUpdate(BaseConfigModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    stock: Optional[int] = Field(None, gt=0)
+    stock_type: Optional[str] = Field(None, min_length=1, max_length=100)
+    shipping_type: Optional[str] = Field(None, min_length=1, max_length=100)
+    motif: Optional[str] = Field(None, min_length=1, max_length=100)
+    regular_price: Optional[Decimal] = Field(None, gt=0)
+    discount_price: Optional[Decimal] = Field(None, ge=0)
+    category: Optional[str] = Field(None, min_length=1, max_length=255)
+    product_summary: Optional[str] = Field(None, min_length=1)
+    manufacturer: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = Field(None, min_length=1)
+    care_guide: Optional[str] = Field(None, min_length=1)
+    is_featured: Optional[bool] = Field(None)
+    is_active: Optional[bool] = Field(None)
+    material: Optional[list[ProductMaterial]] = Field(default_factory=list)
+    sizes: Optional[list[ProductSize]] = Field(default_factory=list)
+    images: Optional[list[ProductImage]] = None
+    colors: Optional[list[ProductColor]] = Field(default_factory=list)
 
 class CartItemCreate(BaseConfigModel):
     product_id: int = Field(gt=0)

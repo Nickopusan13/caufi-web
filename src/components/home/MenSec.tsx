@@ -1,6 +1,6 @@
 "use client";
 
-import { FaArrowRight, FaFire } from "react-icons/fa";
+import { FaArrowRight, FaFire } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import { useProducts } from "@/hooks/useProduct";
 import ProductItem from "../ProductItem";
@@ -11,45 +11,96 @@ export default function MenSection() {
     onlyActive: true,
     limit: 10,
   });
+
   return (
-    <div className="text-black flex mt-10 overflow-x-auto scrollbar-8 scrollbar scrollbar-thumb-red-500 scrollbar-track-gray-700">
-      <div className="flex w-min mx-auto gap-3 lg:gap-4 px-2 lg:px-4">
-        <div>
-          <div className="border-2 border-[#ABABAB] w-[140px] h-40 lg:w-[170px] lg:h-[180px] flex flex-col text-center items-center mb-1 p-1 lg:p-2 rounded-2xl justify-center dark:bg-[#1D1C1C]">
-            <h1 className="font-bold mb-2 lg:mb-3 dark:text-white transition-colors duration-300 text-[13px] lg:text-base">
-              SHOW ALL MAN CLOTHES
-            </h1>
-            <motion.button
-              className="flex items-center justify-center bg-[#D9D9D9] lg:w-[105px] lg:h-[50px] lg:text-[12px] text-[10px] rounded-2xl p-2 font-bold"
-              whileHover={{ scale: 1.5, backgroundColor: "#E5E7EB" }}
-              whileTap={{ scale: 0.95 }}
+    <section className="mt-16 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8">
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight">
+            {`Men's Collection`}
+          </h2>
+          <motion.a
+            href="/men"
+            className="hidden sm:flex items-center gap-2 text-sm font-medium hover:gap-4 transition-all duration-300"
+            whileHover={{ x: 4 }}
+          >
+            View All <FaArrowRight className="text-sm" />
+          </motion.a>
+        </div>
+
+        {/* Horizontal Scroll Container */}
+        <div className="flex gap-6 overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-transparent scroll-smooth snap-x snap-mandatory pb-6 -mx-4 px-4">
+          {/* Special Cards */}
+          <div className="flex gap-6 flex-none">
+            {/* Show All Card */}
+            <motion.div
+              className="group relative w-72 lg:w-80 h-96 bg-linear-to-br from-zinc-100 to-zinc-200 dark:from-zinc-900 dark:to-zinc-950 rounded-3xl overflow-hidden shadow-xl border border-zinc-300 dark:border-zinc-800 backdrop-blur-xl"
+              whileHover={{ scale: 1.03 }}
+              transition={{ type: "spring", stiffness: 300 }}
             >
-              Shop Now
-              <FaArrowRight className="ml-1" />
-            </motion.button>
+              <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative h-full flex flex-col justify-end p-8 text-center">
+                <h3 className="text-2xl font-bold mb-3 tracking-wide">
+                  {`All Men's Wear`}
+                </h3>
+                <motion.button
+                  className="mx-auto flex items-center gap-3 bg-black dark:bg-white text-white dark:text-black px-8 py-4 rounded-full font-semibold text-sm uppercase tracking-wider shadow-lg"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Shop Now <FaArrowRight />
+                </motion.button>
+              </div>
+            </motion.div>
+            <motion.div
+              className="group relative w-72 lg:w-80 h-96 bg-linear-to-br from-red-600 via-red-500 to-rose-600 rounded-3xl overflow-hidden shadow-2xl border border-red-400/20"
+              whileHover={{ scale: 1.03 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <div className="absolute top-6 left-6 flex items-center gap-2 text-white/90">
+                <FaFire className="text-2xl animate-pulse" />
+                <span className="text-sm font-bold tracking-wider">HOT</span>
+              </div>
+              <div className="absolute inset-0 bg-black/20" />
+              <div className="relative h-full flex flex-col justify-end p-8 text-white">
+                <h3 className="text-3xl font-bold mb-2">New Arrivals</h3>
+                <p className="text-sm opacity-90 mb-6">
+                  Fresh drops. Limited stock. Move fast.
+                </p>
+                <motion.button
+                  className="mx-auto flex items-center gap-3 bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wider border border-white/30 shadow-xl"
+                  whileHover={{ backgroundColor: "rgba(255,255,255,0.3)" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Shop New <FaArrowRight />
+                </motion.button>
+              </div>
+            </motion.div>
           </div>
-          <div className="border-2 w-[140px] h-40 lg:w-[170px] lg:h-[180px] flex flex-col text-center items-center p-2 rounded-2xl justify-center bg-[#C34D4D] border-[#ABABAB] dark:bg-[#541313] dark:text-white transition-colors duration-300">
-            <div className="flex mb-1 lg:mb-2 text-center">
-              <FaFire className="mr-1" />
-              <h1 className="font-bold text-[13px] lg:text-base">
-                {`NEW ARRIVALS`}
-              </h1>
-            </div>
-            <p className="lg:text-[12px] text-[10px] mb-3">
-              {`Check out the latest men's Collections!`}
-            </p>
-            <motion.button
-              className="flex items-center justify-center bg-[#A52F2F] lg:w-[105px] lg:h-[50px] lg:text-[12px] text-[10px] rounded-2xl p-2 text-white font-bold"
-              whileHover={{ scale: 1.5, backgroundColor: "#DC2626" }}
-              whileTap={{ scale: 0.95 }}
-              style={{ backgroundColor: "#A52F2F" }}
-            >
-              View New Arrivals <FaArrowRight className="ml-1" />
-            </motion.button>
+          <div className="flex gap-6">
+            {isLoading ? (
+              [...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-64 lg:w-72 h-96 bg-gray-200 dark:bg-zinc-800 rounded-3xl animate-pulse snap-center flex-none"
+                />
+              ))
+            ) : (
+              <ProductItem cloths={cloths} />
+            )}
           </div>
         </div>
-        <ProductItem cloths={cloths} />
+        <div className="sm:hidden mt-6 text-center">
+          <motion.a
+            href="/men"
+            className="inline-flex items-center gap-3 text-sm font-medium"
+            whileHover={{ gap: 5 }}
+          >
+            See all products <FaArrowRight />
+          </motion.a>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

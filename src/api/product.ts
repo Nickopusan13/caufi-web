@@ -33,8 +33,8 @@ export interface ProductData {
   stockType: string;
   shippingType: string;
   motif: string;
-  regularPrice: string;
-  discountPrice: string;
+  regularPrice: number;
+  discountPrice: number;
   category: string;
   productSummary: string;
   manufacturer: string;
@@ -53,8 +53,8 @@ export interface ProductFilters {
   limit?: number;
   search?: string;
   category?: string;
-  minPrice?: string;
-  maxPrice?: string;
+  minPrice?: number;
+  maxPrice?: number;
   color?: string;
   size?: string;
   onlyActive?: boolean;
