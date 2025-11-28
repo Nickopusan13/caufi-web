@@ -1,145 +1,182 @@
 "use client";
 
 import { useState } from "react";
-import { footerSections, socials, optionsStores } from "./Item";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { FaChevronRight, FaEnvelope, FaRocket } from "react-icons/fa";
+import { footerSections, socials, optionsStores } from "./Item";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 },
+  };
   return (
-    <footer className=" dark:bg-zinc-900 transition-all duration-300">
-      <div className="bg-[#928BB9] p-2 lg:p-5 drop-shadow-sm drop-shadow-black flex items-center justify-center dark:bg-[#383548] dark:drop-shadow-white transition-all duration-300 overflow-x-hidden">
-        <div className="text-center">
-          <h1 className="text-[18px] lg:text-[25px] w-full text-black font-bold dark:text-white">
-            Subscribe to our newsletter Get updates on new products and
-            discounts!!
-          </h1>
-          <form
-            className="relative mt-2 lg:mt-3 flex justify-center gap-1 lg:gap-2 lg:px-5"
-            action=""
+    <footer className="bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 overflow-hidden">
+      {/* Newsletter Hero */}
+      <div className="bg-linear-to-br from-purple-600 via-pink-600 to-rose-600 py-16 lg:py-20 px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-5xl mx-auto text-center"
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            whileInView={{ scale: 1 }}
+            className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-lg rounded-full px-6 py-3 mb-6"
           >
-            <input
-              className="bg-white text-black placeholder:text-black w-full h-12 lg:h-16 rounded-2xl lg:px-5 px-3 placeholder:opacity-40 text-[12px] lg:text-[15px] focus:outline-none"
-              type="email"
-              name="input-email"
-              id="input-email"
-              autoComplete="off"
-              placeholder=""
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <label
-              className={`absolute text-black left-3 lg:left-10 transition-all duration-200 ${
-                email
-                  ? "top-1 lg:text-[12px] text-[10px] font-bold"
-                  : "top-4 lg:top-5.5 lg:text-[15px] text-[12px] opacity-40"
-              } pointer-events-none`}
-              htmlFor="input-email"
-            >
-              Email Address
-            </label>
+            <FaRocket className="w-6 h-6 text-white" />
+            <span className="text-white font-bold">Exclusive Drops Only</span>
+          </motion.div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
+            Don’t Miss the Next Drop
+          </h2>
+          <p className="text-white/90 text-lg mb-10 max-w-2xl mx-auto">
+            Be the first to know about limited releases, restocks, and secret
+            sales.
+          </p>
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="flex flex-col sm:flex-row max-w-2xl mx-auto gap-4"
+          >
+            <div className="relative flex-1 group">
+              <FaEnvelope className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400 group-focus-within:text-purple-400 transition-colors" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="w-full pl-6 pr-6 py-5 rounded-2xl bg-white/20 backdrop-blur-xl border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-4 focus:ring-white/40 focus:border-transparent transition-all text-lg font-medium"
+              />
+            </div>
             <motion.button
-              type="submit"
-              className="text-white rounded-2xl p-1 px-1 lg:px-5 h-12 lg:h-16 font-bold text-[13px] lg:text-[18px]"
-              whileHover={{ backgroundColor: "#9F1239" }}
-              style={{ backgroundColor: "#B75050" }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-10 py-5 bg-white text-purple-600 font-black rounded-2xl shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-3"
             >
-              Subscribe
+              Join the List
+              <FaChevronRight className="w-5 h-5" />
             </motion.button>
           </form>
-        </div>
+        </motion.div>
       </div>
-      <div className="bg-white h-full dark:bg-zinc-900 transition-all duration-300 text-black dark:text-white flex flex-col">
-        <div className="flex flex-col lg:flex-row lg:justify-around lg:items-baseline items-center h-full py-4 lg:py-10 lg:gap-0 gap-6 justify-center">
-          <div className="flex flex-col pl-2 text-center">
-            <h1 className="font-bold mb-1 lg:mb-2 text-[15px] lg:text-[20px]">
+      <div className="max-w-7xl mx-auto px-6 py-16 lg:py-20">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 lg:gap-12"
+        >
+          <motion.div
+            variants={item}
+            className="col-span-2 md:col-span-3 lg:col-span-1"
+          >
+            <h1 className="text-5xl font-black bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
               CAUFI.
             </h1>
-            <div className="flex gap-2 lg:gap-3">
-              {socials.map((item, index) => {
-                const Icon = item.icon;
+            <p className="text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed">
+              Premium streetwear curated for those who lead, not follow. Limited
+              drops. Zero compromises.
+            </p>
+            <div className="flex gap-5">
+              {socials.map((social, i) => {
+                const Icon = social.icon;
                 return (
                   <motion.a
-                    rel="noopener noreferrer"
+                    key={i}
+                    href={social.link}
                     target="_blank"
-                    href={item.link}
-                    key={index}
-                    whileHover={{ scale: 2 }}
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.3, rotate: 12 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/50 transition-all duration-300 shadow-md hover:shadow-xl"
                   >
-                    <Icon className="hover:fill-blue-500" />
+                    <Icon className="w-6 h-6" />
                   </motion.a>
                 );
               })}
             </div>
-          </div>
-          <div className="flex gap-3 lg:gap-8 justify-center">
-            {footerSections.map((section, index) => (
-              <div key={index}>
-                <h1 className="mb-3 font-bold lg:text-base text-[15px]">
-                  {section.title}
-                </h1>
-                {section.links.map((shop: string, idx: number) => (
-                  <a
-                    className="flex flex-col mb-1 lg:text-base text-[12px] hover:text-blue-500"
-                    href="#"
-                    key={idx}
-                  >
-                    {shop}
-                  </a>
+          </motion.div>
+          {footerSections.map((section, i) => (
+            <motion.div key={i} variants={item}>
+              <h3 className="font-bold text-lg mb-6 text-zinc-900 dark:text-white">
+                {section.title}
+              </h3>
+              <ul className="space-y-3">
+                {section.links.map((link, idx) => (
+                  <motion.li key={idx} whileHover={{ x: 8 }} className="group">
+                    <a
+                      href="#"
+                      className="text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 flex items-center gap-2 text-sm font-medium"
+                    >
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                        →
+                      </span>
+                      {link}
+                    </a>
+                  </motion.li>
                 ))}
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-col gap-3 max-w-100 pr-2">
-            {optionsStores.map((section, index) => (
-              <div
-                className="border-b border-gray-400 pb-4 last:border-none"
-                key={index}
-              >
-                <h1 className="font-bold mb-2 lg:text-base text-[15px]">
-                  {section.title}
-                </h1>
-                <div className="flex flex-wrap gap-4">
-                  {section.icon?.map((icon, idx) =>
-                    section.title === "Payment Options" ||
-                    section.title === "Shipping Options" ? (
-                      <div key={idx} className="relative w-[50px] h-[25px]">
-                        <Image
-                          src={icon}
-                          alt="payment-options"
-                          className="object-contain"
-                          fill
-                        />
-                      </div>
-                    ) : (
-                      <a href="#" key={idx}>
-                        <div className="relative w-20 h-[25px]">
+              </ul>
+            </motion.div>
+          ))}
+          <motion.div variants={item} className="col-span-2 lg:col-span-1">
+            <div className="space-y-10">
+              {optionsStores.map((store, i) => (
+                <div key={i}>
+                  <h3 className="font-bold text-lg mb-5 text-zinc-900 dark:text-white">
+                    {store.title}
+                  </h3>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    {store.icon?.map((icon, idx) => (
+                      <motion.div
+                        key={idx}
+                        whileHover={{ scale: 1.15, y: -4 }}
+                        className="bg-white dark:bg-zinc-900/80 rounded-2xl w-full p-1 shadow-lg hover:shadow-2xl transition-all duration-300 border border-zinc-200 dark:border-zinc-800"
+                      >
+                        <div className="relative w-full aspect-3/2">
                           <Image
                             src={icon}
-                            alt="shipping-options"
-                            className="object-contain"
+                            alt={store.title}
                             fill
+                            className="object-contain"
                           />
                         </div>
-                      </a>
-                    )
-                  )}
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="border-t p-5 dark:bg-zinc-800 border-gray-300 pt-4 text-center text-sm text-gray-500">
-          © 2025 CAUFI. |{" "}
-          <a href="/contact" className="underline hover:text-black">
-            Contact
-          </a>{" "}
-          |{" "}
-          <a href="/reviews" className="underline hover:text-black">
-            Reviews
-          </a>
-        </div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-16 pt-10 border-t border-zinc-200 dark:border-zinc-800 text-center"
+        >
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            © 2025{" "}
+            <span className="font-bold text-purple-600 dark:text-purple-400">
+              CAUFI
+            </span>
+            . All rights reserved. | Crafted with{" "}
+            <span className="text-red-500">♥</span> in Indonesia
+          </p>
+        </motion.div>
       </div>
     </footer>
   );

@@ -9,7 +9,7 @@ const MotionLink = motion.create(Link);
 
 export default function Quotes() {
   return (
-    <section className="py-20 lg:py-32 px-6 overflow-hidden">
+    <section className="py-20 lg:py-20 px-6 overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
         <MotionLink
           href="#"
