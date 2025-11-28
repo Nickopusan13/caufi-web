@@ -33,8 +33,8 @@ export interface ProductData {
   stockType: string;
   shippingType: string;
   motif: string;
-  regularPrice: number;
-  discountPrice: number;
+  regularPrice: string;
+  discountPrice: string;
   category: string;
   productSummary: string;
   manufacturer: string;

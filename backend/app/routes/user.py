@@ -127,7 +127,7 @@ async def add_images_to_profile(
     return new_url
 
 
-@router.post("/api/user/logout", status_code=status.HTTP_200_OK)
+@router.post("/logout", status_code=status.HTTP_200_OK)
 async def api_user_logout(response: Response):
     response.delete_cookie(key="access_token", path="/")
     return {"message": "Logout successful"}
