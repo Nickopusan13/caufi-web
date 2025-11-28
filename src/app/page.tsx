@@ -5,12 +5,12 @@ import Footer from "@/components/Footer";
 import MenSection from "@/components/home/MenSec";
 import WomanSec from "@/components/home/WomanSec";
 import Quotes from "@/components/home/Quotes";
-import Promo from "@/components/home/Promo";
 import BagSection from "@/components/home/BagSec";
 import ShoesSection from "@/components/home/ShoesSec";
 import WhyLoveCaufi from "@/components/home/WhyLoveCaufi";
 import Trending from "@/components/home/Trending";
 import ReviewSection from "@/components/home/ReviewSec";
+import Promo from "@/components/home/Promo";
 
 export const metadata: Metadata = {
   title: "Caufi",
