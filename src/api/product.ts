@@ -67,26 +67,16 @@ export async function fetchProductData(
     console.error("API_URL is not defined");
     throw new Error("API_URL is not defined");
   }
-
-  console.log("Fetching products from API:", `${API_URL}/api/product/get/all`);
-  console.log("Filters:", filters);
-
   try {
     const res = await axios.get(`${API_URL}/api/product/get/all`, {
       params: filters,
     });
-
-    console.log("API response data:", res.data);
-    return res.data; // your FastAPI returns a list directly
+    return res.data;
   } catch (err) {
     const error = err as AxiosError<ApiErrorResponse>;
-
     if (error.response && error.response.data) {
-      console.error("API error response:", error.response.data);
       throw new Error(error.response.data.detail || "Failed to fetch products");
     }
-
-    console.error("Axios error:", error.message);
     throw new Error(error.message || "Failed to fetch products");
   }
 }
