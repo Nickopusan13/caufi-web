@@ -52,9 +52,7 @@ export default function MenSection() {
                     <Link href={`/product/${product.slug}`}>
                       <div className="relative h-full group cursor-pointer">
                         <Image
-                          src={
-                            product.images[0]?.imageUrl || "/placeholder.jpg"
-                          }
+                          src={product.images[0]?.imageUrl}
                           alt={product.name}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -93,9 +91,7 @@ export default function MenSection() {
                     <Link href={`/product/${product.slug}`}>
                       <div className="relative h-full group cursor-pointer">
                         <Image
-                          src={
-                            product.images[0]?.imageUrl || "/placeholder.jpg"
-                          }
+                          src={product.images[0]?.imageUrl}
                           alt={product.name}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"

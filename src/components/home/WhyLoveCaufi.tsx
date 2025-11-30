@@ -36,7 +36,6 @@ export default function WhyLoveCaufi() {
   return (
     <section className="w-full py-10 px-4 bg-linear-to-b from-transparent via-purple-50/30 to-transparent dark:via-purple-950/20">
       <div className="max-w-6xl mx-auto">
-        {/* Headline */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -58,8 +57,6 @@ export default function WhyLoveCaufi() {
             Here’s why thousands already do.
           </p>
         </motion.div>
-
-        {/* Reasons Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {reasons.map((item, i) => (
             <motion.div
@@ -70,20 +67,16 @@ export default function WhyLoveCaufi() {
               transition={{ delay: i * 0.1 }}
               className="group relative p-8 rounded-3xl bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-white/40 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3"
             >
-              {/* Floating Icon */}
               <div className="mb-6 relative">
                 <div className="absolute inset-0 bg-purple-500/20 blur-2xl scale-0 group-hover:scale-150 transition-transform duration-700" />
                 <item.icon className="relative w-12 h-12 text-purple-600 dark:text-purple-400 mx-auto" />
               </div>
-
               <h3 className="text-xl font-bold text-center mb-3 text-gray-900 dark:text-white">
                 {item.title}
               </h3>
               <p className="text-center text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                 {item.desc}
               </p>
-
-              {/* Tiny check on hover */}
               <motion.div
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
@@ -94,8 +87,6 @@ export default function WhyLoveCaufi() {
             </motion.div>
           ))}
         </div>
-
-        {/* Optional subtle CTA at bottom */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

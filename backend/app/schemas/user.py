@@ -43,7 +43,7 @@ class UserProfileOut(UserProfile):
 
 class UserToken(BaseConfigModel):
     message: str
-    user: UserProfile
+    user: UserProfileOut
     access_token: str
 
 

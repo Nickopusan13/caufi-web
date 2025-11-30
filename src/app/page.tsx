@@ -14,7 +14,7 @@ import Promo from "@/components/home/Promo";
 
 export const metadata: Metadata = {
   title: "Caufi",
-  description: "Welcome to Caufi — Fashion for Everyone",
+  description: "Welco6me to Caufi — Fashion for Everyone",
 };
 
 export default function Home() {

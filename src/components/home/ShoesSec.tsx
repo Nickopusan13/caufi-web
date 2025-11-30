@@ -25,7 +25,7 @@ export default function ShoesSection() {
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl lg:text-4xl font-bold tracking-tight">
-            {`Men's Collection`}
+            {`Shoes's Collection`}
           </h2>
           <motion.a
             href="/men"
@@ -52,9 +52,7 @@ export default function ShoesSection() {
                     <Link href={`/product/${product.slug}`}>
                       <div className="relative h-full group cursor-pointer">
                         <Image
-                          src={
-                            product.images[0]?.imageUrl || "/placeholder.jpg"
-                          }
+                          src={product.images[0]?.imageUrl}
                           alt={product.name}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -62,7 +60,7 @@ export default function ShoesSection() {
                         <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
                         <div className="absolute bottom-8 left-0 right-0 text-center text-white px-4">
                           <h3 className="text-2xl font-bold mb-3">
-                            {`All Men's Wear`}
+                            {`All Shoes's Wear`}
                           </h3>
                           <motion.button
                             className="mx-auto flex items-center gap-3 bg-black/80 backdrop-blur-md text-white px-8 py-4 rounded-full font-semibold text-sm uppercase tracking-wider shadow-lg"
@@ -93,14 +91,12 @@ export default function ShoesSection() {
                     <Link href={`/product/${product.slug}`}>
                       <div className="relative h-full group cursor-pointer">
                         <Image
-                          src={
-                            product.images[0]?.imageUrl || "/placeholder.jpg"
-                          }
+                          src={product.images[0]?.imageUrl}
                           alt={product.name}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-red-700/80 via-red-700/40 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-yellow-700/80 via-yellow-700/40 to-transparent" />
                         <div className="absolute top-6 left-6 flex items-center gap-2 z-10">
                           <FaFire className="text-2xl text-orange-400 animate-pulse" />
                           <span className="text-sm font-bold text-red-600 tracking-wider">

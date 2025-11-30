@@ -36,10 +36,8 @@ export default function WomenSection() {
             View All <FaArrowRight className="text-sm" />
           </motion.a>
         </div>
-
         <div className="flex gap-6 overflow-x-auto scrollbar-thin scrollbar-thumb-pink-300 scrollbar-track-transparent scroll-smooth snap-x snap-mandatory pb-6 -mx-4 px-4 pt-3">
           <div className="flex gap-6 flex-none">
-            {/* All Women's Wear Slider */}
             <div className="flex-none w-72 lg:w-80">
               <Swiper
                 modules={[Autoplay, Pagination]}
@@ -55,14 +53,11 @@ export default function WomenSection() {
                     <Link href={`/product/${product.slug}`}>
                       <div className="relative h-full group cursor-pointer">
                         <Image
-                          src={
-                            product.images[0]?.imageUrl || "/placeholder.jpg"
-                          }
+                          src={product.images[0]?.imageUrl}
                           alt={product.name}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
-                        {/* Feminine gradient overlay */}
                         <div className="absolute inset-0 bg-linear-to-t from-pink-900/80 via-pink-600/30 to-transparent" />
                         <div className="absolute bottom-8 left-0 right-0 text-center text-white px-4">
                           <h3 className="text-2xl font-bold mb-3">
@@ -82,8 +77,6 @@ export default function WomenSection() {
                 ))}
               </Swiper>
             </div>
-
-            {/* New Arrivals Slider */}
             <div className="flex-none w-72 lg:w-80">
               <Swiper
                 modules={[Autoplay, Pagination]}
@@ -99,14 +92,11 @@ export default function WomenSection() {
                     <Link href={`/product/${product.slug}`}>
                       <div className="relative h-full group cursor-pointer">
                         <Image
-                          src={
-                            product.images[0]?.imageUrl || "/placeholder.jpg"
-                          }
+                          src={product.images[0]?.imageUrl}
                           alt={product.name}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
-                        {/* Hot pink/purple gradient */}
                         <div className="absolute inset-0 bg-linear-to-t from-purple-800/90 via-pink-600/50 to-transparent" />
                         <div className="absolute top-6 left-6 flex items-center gap-2 z-10">
                           <FaFire className="text-2xl text-pink-400 animate-pulse" />
@@ -139,8 +129,6 @@ export default function WomenSection() {
               </Swiper>
             </div>
           </div>
-
-          {/* Product Grid */}
           <div className="flex gap-6">
             {isLoading ? (
               [...Array(6)].map((_, i) => (
@@ -154,8 +142,6 @@ export default function WomenSection() {
             )}
           </div>
         </div>
-
-        {/* Mobile View All */}
         <div className="sm:hidden mt-6 text-center">
           <motion.a
             href="/women"

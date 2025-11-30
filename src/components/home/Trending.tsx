@@ -52,7 +52,6 @@ export default function Trending() {
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-110"
               sizes="(max-width: 768px) 85vw, 400px"
-              quality={98}
               priority={i < 3}
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-60" />

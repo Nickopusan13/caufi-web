@@ -18,7 +18,35 @@ export interface UserLogin {
   password: string;
 }
 
-export async function fetchUseregister(data: UserRegister) {
+export interface UserAddressOut {
+  id: number;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+}
+
+export interface UserProfileOut {
+  id: number;
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  birthday: string;
+  profileImage: string;
+  addresses: UserAddressOut[];
+  createdAt: string;
+  isActive: boolean;
+}
+
+export interface UserToken {
+  message: string;
+  user: UserProfileOut;
+  accessToken: string;
+}
+
+export async function fetchUserRegister(data: UserRegister) {
   try {
     const res = await axios.post(`${API_URL}/api/user/register`, data, {
       headers: {
