@@ -81,7 +81,8 @@ async def api_user_login(
     data: UserLogin, response: Response, db: AsyncSession = Depends(get_db)
 ):
     user = await get_user(db=db, user_email=data.email)
-    if not user or not verify_password(data.password, user.password):
+    if not user or not user.password or not verify_password(data.password, user.password):
+        response.delete_cookie("access_token")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password.",
@@ -92,7 +93,7 @@ async def api_user_login(
         key="access_token",
         value=jwt_token,
         httponly=True,
-        secure=True,
+        secure=False,
         samesite="lax",
         max_age=expire_duration,
         path="/",
@@ -306,3 +307,11 @@ async def api_reset_password(
         )
     await update_password(db=db, id=user.id, password=data.new_password)
     return {"message": "Password reset successfully."}
+
+@router.get(
+    "/me",
+    response_model=UserProfileOut,
+    status_code=status.HTTP_200_OK,
+)
+async def api_get_current_user(current_user: User = Depends(get_current_user)):
+    return current_user

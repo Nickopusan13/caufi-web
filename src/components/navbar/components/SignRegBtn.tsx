@@ -18,7 +18,7 @@ export default function SignRegBtn() {
           </Button>
         </motion.div>
       </Link>
-      <Link href="/register">
+      <Link href="/login">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Button className="relative group bg-linear-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-medium shadow-xl hover:shadow-2xl hover:shadow-red-500/25 transition-all duration-300 border border-red-500/30 overflow-hidden">
             <span className="relative z-10 flex items-center gap-2">

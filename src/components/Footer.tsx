@@ -24,8 +24,7 @@ export default function Footer() {
   };
   return (
     <footer className="bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 overflow-hidden">
-      {/* Newsletter Hero */}
-      <div className="bg-linear-to-br from-purple-600 via-pink-600 to-rose-600 py-16 lg:py-20 px-6">
+      <div className="bg-linear-to-br from-purple-600 via-pink-600 to-rose-600 py-10 px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

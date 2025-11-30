@@ -1,9 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchUserRegister,
   fetchUserLogin,
   fetchUserResetPasswordRequest,
   fetchUserResetPassword,
+  getUserById,
+  getCurrentUser,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -11,6 +13,7 @@ import type {
   UserRegister,
   UserProfileOut,
   UserToken,
+  UserProfile,
 } from "@/api/user";
 import { useRouter } from "next/navigation";
 
@@ -32,7 +35,6 @@ export function useLogin() {
     mutationFn: fetchUserLogin,
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data.user);
-      queryClient.setQueryData(["access_token"], data.accessToken);
     },
   });
 }
@@ -60,5 +62,19 @@ export function useResetPassword() {
     onError: (error: Error) => {
       toast.error(error.message);
     },
+  });
+}
+
+export function useGetUserById(userId: number) {
+  return useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => getUserById(userId),
+  });
+}
+
+export function useGetCurrentUser() {
+  return useQuery<UserProfile>({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUser,
   });
 }

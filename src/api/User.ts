@@ -40,6 +40,15 @@ export interface UserProfileOut {
   isActive: boolean;
 }
 
+export interface UserProfile {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  birthday: string;
+  profileImage: string;
+  addresses: UserAddressOut[];
+}
+
 export interface UserToken {
   message: string;
   user: UserProfileOut;
@@ -62,6 +71,7 @@ export async function fetchUserRegister(data: UserRegister) {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
     return res.data;
   } catch (err) {
@@ -81,6 +91,7 @@ export async function fetchUserLogin(data: UserLogin) {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
     return res.data;
   } catch (err) {
@@ -157,4 +168,35 @@ export async function fetchUserResetPassword(data: UserResetPassword) {
       throw new Error(error.message);
     }
   }
+}
+
+export async function getUserById(userId: number): Promise<UserProfile> {
+  try {
+    const res = await axios.get<UserProfileOut>(
+      `${API_URL}/api/user/get/${userId}`,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export async function getCurrentUser(): Promise<UserProfile> {
+  const res = await axios.get<UserProfile>(`${API_URL}/api/user/me`, {
+    withCredentials: true,
+  });
+  console.log(res);
+  return res.data;
 }

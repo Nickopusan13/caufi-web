@@ -39,7 +39,7 @@ export const FormInput = ({
           top: hasValue ? "0" : "50%",
           y: hasValue ? "-120%" : "-50%",
           x: hasValue ? "-30%" : "-0%",
-          fontSize: hasValue ? "12px" : "14px",
+          fontSize: hasValue ? "11px" : "12px",
           color: hasValue ? "#67e8f9" : "#94a3b8",
         }}
         transition={{ duration: 0.25, ease: "easeOut" }}
@@ -64,7 +64,7 @@ export const FormInput = ({
         autoComplete={isPassword ? "new-password" : "off"}
         className={clsx(
           "w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl",
-          "px-10 py-4 text-white placeholder-cyan-200/40",
+          "px-10 py-4 text-white text-sm placeholder-cyan-200/40",
           "focus:outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/20",
           "transition-all duration-300",
           "disabled:opacity-50 disabled:cursor-not-allowed",

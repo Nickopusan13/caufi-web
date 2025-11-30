@@ -1,28 +1,11 @@
+// components/Items.ts
 export const menus = [
-  {
-    title: "Home",
-    href: "/",
-  },
-  {
-    title: "Product",
-    href: "/product",
-  },
-  {
-    title: "Collections",
-    href: "/collections",
-  },
-  {
-    title: "About",
-    href: "/about",
-  },
-  {
-    title: "Contact",
-    href: "/contact",
-  },
-  {
-    title: "Help Center",
-    href: "/help-center",
-  },
+  { title: "Home", href: "/" },
+  { title: "Product", href: "/product" },
+  { title: "Collections", href: "/collections" },
+  { title: "About", href: "/about" },
+  { title: "Contact", href: "/contact" },
+  { title: "Help Center", href: "/help-center" },
 ];
 
 export const productItems = [
@@ -56,6 +39,23 @@ export const productItems = [
       "Wallets",
       "Socks",
       "Sleepwear",
+    ],
+  },
+];
+
+export const collectionItems = [
+  {
+    title: "NEW ARRIVALS",
+    items: ["Summer 2025", "Winter Essentials", "Limited Edition"],
+  },
+  {
+    title: "FEATURED",
+    items: [
+      "Best Sellers",
+      "Streetwear",
+      "Minimalist",
+      "Vintage",
+      "Designer Collabs",
     ],
   },
 ];
