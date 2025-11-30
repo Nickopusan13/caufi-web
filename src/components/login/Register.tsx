@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRegister } from "@/hooks/useLogin";
 import toast from "react-hot-toast";
+import ToasterProvider from "../ToasterProvider";
 
 export default function Register({ onToggle }: { onToggle: () => void }) {
   const [name, setName] = useState("");
@@ -37,6 +38,7 @@ export default function Register({ onToggle }: { onToggle: () => void }) {
   const isLoading = mutation.isPending;
   return (
     <div className="flex rounded-3xl bg-linear-to-br from-slate-900 via-cyan-900 to-teal-900 relative overflow-hidden">
+      <ToasterProvider />
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

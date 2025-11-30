@@ -46,6 +46,16 @@ export interface UserToken {
   accessToken: string;
 }
 
+export interface UserResetPasswordRequest {
+  email: string;
+}
+
+export interface UserResetPassword {
+  token: string;
+  newPassword: string;
+  email: string;
+}
+
 export async function fetchUserRegister(data: UserRegister) {
   try {
     const res = await axios.post(`${API_URL}/api/user/register`, data, {
@@ -107,4 +117,44 @@ export async function userLogout() {
 
 export async function userGoogleLogin() {
   window.location.href = `${API_URL}/api/user/auth/login/google`;
+}
+
+export async function fetchUserResetPasswordRequest(
+  data: UserResetPasswordRequest
+) {
+  try {
+    const res = await axios.post(
+      `${API_URL}/api/user/reset/password-request`,
+      data,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export async function fetchUserResetPassword(data: UserResetPassword) {
+  try {
+    const res = await axios.post(`${API_URL}/api/user/reset/password`, data, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
 }

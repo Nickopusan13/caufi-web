@@ -53,6 +53,7 @@ class UserResetPasswordRequest(BaseConfigModel):
 
 class UserResetPassword(BaseConfigModel):
     token: str = Field(min_length=1, max_length=255)
+    email: EmailStr = Field(min_length=1, max_length=100)
     new_password: str = Field(min_length=8, max_length=100)
 
 

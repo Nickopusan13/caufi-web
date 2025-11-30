@@ -1,4 +1,3 @@
-import LoginRegisterChange from "@/components/login/LoginRegisterChange";
 import LoginSection from "@/components/login/LoginSec";
 import type { Metadata } from "next";
 
@@ -8,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return (
-    <>
-      <LoginSection />
-    </>
-  );
+  return <LoginSection />;
 }

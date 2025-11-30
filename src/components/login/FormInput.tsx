@@ -90,6 +90,7 @@ export const FormSocial = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-md">
       <motion.button
+        type="button"
         whileHover={{ y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={userGoogleLogin}
@@ -100,6 +101,7 @@ export const FormSocial = () => {
         <div className="absolute inset-0 bg-linear-to-r from-cyan-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
       </motion.button>
       <motion.button
+        type="button"
         whileHover={{ y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 py-3 flex items-center justify-center gap-3 transition-all duration-300 hover:bg-blue-500/10 hover:border-blue-400/50"
@@ -109,6 +111,7 @@ export const FormSocial = () => {
         <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
       </motion.button>
       <motion.button
+        type="button"
         whileHover={{ y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 py-3 flex items-center justify-center gap-3 transition-all duration-300 hover:bg-black/30 hover:border-white/40"
