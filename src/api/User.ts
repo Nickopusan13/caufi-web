@@ -202,6 +202,5 @@ export async function getCurrentUser(): Promise<UserProfile> {
   const res = await axios.get<UserProfile>(`${API_URL}/api/user/me`, {
     withCredentials: true,
   });
-  console.log(res);
   return res.data;
 }

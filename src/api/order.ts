@@ -9,6 +9,7 @@ interface ApiErrorResponse {
 }
 
 export type OrderStatus =
+  | "all"
   | "pending"
   | "confirmed"
   | "shipped"
@@ -28,7 +29,7 @@ export interface OrderItemOut {
 export interface OrderOut {
   id: number;
   status: OrderStatus;
-  totalAmont: number;
+  totalAmount: number;
   createdAt: string;
   address: UserAddressOut;
   user: UserProfileOut;
@@ -36,3 +37,10 @@ export interface OrderOut {
 }
 
 export type OrderListOut = OrderOut[];
+
+export async function getUserOrder(): Promise<OrderListOut> {
+  const res = await axios.get<OrderListOut>(`${API_URL}/api/orders/me`, {
+    withCredentials: true,
+  });
+  return res.data;
+}

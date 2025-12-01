@@ -25,6 +25,7 @@ from app.schemas.user import (
     UserProfileOut,
     UserDeleteMany,
     UserListFilters,
+    UserProfileUpdate
 )
 from app.security.hash import verify_password
 from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS, get_current_user
@@ -219,7 +220,7 @@ async def api_delete_all_user(data: UserDeleteMany, db: AsyncSession = Depends(g
     status_code=status.HTTP_200_OK,
 )
 async def api_update_user(
-    user_id: int, data: UserProfile, db: AsyncSession = Depends(get_db)
+    user_id: int, data: UserProfileUpdate, db: AsyncSession = Depends(get_db)
 ):
     user = await get_user(db=db, user_id=user_id)
     if not user:

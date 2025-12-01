@@ -36,6 +36,15 @@ class UserProfile(BaseConfigModel):
     profile_image: Optional[str] = Field(default=None)
     addresses: list["UserAddress"] = Field(default_factory=list)
 
+class UserProfileUpdate(BaseConfigModel):
+    name: Optional[str] = Field(default=None, min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
+    user_name: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    gender: Optional[str] = Field(default=None, min_length=1, max_length=20)
+    email: Optional[EmailStr] = Field(default=None, min_length=1, max_length=100)
+    phone_number: Optional[str] = Field(default=None, min_length=1, max_length=20)
+    birthday: Optional[date] = Field(default=None)
+    profile_image: Optional[str] = Field(default=None)
+    addresses: Optional[list["UserAddress"]] = Field(default_factory=list)
 
 class UserProfileOut(UserProfile):
     id: int = Field(gt=0)

@@ -62,7 +62,7 @@ class UserAddress(Base):
         Integer, ForeignKey("users.id"), nullable=False
     )
     address_line1: Mapped[str] = mapped_column(String(255), nullable=False)
-    address_line2: Mapped[Optional[str]] = mapped_column(String(255), nullable=False)
+    address_line2: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     city: Mapped[str] = mapped_column(String(100), nullable=False)
     state: Mapped[str] = mapped_column(String(100), nullable=False)
     postal_code: Mapped[str] = mapped_column(String(20), nullable=False)

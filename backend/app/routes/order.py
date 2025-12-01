@@ -5,10 +5,11 @@ from app.utils.midtrans import create_midtrans_transaction
 from app.db.session import AsyncSession
 from app.db.dependencies import get_db
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select
+from sqlalchemy import select, update
 from app.db.models.user import Order, OrderStatus, OrderItem
 from app.schemas.order import OrderOut, OrderCreate
 from app.db.models.product import Product
+from decimal import Decimal
 
 router = APIRouter(prefix="/api/orders")
 
@@ -21,42 +22,51 @@ async def api_order_create(
 ):
     addr = await db.get(UserAddress, payload.address_id)
     if not addr or addr.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Address"
+        raise HTTPException(status_code=400, detail="Invalid address")
+    product_ids = [item.product_id for item in payload.items]
+    result = await db.execute(
+        select(Product).where(Product.id.in_(product_ids), Product.is_active.is_(True))
+    )
+    products = result.scalars().all()
+    products_map = {p.id: p for p in products}
+    total_amount = Decimal("0")
+    order_items = []
+    for item in payload.items:
+        product = products_map.get(item.product_id)
+        if not product:
+            raise HTTPException(status_code=400, detail=f"Product {item.product_id} not found")
+
+        if product.stock < item.quantity:
+            raise HTTPException(status_code=400, detail=f"Not enough stock for {product.name}")
+        price = product.discount_price or product.regular_price
+        total_amount += price * item.quantity
+        order_items.append(
+            OrderItem(
+                product_id=item.product_id,
+                quantity=item.quantity,
+                price_at_purchase=price,
+            )
         )
     order = Order(
         user_id=current_user.id,
         address_id=payload.address_id,
-        total_amount=payload.total_amount,
+        total_amount=total_amount,
         status=OrderStatus.PENDING,
     )
     db.add(order)
     await db.flush()
-    order_items = []
-    for item in payload.items:
-        order_items.append(
-            OrderItem(
-                order_id=order.id,
-                product_id=item.product_id,
-                quantity=item.quantity,
-                price_at_purchase=item.price_at_purchase,
-            )
-        )
+    for item in order_items:
+        item.order_id = order.id
     db.add_all(order_items)
-    await db.commit()
-    result = await db.execute(
-        select(Order)
-        .where(Order.id == order.id)
-        .options(
-            selectinload(Order.user),
-            selectinload(Order.address),
-            selectinload(Order.items)
-            .selectinload(OrderItem.product)
-            .selectinload(Product.images),
+    for item in payload.items:
+        await db.execute(
+            update(Product)
+            .where(Product.id == item.product_id)
+            .values(stock=Product.stock - item.quantity)
         )
-    )
-    order_loaded = result.scalars().first()
-    return OrderOut.model_validate(order_loaded)
+    await db.commit()
+    await db.refresh(order)
+    return OrderOut.model_validate(order)
 
 
 @router.post("/{order_id}/pay", status_code=status.HTTP_200_OK)

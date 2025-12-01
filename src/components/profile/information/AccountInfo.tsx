@@ -17,6 +17,13 @@ import { ImPhone } from "react-icons/im";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { useGetCurrentUser } from "@/hooks/useLogin";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetCurrentOrder } from "@/hooks/userOrder";
+import { useState } from "react";
+import { OrderStatus } from "@/api/order";
+import { format } from "date-fns";
+import { FilterButton } from "../OrderEdit";
+import Link from "next/link";
+import Image from "next/image";
 
 export const ProfileInfo = () => {
   const { data: user, isLoading, error } = useGetCurrentUser();
@@ -241,6 +248,135 @@ export const AddressInfo = () => {
                 iconColor="text-indigo-600 dark:text-indigo-400"
                 iconBg="bg-indigo-100 dark:bg-indigo-950/40"
               />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const OrderInfo = () => {
+  const { data: orders = [], isLoading, error } = useGetCurrentOrder();
+  const [selectedFilter, setSelectedFilter] = useState<OrderStatus | "all">(
+    "all"
+  );
+
+  const filteredOrders =
+    selectedFilter === "all"
+      ? orders
+      : orders.filter((order) => order.status === selectedFilter);
+
+  return (
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-4 duration-700 max-h-200">
+      <h1 className="text-2xl font-bold text-center lg:text-start">
+        Order History
+      </h1>
+
+      <FilterButton
+        selectedFilter={selectedFilter}
+        setSelectedFilter={setSelectedFilter}
+      />
+      {isLoading && (
+        <div className="text-center py-12">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600">Loading your orders...</p>
+        </div>
+      )}
+      {error && (
+        <div className="text-center py-12 text-red-600">
+          Failed to load orders. Please try again later.
+        </div>
+      )}
+      {!isLoading && !error && filteredOrders.length === 0 && (
+        <div className="text-center py-16">
+          <p className="text-xl text-gray-500">
+            {selectedFilter === "all"
+              ? "You haven't placed any orders yet."
+              : `No ${selectedFilter} orders found.`}
+          </p>
+        </div>
+      )}
+      <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+        {filteredOrders.map((order) => (
+          <div
+            key={order.id}
+            className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300"
+          >
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex justify-between items-start">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider
+                    ${
+                      order.status === "delivered"
+                        ? "bg-green-100 text-green-800"
+                        : order.status === "shipped"
+                        ? "bg-blue-100 text-blue-800"
+                        : order.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                >
+                  {order.status}
+                </span>
+                <time className="text-sm text-gray-500">
+                  {format(new Date(order.createdAt), "MMM d, yyyy")}
+                </time>
+              </div>
+
+              <div className="flex justify-between items-end">
+                <div>
+                  <p className="text-lg font-semibold">Order #{order.id}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ${Number(order.totalAmount).toFixed(2)}
+                  </p>
+                </div>
+                <p className="text-sm text-gray-600">
+                  {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+            </div>
+            <div className="p-5 bg-gray-50">
+              {order.items.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/products/${item.productId}`}
+                  className="flex gap-4 items-center hover:bg-white p-3 -m-3 rounded-lg transition-colors"
+                >
+                  {item.imageUrl ? (
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.name}
+                      quality={100}
+                      width={100}
+                      height={100}
+                      className="object-cover rounded-lg border border-gray-200 shrink-0"
+                    />
+                  ) : (
+                    <div className="bg-gray-200 border-2 border-dashed rounded-lg w-16 h-16 0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 truncate">
+                      {item.name}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {item.quantity} × $
+                      {Number(item.priceAtPurchase).toFixed(2)}
+                    </p>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    ${(item.quantity * Number(item.priceAtPurchase)).toFixed(2)}
+                  </p>
+                </Link>
+              ))}
+            </div>
+            <div className="px-6 py-4 bg-white border-t border-gray-100">
+              <p className="text-sm text-gray-600">
+                Delivered to:{" "}
+                <span className="font-medium">
+                  {order.address.addressLine1}, {order.address.city}
+                </span>
+              </p>
             </div>
           </div>
         ))}
