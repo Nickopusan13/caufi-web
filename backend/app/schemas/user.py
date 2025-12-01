@@ -6,6 +6,7 @@ from typing import Optional
 
 class UserRegister(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
+    user_name: Optional[str] = Field(default=None, min_length=1, max_length=100)
     email: EmailStr = Field(min_length=1, max_length=100)
     password: str = Field(min_length=8, max_length=100)
 
@@ -27,9 +28,11 @@ class UserAddress(BaseConfigModel):
 
 class UserProfile(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
+    user_name: str = Field(min_length=1, max_length=100)
+    gender: Optional[str] = Field(default=None, min_length=1, max_length=20)
     email: EmailStr = Field(min_length=1, max_length=100)
     phone_number: Optional[str] = Field(default=None, min_length=1, max_length=20)
-    birthday: date | None = Field(default=None)
+    birthday: Optional[date] = Field(default=None)
     profile_image: Optional[str] = Field(default=None)
     addresses: list["UserAddress"] = Field(default_factory=list)
 

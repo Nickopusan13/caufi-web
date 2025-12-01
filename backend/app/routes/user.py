@@ -35,10 +35,15 @@ from app.security.reset_password import (
     get_user_reset_passsword,
     update_password,
 )
-from app.utils.r2_service import upload_product_images, delete_image_from_r2, extract_r2_key
+from app.utils.r2_service import (
+    upload_product_images,
+    delete_image_from_r2,
+    extract_r2_key,
+)
 from app.utils.filters import apply_user_filters
 from app.utils.email_service import send_mail
 from app.security.oauth import oauth
+from app.utils.generate_username import generate_username
 from sqlalchemy import select, delete
 from dotenv import load_dotenv
 import logging
@@ -63,9 +68,18 @@ async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_d
             status_code=status.HTTP_409_CONFLICT,
             detail="A user with this email already exists.",
         )
+    user_name = data.user_name.strip() if data.user_name else None
+    if not user_name:
+        user_name = generate_username(data.name or "", data.email)
+        while await db.scalar(select(User).where(User.user_name == user_name)):
+            user_name = generate_username(data.name or "user", data.email)
     try:
         new_user = await create_user(
-            db=db, name=data.name, email=data.email, password=data.password
+            db=db,
+            name=data.name,
+            email=data.email,
+            password=data.password,
+            user_name=user_name,
         )
         return new_user
     except Exception as e:
@@ -81,7 +95,11 @@ async def api_user_login(
     data: UserLogin, response: Response, db: AsyncSession = Depends(get_db)
 ):
     user = await get_user(db=db, user_email=data.email)
-    if not user or not user.password or not verify_password(data.password, user.password):
+    if (
+        not user
+        or not user.password
+        or not verify_password(data.password, user.password)
+    ):
         response.delete_cookie("access_token")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -103,6 +121,7 @@ async def api_user_login(
         user=UserProfileOut.model_validate(user),
         access_token=jwt_token,
     )
+
 
 @router.post(
     "/upload/images",
@@ -307,6 +326,7 @@ async def api_reset_password(
         )
     await update_password(db=db, id=user.id, password=data.new_password)
     return {"message": "Password reset successfully."}
+
 
 @router.get(
     "/me",

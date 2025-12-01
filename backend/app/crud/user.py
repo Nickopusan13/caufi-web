@@ -7,10 +7,16 @@ from typing import Optional
 
 
 async def create_user(
-    db: AsyncSession, name: str, email: str, password: Optional[str] = None
+    db: AsyncSession,
+    name: str,
+    email: str,
+    user_name: str,
+    password: Optional[str] = None,
 ) -> User:
     hashed_password = hash_password(password) if password else None
-    new_user = User(name=name, email=email, password=hashed_password)
+    new_user = User(
+        name=name, email=email, password=hashed_password, user_name=user_name
+    )
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)

@@ -82,7 +82,7 @@ export const ProfileInfo = () => {
             icon={BiSolidUser}
             title="Full Name"
             description={user.name || "—"}
-            username={user.name}
+            username={user.userName}
             iconColor="text-purple-600 dark:text-purple-400"
             iconBg="bg-purple-100 dark:bg-purple-950/40"
           />
@@ -121,7 +121,7 @@ export const ProfileInfo = () => {
             description={
               user.gender
                 ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1)
-                : "Prefer not to say"
+                : "—"
             }
             iconColor="text-indigo-600 dark:text-indigo-400"
             iconBg="bg-indigo-100 dark:bg-indigo-950/40"

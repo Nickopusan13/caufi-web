@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Query
 from app.db.models.user import User, UserAddress
 from app.security.jwt import get_current_user
 from app.utils.midtrans import create_midtrans_transaction
@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy import select
 from app.db.models.user import Order, OrderStatus, OrderItem
 from app.schemas.order import OrderOut, OrderCreate
+from app.db.models.product import Product
 
 router = APIRouter(prefix="/api/orders")
 
@@ -43,7 +44,6 @@ async def api_order_create(
         )
     db.add_all(order_items)
     await db.commit()
-    from app.db.models.product import Product
     result = await db.execute(
         select(Order)
         .where(Order.id == order.id)
@@ -86,3 +86,26 @@ async def api_order_pay(
         print("Midtrans Error:", e)
         raise HTTPException(status_code=500, detail=f"Midtrans error: {e}")
     return {"success": True, "payment": payment}
+
+
+@router.get("/me", response_model=list[OrderOut], status_code=status.HTTP_200_OK)
+async def api_get_my_orders(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    page: int = Query(1, ge=1),
+    limit: int = Query(24, ge=1, le=100),
+):
+    query = (
+        select(Order)
+        .where(Order.user_id == current_user.id)
+        .order_by(Order.created_at.desc())
+        .options(
+            selectinload(Order.address),
+            selectinload(Order.items)
+            .selectinload(OrderItem.product)
+            .selectinload(Product.images),
+        )
+    )
+    result = await db.execute(query.offset((page - 1) * limit).limit(limit))
+    orders = result.scalars().all()
+    return [OrderOut.model_validate(order) for order in orders]

@@ -57,5 +57,6 @@ def delete_image_from_r2(key: str):
     client = get_r2_client()
     client.delete_object(Bucket=CLOUDFLARE_BUCKET_NAME_1, Key=key)
 
+
 def extract_r2_key(url: str) -> str:
     return url.replace(f"{R2_PUBLIC_URL}/", "")

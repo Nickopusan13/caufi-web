@@ -11,6 +11,7 @@ export interface UserRegister {
   name: string;
   email: string;
   password: string;
+  userName?: string;
 }
 
 export interface UserLogin {
@@ -31,11 +32,12 @@ export interface UserAddressOut {
 export interface UserProfileOut {
   id: number;
   name: string;
+  userName: string;
   email: string;
   phoneNumber?: string;
   birthday: string;
   profileImage: string;
-  gender: string;
+  gender?: string;
   addresses: UserAddressOut[];
   createdAt: string;
   isActive: boolean;
@@ -44,10 +46,11 @@ export interface UserProfileOut {
 export interface UserProfile {
   name: string;
   email: string;
+  userName: string;
   phoneNumber?: string;
   birthday: string;
   profileImage: string;
-  gender: string;
+  gender?: string;
   addresses: UserAddressOut[];
 }
 

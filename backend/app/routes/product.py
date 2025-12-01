@@ -12,7 +12,7 @@ from app.schemas.product import (
     ProductDeleteMany,
     ProductListFilters,
     ProductImageOut,
-    ProductUpdate
+    ProductUpdate,
 )
 from app.db.session import AsyncSession
 from app.db.dependencies import get_db
@@ -21,7 +21,11 @@ from app.utils.slug import get_slug, get_sku
 from app.crud.product import get_product
 from sqlalchemy import select
 from app.utils.filters import apply_product_filters, get_base_product_query
-from app.utils.r2_service import upload_product_images, delete_image_from_r2, R2_PUBLIC_URL
+from app.utils.r2_service import (
+    upload_product_images,
+    delete_image_from_r2,
+    R2_PUBLIC_URL,
+)
 from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
 
 router = APIRouter(prefix="/api/product")
@@ -84,21 +88,21 @@ async def add_images_to_product(
         await db.refresh(img)
     return new_images
 
+
 @router.delete("/images/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_image(image_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(ProductImage).where(ProductImage.id == image_id))
     image = result.scalar_one_or_none()
     if not image:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Image not found."
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found."
         )
     key = image.image_url.replace(f"{R2_PUBLIC_URL}/", "")
     delete_image_from_r2(key)
     await db.delete(image)
     await db.commit()
 
-    return {"meessage":"Delete success"}
+    return {"meessage": "Delete success"}
 
 
 @router.get(
@@ -179,9 +183,7 @@ async def api_delete_all_product(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Product not found.",
         )
-    result = await db.execute(
-        select(Product).where(Product.id.in_(data.product_ids))
-    )
+    result = await db.execute(select(Product).where(Product.id.in_(data.product_ids)))
     products = result.scalars().all()
     if not products:
         raise HTTPException(
@@ -207,15 +209,11 @@ async def api_delete_all_product(
     "/delete/{product_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def api_delete_product(
-    product_id: int,
-    db: AsyncSession = Depends(get_db)
-):
+async def api_delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
     product = await get_product(db=db, product_id=product_id)
     if not product:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found."
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found."
         )
     result_img = await db.execute(
         select(ProductImage).where(ProductImage.product_id == product_id)
@@ -229,7 +227,6 @@ async def api_delete_product(
     await db.delete(product)
     await db.commit()
     return
-
 
 
 @router.patch(

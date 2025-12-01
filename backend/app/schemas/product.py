@@ -82,6 +82,7 @@ class ProductDataOut(ProductDataBase):
     created_at: datetime
     updated_at: datetime
 
+
 class ProductUpdate(BaseConfigModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     stock: Optional[int] = Field(None, gt=0)
@@ -101,6 +102,7 @@ class ProductUpdate(BaseConfigModel):
     sizes: Optional[list[ProductSize]] = Field(default_factory=list)
     images: Optional[list[ProductImage]] = None
     colors: Optional[list[ProductColor]] = Field(default_factory=list)
+
 
 class CartItemCreate(BaseConfigModel):
     product_id: int = Field(gt=0)

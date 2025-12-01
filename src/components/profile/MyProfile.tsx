@@ -39,7 +39,7 @@ export default function MyProfile() {
                   {user?.name}
                 </h1>
                 <p className="text-lg text-zinc-500 dark:text-zinc-400 mt-1">
-                  @{user?.name}
+                  @{user?.userName}
                 </p>
               </div>
             </div>
