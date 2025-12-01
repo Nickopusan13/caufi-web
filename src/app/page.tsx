@@ -10,7 +10,7 @@ import ShoesSection from "@/components/home/ShoesSec";
 import WhyLoveCaufi from "@/components/home/WhyLoveCaufi";
 import Trending from "@/components/home/Trending";
 import ReviewSection from "@/components/home/ReviewSec";
-import Promo from "@/components/home/Promo";
+import Promo from "@/components/home/p";
 
 export const metadata: Metadata = {
   title: "Caufi",
