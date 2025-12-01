@@ -33,7 +33,7 @@ export default function Login({ onToggle }: { onToggle: () => void }) {
       {
         onSuccess: (user) => {
           toast.success(`Welcome back, ${user.user.name.split(" ")[0]}!`);
-          router.push("/dashboard");
+          router.push("/profile");
         },
         onError: () => {
           toast.error("Invalid email or password");

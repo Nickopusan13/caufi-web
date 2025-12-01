@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { TbCameraPlus } from "react-icons/tb";
-import { ProfileInfo } from "./information/AccountInfo";
+import { AddressInfo, ProfileInfo } from "./information/AccountInfo";
 import { useGetCurrentUser } from "@/hooks/useLogin";
 
 const tabs = ["My Profile", "My Address", "Order History", "Settings"] as const;
@@ -12,7 +12,7 @@ const tabs = ["My Profile", "My Address", "Order History", "Settings"] as const;
 export default function MyProfile() {
   const [activeTab, setActiveTab] =
     useState<(typeof tabs)[number]>("My Profile");
-  const { data: user, isLoading, error } = useGetCurrentUser();
+  const { data: user } = useGetCurrentUser();
   return (
     <div className="min-h-screen max-w-6xl mx-auto py-5">
       <div className="relative overflow-hidden rounded-3xl bg-white/60 dark:bg-zinc-900 backdrop-blur-2xl border border-white/30 dark:border-zinc-800/50 shadow-2xl">
@@ -104,7 +104,8 @@ export default function MyProfile() {
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="mt-12"
             >
-              <ProfileInfo />
+              {activeTab === "My Profile" && <ProfileInfo />}
+              {activeTab === "My Address" && <AddressInfo />}
             </motion.div>
           </AnimatePresence>
         </div>

@@ -261,7 +261,7 @@ async def google_oauth_callback(
         value=jwt_token,
         httponly=True,
         secure=False,
-        samesite="lax",
+        samesite="none",
         max_age=expire_duration,
         path="/",
     )

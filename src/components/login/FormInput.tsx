@@ -1,4 +1,3 @@
-// components/FormInput.tsx
 "use client";
 
 import { useState, type ReactNode, InputHTMLAttributes } from "react";

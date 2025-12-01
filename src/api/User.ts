@@ -20,11 +20,11 @@ export interface UserLogin {
 
 export interface UserAddressOut {
   id: number;
-  address_line1: string;
-  address_line2?: string;
+  addressLine1: string;
+  addressLine2?: string;
   city: string;
   state: string;
-  postal_code: string;
+  postalCode: string;
   country: string;
 }
 
@@ -35,6 +35,7 @@ export interface UserProfileOut {
   phoneNumber?: string;
   birthday: string;
   profileImage: string;
+  gender: string;
   addresses: UserAddressOut[];
   createdAt: string;
   isActive: boolean;
@@ -46,6 +47,7 @@ export interface UserProfile {
   phoneNumber?: string;
   birthday: string;
   profileImage: string;
+  gender: string;
   addresses: UserAddressOut[];
 }
 

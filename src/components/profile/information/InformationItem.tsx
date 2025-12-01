@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 interface InformationItemProps {
   icon: IconType;
   title?: string;
-  description?: string | number;
-  username?: string;
+  description?: string | number | null;
+  username?: string | null;
   href?: string;
   iconColor?: string;
   iconBg?: string;
@@ -23,6 +23,7 @@ export const InformationItem = ({
   iconColor = "text-blue-600 dark:text-blue-400",
   iconBg = "bg-blue-100 dark:bg-blue-950/40",
 }: InformationItemProps) => {
+  const displayText = description ?? (username ? `@${username}` : "—");
   return (
     <motion.div
       whileHover={{ scale: 1.02, x: 4 }}
@@ -36,6 +37,7 @@ export const InformationItem = ({
         href &&
           "cursor-pointer hover:border-blue-300 dark:hover:border-blue-700"
       )}
+      onClick={() => href && window.open(href, "_blank")}
     >
       <div
         className={cn(
@@ -53,13 +55,15 @@ export const InformationItem = ({
             {title}
           </p>
         )}
-        <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-          {description}
-          {username && (
-            <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-              (@{username})
-            </span>
+        <p
+          className={cn(
+            "text-lg font-semibold truncate",
+            displayText === "—"
+              ? "text-zinc-400 dark:text-zinc-600"
+              : "text-zinc-900 dark:text-zinc-100"
           )}
+        >
+          {displayText}
         </p>
       </div>
     </motion.div>

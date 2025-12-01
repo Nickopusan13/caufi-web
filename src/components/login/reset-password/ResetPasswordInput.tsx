@@ -1,4 +1,3 @@
-// app/login/reset-password/page.tsx
 "use client";
 
 import { FormInput } from "../FormInput";
