@@ -54,6 +54,9 @@ export default function Login({ onToggle }: { onToggle: () => void }) {
     );
   };
   const isLoading = mutationLogin.isPending;
+  const isInputFocused =
+    typeof document !== "undefined" &&
+    document.activeElement?.tagName === "INPUT";
   return (
     <>
       <div className="flex rounded-3xl bg-linear-to-br from-slate-900 via-cyan-900 to-teal-900 relative overflow-hidden">
@@ -200,7 +203,7 @@ export default function Login({ onToggle }: { onToggle: () => void }) {
               <label
                 className={clsx(
                   "absolute left-12 top-1/2 -translate-y-1/2 origin-left transition-all duration-300 pointer-events-none font-medium",
-                  emailForgot || document.activeElement?.tagName === "INPUT"
+                  emailForgot || isInputFocused
                     ? "top-2 text-xs text-cyan-300 scale-90"
                     : "text-cyan-300/70"
                 )}
