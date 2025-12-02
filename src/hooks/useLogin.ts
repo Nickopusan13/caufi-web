@@ -7,6 +7,8 @@ import {
   getUserById,
   getCurrentUser,
   userLogout,
+  updateUserAddress,
+  updateUserProfile,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -15,6 +17,7 @@ import type {
   UserProfileOut,
   UserToken,
   UserProfile,
+  UserAddressUpdate,
 } from "@/api/user";
 import { useRouter } from "next/navigation";
 
@@ -90,6 +93,40 @@ export function useUserLogout() {
     },
     onError: (error: Error) => {
       toast.error(error.message);
+    },
+  });
+}
+
+export function useUpdateUserProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateUserProfile,
+    onSuccess: (updatedUser) => {
+      toast.success("Update Done!!");
+      queryClient.setQueryData(["currentUser"], updatedUser);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useUpdateUserAddress() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      addressId,
+      data,
+    }: {
+      addressId: number;
+      data: UserAddressUpdate;
+    }) => updateUserAddress(addressId, data),
+    onSuccess: () => {
+      toast.success("Address updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update address");
     },
   });
 }

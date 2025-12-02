@@ -29,6 +29,24 @@ export interface UserAddressOut {
   country: string;
 }
 
+export interface UserAddress {
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
+export interface UserAddressUpdate {
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+}
+
 export interface UserProfileOut {
   id: number;
   name: string;
@@ -70,6 +88,16 @@ export interface UserResetPassword {
   email: string;
 }
 
+export interface UserProfileUpdate {
+  name?: string;
+  email?: string;
+  userName?: string;
+  phoneNumber?: string;
+  birthday?: string;
+  profileImage?: string;
+  gender?: string;
+}
+
 export async function fetchUserRegister(data: UserRegister) {
   try {
     const res = await axios.post(`${API_URL}/api/user/register`, data, {
@@ -86,6 +114,26 @@ export async function fetchUserRegister(data: UserRegister) {
       throw new Error(errorData.detail || "Register failed");
     } else {
       throw new Error(error.message || "Register failed");
+    }
+  }
+}
+
+export async function createUserAddress(data: UserAddress) {
+  try {
+    const res = await axios.post(`${API_URL}/api/user/me/addresses`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
     }
   }
 }
@@ -203,4 +251,51 @@ export async function getCurrentUser(): Promise<UserProfile> {
     withCredentials: true,
   });
   return res.data;
+}
+
+export async function updateUserProfile(
+  data: UserProfileUpdate
+): Promise<UserProfileOut> {
+  try {
+    const res = await axios.patch<UserProfileOut>(
+      `${API_URL}/api/user/me/profile`,
+      data,
+      {
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export async function updateUserAddress(
+  addressId: number,
+  data: UserAddressUpdate
+): Promise<UserAddressOut> {
+  try {
+    const res = await axios.patch<UserAddressOut>(
+      `${API_URL}/api/user/me/address/${addressId}`,
+      data,
+      {
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
 }

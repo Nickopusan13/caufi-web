@@ -11,12 +11,15 @@ import {
   Settings,
 } from "./information/AccountInfo";
 import { useGetCurrentUser } from "@/hooks/useLogin";
+import { EditProfile } from "./EditProfile";
+import EditAddress from "./EditAddress";
 
 const tabs = ["My Profile", "My Address", "Order History", "Settings"] as const;
 
 export default function MyProfile() {
   const [activeTab, setActiveTab] =
     useState<(typeof tabs)[number]>("My Profile");
+  const [edit, setEdit] = useState<string | null>(null);
   const { data: user } = useGetCurrentUser();
   return (
     <div className="min-h-screen max-w-6xl mx-auto py-5">
@@ -55,6 +58,7 @@ export default function MyProfile() {
                   key={label}
                   whileHover={{ scale: 1.06 }}
                   whileTap={{ scale: 0.96 }}
+                  onClick={() => setEdit(label)}
                   className="rounded-xl px-6 py-3 text-sm font-medium text-black dark:text-white shadow-md transition-all duration-300 whitespace-nowrap"
                 >
                   {label}
@@ -115,6 +119,24 @@ export default function MyProfile() {
               {activeTab === "Order History" && <OrderInfo />}
               {activeTab === "Settings" && <Settings />}
             </motion.div>
+            {edit && (
+              <div>
+                {edit === "Edit Profile" && (
+                  <EditProfile
+                    onClose={() => {
+                      setEdit(null);
+                    }}
+                  />
+                )}
+                {edit === "Edit Address" && (
+                  <EditAddress
+                    onClose={() => {
+                      setEdit(null);
+                    }}
+                  />
+                )}
+              </div>
+            )}
           </AnimatePresence>
         </div>
       </div>

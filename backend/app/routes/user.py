@@ -25,7 +25,10 @@ from app.schemas.user import (
     UserProfileOut,
     UserDeleteMany,
     UserListFilters,
-    UserProfileUpdate
+    UserProfileUpdate,
+    UserAddressUpdate,
+    UserAddressOut,
+    UserAddressCreate
 )
 from app.security.hash import verify_password
 from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS, get_current_user
@@ -220,30 +223,43 @@ async def api_delete_all_user(data: UserDeleteMany, db: AsyncSession = Depends(g
     return
 
 
-@router.patch(
-    "/update/{user_id}",
-    response_model=UserProfileOut,
-    status_code=status.HTTP_200_OK,
-)
+@router.patch("/me/profile", response_model=UserProfileOut)
 async def api_update_user(
-    user_id: int, data: UserProfileUpdate, db: AsyncSession = Depends(get_db)
+    data: UserProfileUpdate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    user = await get_user(db=db, user_id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found.")
-    payload = data.model_dump(exclude_unset=True, exclude={"addresses", "email"})
-    for field, value in payload.items():
-        setattr(user, field, value)
-    if data.addresses is not None:
-        user.addresses.clear()
-        for addr in data.addresses:
-            user.addresses.append(UserAddress(**addr.model_dump()))
+    update_data = data.model_dump(exclude_unset=True, exclude={"addresses", "email"})
+    for field, value in update_data.items():
+        setattr(current_user, field, value)
     await db.commit()
-    await db.refresh(user)
-    result = await db.execute(
-        select(User).options(selectinload(User.addresses)).where(User.id == user.id)
-    )
-    return result.scalar_one()
+    await db.refresh(current_user, ["addresses"])
+    return current_user
+
+@router.post("/me/addresses", response_model=UserAddressOut)
+async def add_address(data: UserAddressCreate, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    addr = UserAddress(user_id=current_user.id, **data.model_dump())
+    db.add(addr)
+    await db.commit()
+    await db.refresh(addr)
+    return addr
+
+@router.patch("/me/address{address_id}", response_model=UserAddressOut)
+async def api_update_address(
+    address_id: int,
+    data: UserAddressUpdate,     
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    addr = await db.get(UserAddress, address_id)
+    if not addr or addr.user_id != current_user.id:
+        raise HTTPException(404, "Address not found")
+    update_data = data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(addr, field, value)
+    await db.commit()
+    await db.refresh(addr)
+    return addr
 
 
 @router.get("/auth/login/google", status_code=status.HTTP_200_OK)

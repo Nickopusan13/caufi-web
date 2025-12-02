@@ -16,15 +16,24 @@ class UserLogin(BaseConfigModel):
     password: str = Field(min_length=8, max_length=100)
 
 
-class UserAddress(BaseConfigModel):
-    id: int = Field(gt=0)
+class UserAddressCreate(BaseConfigModel):
     address_line1: str = Field(min_length=1, max_length=255)
     address_line2: Optional[str] = Field(default=None, min_length=1, max_length=255)
     city: str = Field(min_length=1, max_length=100)
     state: str = Field(min_length=1, max_length=100)
     postal_code: str = Field(min_length=1, max_length=20)
     country: str = Field(min_length=1, max_length=100)
+    
+class UserAddressUpdate(BaseConfigModel):
+    address_line1: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    address_line2: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    city: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    state: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    postal_code: Optional[str] = Field(default=None, min_length=1, max_length=20)
+    country: Optional[str] = Field(default=None, min_length=1, max_length=100)
 
+class UserAddressOut(UserAddressCreate):
+    id: int = Field(gt=0)
 
 class UserProfile(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
@@ -34,7 +43,7 @@ class UserProfile(BaseConfigModel):
     phone_number: Optional[str] = Field(default=None, min_length=1, max_length=20)
     birthday: Optional[date] = Field(default=None)
     profile_image: Optional[str] = Field(default=None)
-    addresses: list["UserAddress"] = Field(default_factory=list)
+    addresses: list["UserAddressOut"] = Field(default_factory=list)
 
 class UserProfileUpdate(BaseConfigModel):
     name: Optional[str] = Field(default=None, min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
@@ -44,13 +53,13 @@ class UserProfileUpdate(BaseConfigModel):
     phone_number: Optional[str] = Field(default=None, min_length=1, max_length=20)
     birthday: Optional[date] = Field(default=None)
     profile_image: Optional[str] = Field(default=None)
-    addresses: Optional[list["UserAddress"]] = Field(default_factory=list)
+
 
 class UserProfileOut(UserProfile):
     id: int = Field(gt=0)
     created_at: datetime
     is_active: bool
-    addresses: list[UserAddress] = Field(default_factory=list)
+    addresses: list[UserAddressOut] = Field(default_factory=list)
 
 
 class UserToken(BaseConfigModel):

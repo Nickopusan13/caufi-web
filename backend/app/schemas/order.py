@@ -1,6 +1,6 @@
 from pydantic import Field
 from app.schemas.to_camel import BaseConfigModel
-from app.schemas.user import UserAddress, UserProfileOut
+from app.schemas.user import UserAddressOut, UserProfileOut
 from app.db.models.user import OrderStatus
 from datetime import datetime
 from typing import Optional, List
@@ -29,6 +29,6 @@ class OrderOut(BaseConfigModel):
     status: OrderStatus
     total_amount: Decimal = Field(gt=0)
     created_at: datetime
-    address: UserAddress
+    address: UserAddressOut
     user: UserProfileOut
     items: List[OrderItemOut] = Field(default_factory=list)
