@@ -4,6 +4,7 @@ import { Love_Ya_Like_A_Sister, Poppins, Inter, Kalam } from "next/font/google";
 import "./globals.css";
 import { Lenis } from "lenis/react";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
+import "leaflet/dist/leaflet.css";
 
 export const metadata: Metadata = {
   title: "Caufi",

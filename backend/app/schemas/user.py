@@ -23,7 +23,8 @@ class UserAddressCreate(BaseConfigModel):
     state: str = Field(min_length=1, max_length=100)
     postal_code: str = Field(min_length=1, max_length=20)
     country: str = Field(min_length=1, max_length=100)
-    
+
+
 class UserAddressUpdate(BaseConfigModel):
     address_line1: Optional[str] = Field(default=None, min_length=1, max_length=255)
     address_line2: Optional[str] = Field(default=None, min_length=1, max_length=255)
@@ -32,8 +33,10 @@ class UserAddressUpdate(BaseConfigModel):
     postal_code: Optional[str] = Field(default=None, min_length=1, max_length=20)
     country: Optional[str] = Field(default=None, min_length=1, max_length=100)
 
+
 class UserAddressOut(UserAddressCreate):
     id: int = Field(gt=0)
+
 
 class UserProfile(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
@@ -45,8 +48,11 @@ class UserProfile(BaseConfigModel):
     profile_image: Optional[str] = Field(default=None)
     addresses: list["UserAddressOut"] = Field(default_factory=list)
 
+
 class UserProfileUpdate(BaseConfigModel):
-    name: Optional[str] = Field(default=None, min_length=1, max_length=100, pattern="^[A-Za-z ]+$")
+    name: Optional[str] = Field(
+        default=None, min_length=1, max_length=100, pattern="^[A-Za-z ]+$"
+    )
     user_name: Optional[str] = Field(default=None, min_length=1, max_length=100)
     gender: Optional[str] = Field(default=None, min_length=1, max_length=20)
     email: Optional[EmailStr] = Field(default=None, min_length=1, max_length=100)
@@ -85,3 +91,25 @@ class UserDeleteMany(BaseConfigModel):
 class UserListFilters(BaseConfigModel):
     search: Optional[str] = None
     is_active: Optional[bool] = None
+
+
+class PlaceDetails(BaseConfigModel):
+    lat: float = Field(..., description="Latitude of the selected place")
+    lng: float = Field(..., description="Longitude of the selected place")
+    formatted_address: str = Field(..., min_length=1, max_length=255)
+    place_id: str = Field(..., min_length=1, max_length=255)
+
+
+class StructuredFormatting(BaseConfigModel):
+    main_text: str
+    secondary_text: str
+
+
+class AutocompleteResult(BaseConfigModel):
+    place_id: str
+    description: str
+    structured_formatting: StructuredFormatting
+
+
+class AutocompleteResponse(BaseConfigModel):
+    predictions: list[AutocompleteResult]

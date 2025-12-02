@@ -9,6 +9,9 @@ import {
   userLogout,
   updateUserAddress,
   updateUserProfile,
+  PlaceDetails,
+  mapsGeocode,
+  mapsAutocomplete,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -18,6 +21,7 @@ import type {
   UserToken,
   UserProfile,
   UserAddressUpdate,
+  AutocompleteResponse,
 } from "@/api/user";
 import { useRouter } from "next/navigation";
 
@@ -128,5 +132,21 @@ export function useUpdateUserAddress() {
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update address");
     },
+  });
+}
+
+export function usePlaceDetails(placeId: string) {
+  return useQuery<PlaceDetails>({
+    queryKey: ["placeDetails", placeId],
+    queryFn: () => mapsGeocode(placeId),
+    enabled: !!placeId,
+  });
+}
+
+export function usePlaceAutocomplete(input: string) {
+  return useQuery<AutocompleteResponse>({
+    queryKey: ["placeAutocomplete", input],
+    queryFn: () => mapsAutocomplete(input),
+    enabled: !!input,
   });
 }

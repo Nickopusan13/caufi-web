@@ -28,7 +28,9 @@ from app.schemas.user import (
     UserProfileUpdate,
     UserAddressUpdate,
     UserAddressOut,
-    UserAddressCreate
+    UserAddressCreate,
+    PlaceDetails,
+    AutocompleteResponse,
 )
 from app.security.hash import verify_password
 from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS, get_current_user
@@ -46,6 +48,7 @@ from app.utils.r2_service import (
 )
 from app.utils.filters import apply_user_filters
 from app.utils.email_service import send_mail
+from app.utils.geocode import get_place_details, autocomplete_place
 from app.security.oauth import oauth
 from app.utils.generate_username import generate_username
 from sqlalchemy import select, delete
@@ -154,12 +157,12 @@ async def add_images_to_profile(
 @router.post("/logout", status_code=status.HTTP_200_OK)
 async def api_user_logout(response: Response):
     response.delete_cookie(
-            key="access_token",
-            path="/",
-            httponly=True,
-            secure=True,  
-            samesite="lax", 
-        )
+        key="access_token",
+        path="/",
+        httponly=True,
+        secure=True,
+        samesite="lax",
+    )
     return {"message": "Logout successful"}
 
 
@@ -236,18 +239,24 @@ async def api_update_user(
     await db.refresh(current_user, ["addresses"])
     return current_user
 
+
 @router.post("/me/addresses", response_model=UserAddressOut)
-async def add_address(data: UserAddressCreate, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+async def add_address(
+    data: UserAddressCreate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
     addr = UserAddress(user_id=current_user.id, **data.model_dump())
     db.add(addr)
     await db.commit()
     await db.refresh(addr)
     return addr
 
+
 @router.patch("/me/address{address_id}", response_model=UserAddressOut)
 async def api_update_address(
     address_id: int,
-    data: UserAddressUpdate,     
+    data: UserAddressUpdate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -338,7 +347,7 @@ async def api_reset_password_request(
     )
 
 
-@router.post("/reset/password")
+@router.post("/reset/password", status_code=status.HTTP_200_OK)
 async def api_reset_password(
     data: UserResetPassword, db: AsyncSession = Depends(get_db)
 ):
@@ -358,3 +367,13 @@ async def api_reset_password(
 )
 async def api_get_current_user(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+@router.get("/geocode", response_model=PlaceDetails, status_code=status.HTTP_200_OK)
+async def geocode(place_id: str):
+    return await get_place_details(place_id)
+
+
+@router.get("/places/autocomplete", response_model=AutocompleteResponse)
+async def places_autocomplete(input: str = Query(..., min_length=1)):
+    return await autocomplete_place(input)

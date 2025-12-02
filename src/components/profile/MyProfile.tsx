@@ -119,23 +119,27 @@ export default function MyProfile() {
               {activeTab === "Order History" && <OrderInfo />}
               {activeTab === "Settings" && <Settings />}
             </motion.div>
-            {edit && (
-              <div>
-                {edit === "Edit Profile" && (
-                  <EditProfile
-                    onClose={() => {
-                      setEdit(null);
-                    }}
-                  />
-                )}
-                {edit === "Edit Address" && (
-                  <EditAddress
-                    onClose={() => {
-                      setEdit(null);
-                    }}
-                  />
-                )}
-              </div>
+          </AnimatePresence>
+          <AnimatePresence>
+            {edit === "Edit Profile" && (
+              <motion.div
+                key="editProfile"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <EditProfile onClose={() => setEdit(null)} />
+              </motion.div>
+            )}
+            {edit === "Edit Address" && (
+              <motion.div
+                key="editAddress"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <EditAddress onClose={() => setEdit(null)} />
+              </motion.div>
             )}
           </AnimatePresence>
         </div>

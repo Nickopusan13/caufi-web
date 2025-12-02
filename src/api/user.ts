@@ -98,6 +98,27 @@ export interface UserProfileUpdate {
   gender?: string;
 }
 
+export interface PlaceDetails {
+  lat: number;
+  lng: number;
+  formattedAddress: string;
+  placeId: string;
+}
+
+export interface StructuredFormatting {
+  mainText: string;
+  secondaryText: string;
+}
+
+export interface AutocompleteResult {
+  placeid: string;
+  description: string;
+  structuredFormatting: StructuredFormatting;
+}
+export interface AutocompleteResponse {
+  predictions: AutocompleteResult[];
+}
+
 export async function fetchUserRegister(data: UserRegister) {
   try {
     const res = await axios.post(`${API_URL}/api/user/register`, data, {
@@ -286,6 +307,53 @@ export async function updateUserAddress(
       data,
       {
         withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export async function mapsGeocode(placeId: string): Promise<PlaceDetails> {
+  try {
+    const res = await axios.get<PlaceDetails>(`${API_URL}/api/user/geocode`, {
+      params: { place_id: placeId },
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export async function mapsAutocomplete(
+  input: string
+): Promise<AutocompleteResponse> {
+  try {
+    const res = await axios.get<AutocompleteResponse>(
+      `${API_URL}/api/user/places/autocomplete`,
+      {
+        params: { input: input },
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     );
     return res.data;

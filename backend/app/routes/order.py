@@ -34,10 +34,14 @@ async def api_order_create(
     for item in payload.items:
         product = products_map.get(item.product_id)
         if not product:
-            raise HTTPException(status_code=400, detail=f"Product {item.product_id} not found")
+            raise HTTPException(
+                status_code=400, detail=f"Product {item.product_id} not found"
+            )
 
         if product.stock < item.quantity:
-            raise HTTPException(status_code=400, detail=f"Not enough stock for {product.name}")
+            raise HTTPException(
+                status_code=400, detail=f"Not enough stock for {product.name}"
+            )
         price = product.discount_price or product.regular_price
         total_amount += price * item.quantity
         order_items.append(

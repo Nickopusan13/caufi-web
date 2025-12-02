@@ -194,7 +194,7 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
                     mode="single"
                     selected={birthday}
                     onSelect={setBirthday}
-                    initialFocus
+                    autoFocus
                   />
                 </PopoverContent>
               </Popover>
