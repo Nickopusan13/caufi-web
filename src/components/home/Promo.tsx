@@ -95,6 +95,7 @@ export default function Promo() {
                         fill
                         className="object-cover transition-all duration-1000 group-hover:scale-110"
                         priority
+                        sizes="(max-width: 1024px) 100vw, 50vw"
                       />
                       <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
                       <div className="absolute bottom-8 left-8 text-white">

@@ -151,6 +151,7 @@ export default function Footer() {
                             alt={store.title}
                             fill
                             className="object-contain"
+                            sizes="(max-width: 768px) 50px, 80px"
                           />
                         </div>
                       </motion.div>

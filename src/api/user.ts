@@ -113,7 +113,7 @@ export async function fetchUserLogin(data: UserLogin) {
 export async function userLogout() {
   try {
     const res = await axios.post(
-      `${API_URL}/logout`,
+      `${API_URL}/api/user/logout`,
       {},
       {
         withCredentials: true,

@@ -1,3 +1,5 @@
+"use client";
+
 import { InformationItem } from "./InformationItem";
 import {
   FaMapMarkedAlt,
@@ -15,7 +17,7 @@ import {
 import { TbMailFilled } from "react-icons/tb";
 import { ImPhone } from "react-icons/im";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
-import { useGetCurrentUser } from "@/hooks/useLogin";
+import { useGetCurrentUser, useUserLogout } from "@/hooks/useLogin";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetCurrentOrder } from "@/hooks/userOrder";
 import { useState } from "react";
@@ -24,6 +26,14 @@ import { format } from "date-fns";
 import { FilterButton } from "../OrderEdit";
 import Link from "next/link";
 import Image from "next/image";
+import ToasterProvider from "@/components/ToasterProvider";
+import { AnimatePresence } from "framer-motion";
+import { RiLockPasswordFill } from "react-icons/ri";
+import { LuLanguages } from "react-icons/lu";
+import { IoLogOutSharp } from "react-icons/io5";
+import { OpenSettings, SettingsItem } from "../SettingsEdit";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { Loader2 } from "lucide-react";
 
 export const ProfileInfo = () => {
   const { data: user, isLoading, error } = useGetCurrentUser();
@@ -382,5 +392,117 @@ export const OrderInfo = () => {
         ))}
       </div>
     </div>
+  );
+};
+
+export const Settings = () => {
+  const [dialog, setDialog] = useState<{
+    isOpen: boolean;
+    type: "language" | "logout" | "delete" | null;
+  }>({
+    isOpen: false,
+    type: null,
+  });
+  const openDialog = (type: "language" | "logout" | "delete") => {
+    setDialog({ isOpen: true, type });
+  };
+  const closeDialog = () => {
+    setDialog({ isOpen: false, type: null });
+  };
+  const { mutate: logout, isPending } = useUserLogout();
+  return (
+    <>
+      <ToasterProvider />
+      <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
+        <h1 className="text-2xl font-bold text-center lg:text-start">
+          Settings
+        </h1>
+        <div
+          className="p-7 rounded-2xl bg-linear-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-950 
+                      border border-zinc-200/70 dark:border-zinc-800/70 
+                      shadow-xl hover:shadow-2xl transition-all duration-500 
+                      backdrop-blur-sm"
+        >
+          <div className="grid gap-4">
+            <InformationItem
+              icon={RiLockPasswordFill}
+              title="Password"
+              description="Change your password"
+              href="/change-password"
+              iconColor="text-blue-600 dark:text-blue-400"
+              iconBg="bg-blue-100 dark:bg-blue-950/40"
+            />
+            <SettingsItem
+              icon={LuLanguages}
+              title="Language"
+              description="Change app language"
+              onClick={() => openDialog("language")}
+              iconColor="text-purple-600 dark:text-purple-400"
+              iconBg="bg-purple-100 dark:bg-purple-950/40"
+            />
+            <SettingsItem
+              icon={IoLogOutSharp}
+              title="Logout"
+              description="Sign out from this device"
+              onClick={() => openDialog("logout")}
+              iconColor="text-red-600 dark:text-red-400"
+              iconBg="bg-red-100 dark:bg-red-950/40"
+            />
+            <SettingsItem
+              icon={MdOutlineDeleteForever}
+              title="Delete Account"
+              description="Permanently delete your account"
+              onClick={() => openDialog("delete")}
+              iconColor="text-red-600 dark:text-red-400"
+              iconBg="bg-red-100 dark:bg-red-950/40"
+            />
+          </div>
+        </div>
+      </div>
+      <AnimatePresence>
+        {dialog.isOpen && (
+          <>
+            {dialog.type === "language" && (
+              <OpenSettings
+                open={dialog.isOpen}
+                onOpenChange={closeDialog}
+                title="Change Language"
+                type="language"
+              />
+            )}
+
+            {dialog.type === "logout" && (
+              <OpenSettings
+                open={dialog.isOpen}
+                onOpenChange={closeDialog}
+                title="Want to logout?"
+                type="confirmation"
+                onConfirm={() => {
+                  logout();
+                }}
+              />
+            )}
+
+            {dialog.type === "delete" && (
+              <OpenSettings
+                open={dialog.isOpen}
+                onOpenChange={closeDialog}
+                title="Delete your account?"
+                type="confirmation"
+                onConfirm={() => {
+                  // handleDeleteAccount();
+                  closeDialog();
+                }}
+              />
+            )}
+          </>
+        )}
+        {isPending && (
+          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-white" />
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };

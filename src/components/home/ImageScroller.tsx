@@ -41,6 +41,7 @@ export default function ImageScroller() {
             <Image
               src={slide.image}
               alt={slide.title}
+              sizes="100vw"
               fill
               priority={index === 0}
               className="object-cover brightness-90 scale-105 transition-all duration-1000"

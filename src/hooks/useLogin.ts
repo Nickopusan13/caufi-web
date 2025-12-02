@@ -6,6 +6,7 @@ import {
   fetchUserResetPassword,
   getUserById,
   getCurrentUser,
+  userLogout,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -56,7 +57,7 @@ export function useResetPassword() {
   return useMutation({
     mutationFn: fetchUserResetPassword,
     onSuccess: () => {
-      toast.success("Done!!");
+      toast.success("Done Reset Password!!");
       router.push("/login");
     },
     onError: (error: Error) => {
@@ -76,5 +77,19 @@ export function useGetCurrentUser() {
   return useQuery<UserProfile>({
     queryKey: ["currentUser"],
     queryFn: getCurrentUser,
+  });
+}
+
+export function useUserLogout() {
+  const router = useRouter();
+  return useMutation({
+    mutationFn: userLogout,
+    onSuccess: () => {
+      toast.success("Logout Done!!");
+      router.push("/login");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
   });
 }

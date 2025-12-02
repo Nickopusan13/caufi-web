@@ -54,6 +54,7 @@ export default function BagSection() {
                         <Image
                           src={product.images[0]?.imageUrl}
                           alt={product.name}
+                          sizes="(max-width: 1023px) 288px, 320px"
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
@@ -93,6 +94,7 @@ export default function BagSection() {
                         <Image
                           src={product.images[0]?.imageUrl}
                           alt={product.name}
+                          sizes="(max-width: 1023px) 288px, 320px"
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />

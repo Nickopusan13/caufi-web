@@ -4,7 +4,12 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { TbCameraPlus } from "react-icons/tb";
-import { AddressInfo, OrderInfo, ProfileInfo } from "./information/AccountInfo";
+import {
+  AddressInfo,
+  OrderInfo,
+  ProfileInfo,
+  Settings,
+} from "./information/AccountInfo";
 import { useGetCurrentUser } from "@/hooks/useLogin";
 
 const tabs = ["My Profile", "My Address", "Order History", "Settings"] as const;
@@ -27,6 +32,7 @@ export default function MyProfile() {
                     alt="Nicko"
                     width={200}
                     height={200}
+                    loading="eager"
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -107,6 +113,7 @@ export default function MyProfile() {
               {activeTab === "My Profile" && <ProfileInfo />}
               {activeTab === "My Address" && <AddressInfo />}
               {activeTab === "Order History" && <OrderInfo />}
+              {activeTab === "Settings" && <Settings />}
             </motion.div>
           </AnimatePresence>
         </div>

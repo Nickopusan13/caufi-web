@@ -33,6 +33,7 @@ export default function Quotes() {
               fill
               className="object-cover"
               priority
+              sizes="(max-width: 639px) 256px, (max-width: 1023px) 320px, 384px"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-black/10" />
             <motion.div

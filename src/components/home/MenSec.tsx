@@ -55,6 +55,7 @@ export default function MenSection() {
                           src={product.images[0]?.imageUrl}
                           alt={product.name}
                           fill
+                          sizes="(max-width: 1023px) 288px, 320px"
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
@@ -94,6 +95,7 @@ export default function MenSection() {
                           src={product.images[0]?.imageUrl}
                           alt={product.name}
                           fill
+                          sizes="(max-width: 1023px) 288px, 320px"
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-linear-to-t from-red-700/80 via-red-700/40 to-transparent" />
