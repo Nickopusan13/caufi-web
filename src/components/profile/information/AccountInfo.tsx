@@ -2,13 +2,6 @@
 
 import { InformationItem } from "./InformationItem";
 import {
-  FaMapMarkedAlt,
-  FaCity,
-  FaMap,
-  FaMailBulk,
-  FaRegFlag,
-} from "react-icons/fa";
-import {
   BiSolidUser,
   BiMaleFemale,
   BiHome,
@@ -209,56 +202,46 @@ export const AddressInfo = () => {
     );
   }
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
       <h1 className="text-2xl font-bold text-center lg:text-start">
         Shipping Address{user.addresses.length > 1 ? "es" : ""}
       </h1>
-
-      <div className="grid gap-6">
-        {user.addresses.map((addr, index) => (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {user.addresses.map((addr) => (
           <div
-            key={addr.id || index}
-            className="p-6 rounded-2xl bg-linear-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-950 
-                       border border-zinc-200/70 dark:border-zinc-800/70 shadow-lg hover:shadow-xl 
-                       transition-all duration-300 backdrop-blur-sm"
+            key={addr.id}
+            className="p-5 rounded-xl bg-white/70 dark:bg-zinc-900/70 
+                   border border-zinc-200/60 dark:border-zinc-800 
+                   shadow-md hover:shadow-lg transition-all duration-300"
           >
-            <div className="grid gap-4">
-              <InformationItem
-                icon={FaMapMarkedAlt}
-                title="Street Address"
-                description={addr.addressLine1 || addr.addressLine1 || "—"}
-                iconColor="text-rose-600 dark:text-rose-400"
-                iconBg="bg-rose-100 dark:bg-rose-950/40"
-              />
-              <InformationItem
-                icon={FaCity}
-                title="City"
-                description={addr.city || "—"}
-                iconColor="text-teal-600 dark:text-teal-400"
-                iconBg="bg-teal-100 dark:bg-teal-950/40"
-              />
-              <InformationItem
-                icon={FaMap}
-                title="State / Province"
-                description={addr.state || "—"}
-                iconColor="text-amber-600 dark:text-amber-400"
-                iconBg="bg-amber-100 dark:bg-amber-950/40"
-              />
-              <InformationItem
-                icon={FaMailBulk}
-                title="Postal Code"
-                description={addr.postalCode || "—"}
-                iconColor="text-purple-600 dark:text-purple-400"
-                iconBg="bg-purple-100 dark:bg-purple-950/40"
-              />
-              <InformationItem
-                icon={FaRegFlag}
-                title="Country"
-                description={addr.country || "—"}
-                iconColor="text-indigo-600 dark:text-indigo-400"
-                iconBg="bg-indigo-100 dark:bg-indigo-950/40"
-              />
+            <div className="flex justify-between items-start">
+              <span className="text-xs px-2 py-1 rounded-md bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
+                {addr.addressLabel || "Address"}
+              </span>
+              {addr.isSelected && (
+                <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                  Default
+                </span>
+              )}
             </div>
+
+            <div className="mt-3">
+              <h3 className="font-semibold text-lg">{addr.recipientName}</h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                {addr.phoneNumber}
+              </p>
+
+              <p className="text-sm mt-2 text-zinc-700 dark:text-zinc-300 line-clamp-2">
+                {addr.fullAddress}
+              </p>
+            </div>
+            <button
+              className="mt-4 w-full py-2 text-sm font-medium rounded-lg 
+                     bg-zinc-100 dark:bg-zinc-800 
+                     hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"
+            >
+              View Details
+            </button>
           </div>
         ))}
       </div>
@@ -384,7 +367,7 @@ export const OrderInfo = () => {
               <p className="text-sm text-gray-600">
                 Delivered to:{" "}
                 <span className="font-medium">
-                  {order.address.addressLine1}, {order.address.city}
+                  {order.address.fullAddress}, {order.address.city}
                 </span>
               </p>
             </div>

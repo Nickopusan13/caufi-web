@@ -61,12 +61,13 @@ class UserAddress(Base):
     user_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=False
     )
-    address_line1: Mapped[str] = mapped_column(String(255), nullable=False)
-    address_line2: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    city: Mapped[str] = mapped_column(String(100), nullable=False)
-    state: Mapped[str] = mapped_column(String(100), nullable=False)
-    postal_code: Mapped[str] = mapped_column(String(20), nullable=False)
-    country: Mapped[str] = mapped_column(String(100), nullable=False)
+    recipient_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    full_address: Mapped[str] = mapped_column(String(255), nullable=False)
+    address_label: Mapped[str] = mapped_column(String(255), nullable=False)
+    city: Mapped[str] = mapped_column(String(255), nullable=False)
+    phone_number: Mapped[str] = mapped_column(String(20), nullable=True)
+    notes_courier: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    is_selected: Mapped[bool] = mapped_column(Boolean, default=False)
     order_by: Mapped[list["Order"]] = relationship(
         "Order",
         back_populates="address",

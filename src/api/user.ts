@@ -21,30 +21,33 @@ export interface UserLogin {
 
 export interface UserAddressOut {
   id: number;
-  addressLine1: string;
-  addressLine2?: string;
+  recipientName: string;
+  fullAddress: string;
+  addressLabel: string;
   city: string;
-  state: string;
-  postalCode: string;
-  country: string;
+  phoneNumber: string;
+  notesCourier: string;
+  isSelected: boolean;
 }
 
 export interface UserAddress {
-  addressLine1: string;
-  addressLine2?: string;
+  recipientName: string;
+  fullAddress: string;
+  addressLabel: string;
   city: string;
-  state: string;
-  postalCode: string;
-  country: string;
+  phoneNumber: string;
+  notesCourier?: string;
+  isSelected: boolean;
 }
 
 export interface UserAddressUpdate {
-  addressLine1?: string;
-  addressLine2?: string;
+  recipientName?: string;
+  fullAddress?: string;
+  addressLabel?: string;
   city?: string;
-  state?: string;
-  postalCode?: string;
-  country?: string;
+  phoneNumber?: string;
+  notesCourier?: string;
+  isSelected?: boolean;
 }
 
 export interface UserProfileOut {
@@ -111,7 +114,7 @@ export interface StructuredFormatting {
 }
 
 export interface AutocompleteResult {
-  placeid: string;
+  placeId: string;
   description: string;
   structuredFormatting: StructuredFormatting;
 }
@@ -139,7 +142,9 @@ export async function fetchUserRegister(data: UserRegister) {
   }
 }
 
-export async function createUserAddress(data: UserAddress) {
+export async function createUserAddress(
+  data: UserAddress
+): Promise<UserAddressOut> {
   try {
     const res = await axios.post(`${API_URL}/api/user/me/addresses`, data, {
       headers: {

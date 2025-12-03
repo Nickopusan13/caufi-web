@@ -124,10 +124,8 @@ class CartOut(BaseConfigModel):
 
 
 class CartItemUpdate(BaseConfigModel):
-    product_id: int
-    quantity: int = Field(ge=0)
-    size: Optional[str] = Field(default=None, max_length=50)
-    color: Optional[str] = Field(default=None, max_length=50)
+    product_id: int = Field(gt=0)
+    quantity: Optional[int] = Field(ge=0)
 
 
 class ProductDeleteMany(BaseConfigModel):

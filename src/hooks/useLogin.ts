@@ -12,6 +12,7 @@ import {
   PlaceDetails,
   mapsGeocode,
   mapsAutocomplete,
+  createUserAddress,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -22,6 +23,8 @@ import type {
   UserProfile,
   UserAddressUpdate,
   AutocompleteResponse,
+  UserAddressOut,
+  UserAddress,
 } from "@/api/user";
 import { useRouter } from "next/navigation";
 
@@ -33,6 +36,18 @@ export function useRegister() {
     },
     onSuccess: (data: UserProfileOut) => {
       toast.success(`Welcome, ${data.name.split(" ")[0]}!`);
+    },
+  });
+}
+
+export function useCreateAddress() {
+  return useMutation<UserAddressOut, Error, UserAddress>({
+    mutationFn: createUserAddress,
+    onError: (error: Error) => {
+      toast.error(error.message || "Registration failed");
+    },
+    onSuccess: () => {
+      toast.success("Address Created!!!");
     },
   });
 }

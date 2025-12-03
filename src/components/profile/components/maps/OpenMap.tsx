@@ -2,15 +2,10 @@
 
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import { RiMapPin2Fill } from "react-icons/ri";
-import { IoIosCloseCircle } from "react-icons/io";
+import { IoClose } from "react-icons/io5";
 import {
   ForceMapResize,
   CurrentLocationButton,
@@ -36,47 +31,54 @@ export const OpenMap = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="p-0 overflow-hidden rounded-3xl border-0 shadow-2xl max-w-4xl w-full h-[90vh] max-h-screen bg-white dark:bg-zinc-950"
+        className="p-0 overflow-hidden rounded-3xl border-0 shadow-2xl
+                   max-w-none w-[95vw] h-[90vh] max-h-screen
+                   bg-white dark:bg-zinc-950
+                   **:outline-none!"
+        style={{ maxWidth: "1400px" }}
         onOpenAutoFocus={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader className="top-0 left-0 right-0 z-10 bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-ml-2 text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Set Location on Map
-            </DialogTitle>
+        <div className="absolute top-0 left-0 right-0 z-50 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
+          <div className="flex items-center justify-between px-5 py-4">
+            <div>
+              <h3 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Set Delivery Location
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Search or drag the pin to your exact address
+              </p>
+            </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="p-3 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all active:scale-95"
             >
-              <IoIosCloseCircle className="w-7 h-7 text-zinc-600 dark:text-zinc-400" />
+              <IoClose className="w-7 h-7 text-zinc-600 dark:text-zinc-400" />
             </button>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Move the map or tap to pinpoint your exact address
-          </p>
-        </DialogHeader>
-        <div className="flex w-full h-full">
-          <div className="w-1/3 border-r border-zinc-200 dark:border-zinc-800 p-6 overflow-y-auto">
-            <InputSearch
-              address={address}
-              onClose={onClose}
-              onSelect={(lat: number, lon: number) => {
-                setFromSearch(true);
-                setPosition([lat, lon]);
-              }}
-              onSelectLocation={(addr: string) => {
-                setAddress(addr);
-                onSelectLocation(addr);
-              }}
-            />
+        </div>
+        <div className="flex flex-col h-full pt-20 lg:pt-24 lg:flex-row">
+          <div className="w-full lg:w-96 lg:max-w-md bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 lg:h-full overflow-y-auto">
+            <div className="p-5 lg:p-6">
+              <InputSearch
+                address={address}
+                onSelect={(lat, lng) => {
+                  setFromSearch(true);
+                  setPosition([lat, lng]);
+                }}
+                onSelectLocation={(addr) => {
+                  setAddress(addr);
+                  onSelectLocation(addr);
+                }}
+              />
+            </div>
           </div>
-          <div className="relative w-2/3 py-25">
+          <div className="relative flex-1 bg-zinc-100">
             <MapContainer
               center={position}
               zoom={17}
               scrollWheelZoom={true}
-              className="h-full w-full rounded-b-3xl"
-              style={{ borderRadius: "0 0 24px 24px" }}
+              className="h-full w-full"
             >
               <ForceMapResize />
               <TileLayer
@@ -91,19 +93,14 @@ export const OpenMap = ({
               <CurrentLocationButton />
               <LocationWatcher onChange={setPosition} />
             </MapContainer>
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center z-1000">
+            <div className="pointer-events-none absolute z-1000 inset-0 flex items-center justify-center">
               <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className="text-5xl text-red-600 drop-shadow-2xl"
+                animate={{ y: [0, -16, 0] }}
+                transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }}
+                className="text-6xl text-red-600 drop-shadow-2xl"
               >
                 <RiMapPin2Fill />
               </motion.div>
-            </div>
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[90%] max-w-md">
-              <button className="w-full h-14 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg rounded-2xl shadow-2xl hover:scale-105 transition-all">
-                Confirm This Location
-              </button>
             </div>
           </div>
         </div>

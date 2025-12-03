@@ -208,7 +208,7 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
               <Button
                 type="submit"
                 disabled={mutation.isPending || !isDirty}
-                className="flex-1 h-14 text-lg font-bold rounded-2xl bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:scale-105 transition-all disabled:opacity-60"
+                className="flex-1 h-14 text-lg font-bold rounded-2xl bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:scale-105 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {mutation.isPending ? "Saving..." : "Save Changes"}
               </Button>

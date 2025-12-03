@@ -1,0 +1,66 @@
+export const productCloth = [
+  {
+    category: "T-shirt",
+    title: "Crazy Basic T-shirt",
+    images: ["/assets/Clothes.png", "/assets/Clothes2.png"],
+    price: 1200000,
+    color: ["black", "red", "purple", "blue"],
+    size: ["XS", "S", "M", "XL"],
+    href: "/",
+  },
+  {
+    category: "T-shirt",
+    title: "Crazy Basic T-shirt",
+    images: ["/assets/Clothes.png", "/assets/Clothes2.png"],
+    price: 1200000,
+    color: ["black", "red", "purple", "blue"],
+    size: ["XS", "S", "M", "XL"],
+    href: "/",
+  },
+  {
+    category: "T-shirt",
+    title: "Crazy Basic T-shirt",
+    images: ["/assets/Clothes.png", "/assets/Clothes2.png"],
+    price: 1200000,
+    color: ["black", "red", "purple", "blue"],
+    size: ["XS", "S", "M", "XL"],
+    href: "/",
+  },
+  {
+    category: "T-shirt",
+    title: "Crazy Basic T-shirt",
+    images: ["/assets/Clothes.png", "/assets/Clothes2.png"],
+    price: 1200000,
+    color: ["black", "red", "purple", "blue"],
+    size: ["XS", "M", "XL"],
+    href: "/",
+  },
+  {
+    category: "T-shirt",
+    title: "Crazy Basic T-shirt",
+    images: ["/assets/Clothes.png", "/assets/Clothes2.png"],
+    price: 1200000,
+    color: ["black", "red", "purple", "blue"],
+    size: ["XS", "M", "XL"],
+    href: "/",
+  },
+];
+
+export const ProductInfoImages = {
+  category: "T-shirt",
+  title: "Crazy Basic T-shirt",
+  images: [
+    "/assets/Clothes.png",
+    "/assets/Clothes2.png",
+    "/assets/Clothes.png",
+  ],
+  discount: 900000,
+  price: 1200000,
+  color: ["black", "red", "purple", "blue", "white", "yellow", "ocean"],
+  size: ["XS", "S", "M", "XL"],
+  href: "/",
+  review: {
+    rating: 4.5,
+    count: 19800,
+  },
+};

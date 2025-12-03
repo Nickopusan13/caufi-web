@@ -46,6 +46,8 @@ export interface ProductData {
   sizes: ProductSize[];
   images: ProductImage[];
   colors: ProductColor[];
+  isFeatured: boolean;
+  isActive: boolean;
 }
 
 export interface ProductFilters {

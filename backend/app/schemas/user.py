@@ -17,21 +17,23 @@ class UserLogin(BaseConfigModel):
 
 
 class UserAddressCreate(BaseConfigModel):
-    address_line1: str = Field(min_length=1, max_length=255)
-    address_line2: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    city: str = Field(min_length=1, max_length=100)
-    state: str = Field(min_length=1, max_length=100)
-    postal_code: str = Field(min_length=1, max_length=20)
-    country: str = Field(min_length=1, max_length=100)
+    recipient_name: str = Field(min_length=1, max_length=255)
+    full_address: str = Field(min_length=1, max_length=255)
+    address_label: str = Field(min_length=1, max_length=255)
+    city: str = Field(min_length=1, max_length=255)
+    phone_number: str = Field(min_length=1, max_length=20)
+    notes_courier: Optional[str] = Field(default=None)
+    is_selected: bool = Field(default=False)
 
 
 class UserAddressUpdate(BaseConfigModel):
-    address_line1: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    address_line2: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    city: Optional[str] = Field(default=None, min_length=1, max_length=100)
-    state: Optional[str] = Field(default=None, min_length=1, max_length=100)
-    postal_code: Optional[str] = Field(default=None, min_length=1, max_length=20)
-    country: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    recipient_name: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    full_address: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    address_label: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    city: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    phone_number: Optional[str] = Field(default=None, min_length=1, max_length=20)
+    notes_courier: Optional[str] = Field(default=None, max_length=255)
+    is_selected: Optional[bool] = Field(default=False)
 
 
 class UserAddressOut(UserAddressCreate):

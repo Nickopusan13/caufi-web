@@ -241,7 +241,7 @@ async def api_update_user(
 
 
 @router.post("/me/addresses", response_model=UserAddressOut)
-async def add_address(
+async def api_add_address(
     data: UserAddressCreate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
