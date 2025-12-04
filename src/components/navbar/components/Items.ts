@@ -42,20 +42,3 @@ export const productItems = [
     ],
   },
 ];
-
-export const collectionItems = [
-  {
-    title: "NEW ARRIVALS",
-    items: ["Summer 2025", "Winter Essentials", "Limited Edition"],
-  },
-  {
-    title: "FEATURED",
-    items: [
-      "Best Sellers",
-      "Streetwear",
-      "Minimalist",
-      "Vintage",
-      "Designer Collabs",
-    ],
-  },
-];

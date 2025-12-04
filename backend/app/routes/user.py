@@ -123,8 +123,8 @@ async def api_user_login(
         key="access_token",
         value=jwt_token,
         httponly=True,
-        secure=False,
-        samesite="lax",
+        secure=True,
+        samesite="none",
         max_age=expire_duration,
         path="/",
     )

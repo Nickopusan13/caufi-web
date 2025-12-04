@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
-import { Heart, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 
 import {
   ProductSize,
@@ -36,15 +36,13 @@ export default function ProductInfo() {
   return (
     <section className="max-w-7xl mx-auto px-4 py-8 lg:py-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        {/* Image Gallery */}
         <div className="flex flex-col-reverse lg:flex-row gap-4">
-          {/* Thumbnails */}
           <div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
             {images.map((image, index) => (
               <button
                 key={index}
                 onClick={() => handleThumbnailClick(index)}
-                className={`relative flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24 rounded-xl overflow-hidden border-2 transition-all ${
+                className={`relative shrink-0 w-20 h-20 lg:w-24 lg:h-24 rounded-xl overflow-hidden border-2 transition-all ${
                   selectedImageIndex === index
                     ? "border-purple-600 ring-4 ring-purple-600/20"
                     : "border-zinc-200 dark:border-zinc-700 hover:border-purple-400"
@@ -61,8 +59,6 @@ export default function ProductInfo() {
               </button>
             ))}
           </div>
-
-          {/* Main Image */}
           <div className="relative aspect-square lg:aspect-auto lg:h-[600px] w-full rounded-2xl overflow-hidden bg-zinc-50 dark:bg-zinc-900">
             <MotionImage
               key={selectedImageIndex}
@@ -80,8 +76,6 @@ export default function ProductInfo() {
             </div>
           </div>
         </div>
-
-        {/* Product Details */}
         <div className="flex flex-col gap-6">
           <div>
             <h1 className="text-3xl lg:text-4xl font-bold text-zinc-900 dark:text-white">
@@ -96,8 +90,6 @@ export default function ProductInfo() {
               />
             </div>
           </div>
-
-          {/* Price */}
           <div className="flex items-center gap-4">
             <span className="text-3xl lg:text-4xl font-bold text-purple-600">
               Rp {ProductInfoImages.price.toLocaleString("id-ID")}
@@ -108,14 +100,10 @@ export default function ProductInfo() {
               </span>
             )}
           </div>
-
-          {/* Variants */}
           <div className="space-y-6">
             <ColorDropDown color={ProductInfoImages.color} />
             <ProductSize size={ProductInfoImages.size} />
           </div>
-
-          {/* Action Buttons */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -129,15 +117,13 @@ export default function ProductInfo() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="h-14 bg-gradient-to-r from-red-700 to-red-900 text-white rounded-2xl font-semibold text-lg flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all"
+              className="h-14 bg-linear-to-r from-red-700 to-red-900 text-white rounded-2xl font-semibold text-lg flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all"
             >
               <ShoppingCart size={22} />
               Add to Cart
             </motion.button>
           </div>
-
-          {/* Free Shipping Banner */}
-          <div className="mt-6 p-5 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl border border-purple-200 dark:border-purple-800">
+          <div className="mt-6 p-5 bg-linear-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl border border-purple-200 dark:border-purple-800">
             <p className="text-center text-sm lg:text-base text-zinc-700 dark:text-zinc-300">
               Enjoy{" "}
               <a
@@ -156,8 +142,6 @@ export default function ProductInfo() {
               on orders over <strong>Rp900.000</strong>
             </p>
           </div>
-
-          {/* Payment Methods */}
           <div className="mt-10">
             <h3 className="text-center lg:text-left text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">
               Secure Payment Methods
