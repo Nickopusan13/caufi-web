@@ -140,7 +140,6 @@ export const SettingsItem = ({
         className
       )}
     >
-      {/* Left: Icon + Text */}
       <div className="flex items-center gap-4">
         <div
           className={cn(
@@ -164,8 +163,6 @@ export const SettingsItem = ({
           </p>
         </div>
       </div>
-
-      {/* Right: Chevron */}
       <ChevronRight className="h-6 w-6 text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-all duration-300 group-hover:translate-x-1" />
     </motion.button>
   );

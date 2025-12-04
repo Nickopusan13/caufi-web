@@ -13,6 +13,7 @@ import {
   mapsGeocode,
   mapsAutocomplete,
   createUserAddress,
+  mapsReverseGeocoding,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -25,6 +26,7 @@ import type {
   AutocompleteResponse,
   UserAddressOut,
   UserAddress,
+  ReverseGeocodingResponse,
 } from "@/api/user";
 import { useRouter } from "next/navigation";
 
@@ -164,5 +166,14 @@ export function usePlaceAutocomplete(input: string) {
     queryKey: ["placeAutocomplete", input],
     queryFn: () => mapsAutocomplete(input),
     enabled: !!input,
+  });
+}
+
+export function useReverseGeocoding(lat: number | null, lng: number | null) {
+  const enabled = lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng);
+  return useQuery<ReverseGeocodingResponse>({
+    queryKey: ["reverseGeocoding", lat, lng],
+    queryFn: () => mapsReverseGeocoding(lat!, lng!), // non-null assertion safe because of `enabled`
+    enabled,
   });
 }

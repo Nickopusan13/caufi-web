@@ -495,7 +495,7 @@ export const Settings = () => {
               icon={RiLockPasswordFill}
               title="Password"
               description="Change your password"
-              href="/change-password"
+              href="/login"
               iconColor="text-blue-600 dark:text-blue-400"
               iconBg="bg-blue-100 dark:bg-blue-950/40"
             />

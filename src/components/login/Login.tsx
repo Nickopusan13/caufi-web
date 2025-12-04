@@ -116,6 +116,7 @@ export default function Login({ onToggle }: { onToggle: () => void }) {
               </motion.div>
               <div className="text-right -mt-4">
                 <button
+                  id="forgot-password"
                   type="button"
                   onClick={() => setIsForgotPassword(true)}
                   className="text-cyan-300 text-sm hover:text-cyan-100 underline underline-offset-4 transition"

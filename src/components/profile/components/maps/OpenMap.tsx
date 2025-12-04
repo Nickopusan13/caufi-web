@@ -14,6 +14,8 @@ import {
 } from "./MapComponents";
 import InputSearch from "./InputSearch";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { useReverseGeocoding } from "@/hooks/useLogin";
+import { useEffect } from "react";
 
 export const OpenMap = ({
   open,
@@ -27,19 +29,35 @@ export const OpenMap = ({
   const [position, setPosition] = useState<[number, number]>([
     -6.2088, 106.8456,
   ]);
+  const [lat, lng] = position;
   const [fromSearch, setFromSearch] = useState(false);
   const [address, setAddress] = useState("");
+  const { data, isLoading } = useReverseGeocoding(lat, lng);
+  useEffect(() => {
+    if (!data || data.status !== "OK" || data.results.length === 0) {
+      if (address !== "") {
+        setAddress("");
+      }
+      return;
+    }
+    const bestResult = data.results[0];
+    const newAddr = bestResult.formattedAddress;
+    if (newAddr !== address) {
+      setAddress(newAddr);
+    }
+  }, [data, address]);
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
         className="p-0 overflow-hidden rounded-3xl border-0 shadow-2xl
                    max-w-none w-[95vw] h-[90vh] max-h-screen
                    bg-white dark:bg-zinc-950
-                   **:outline-none!"
+                   outline-none"
         style={{ maxWidth: "1400px" }}
         onOpenAutoFocus={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
       >
+        {/* Header + Current Address */}
         <div className="absolute top-0 left-0 right-0 z-50 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center justify-between px-5 py-4">
             <div>
@@ -54,34 +72,37 @@ export const OpenMap = ({
               onClick={onClose}
               className="p-3 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all active:scale-95"
             >
-              <IoClose className="w-7 h-7 text-zinc-600 dark:text-zinc-400" />
+              <IoClose className="w-7 h-7" />
             </button>
           </div>
+          <div className="px-5 pb-4">
+            <p className="text-base font-medium text-zinc-800 dark:text-zinc-200 line-clamp-2">
+              {isLoading
+                ? "Fetching address..."
+                : address || "Move the pin to see address"}
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col h-full pt-20 lg:pt-24 lg:flex-row">
+        <div className="flex flex-col h-full pt-32 lg:pt-36 lg:flex-row">
           <div className="w-full lg:w-96 lg:max-w-md bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 lg:h-full overflow-y-auto">
-            <div className="p-5 lg:p-6">
+            <div className="p-5 lg:p-6 space-y-4">
               <InputSearch
+                onClose={onClose}
                 address={address}
                 onSelect={(lat, lng) => {
                   setFromSearch(true);
                   setPosition([lat, lng]);
                 }}
-                onClose={onClose}
                 onSelectLocation={(addr) => {
                   setAddress(addr);
                   onSelectLocation(addr);
+                  onClose();
                 }}
               />
             </div>
           </div>
-          <div className="relative flex-1 bg-zinc-100">
-            <MapContainer
-              center={position}
-              zoom={17}
-              scrollWheelZoom={true}
-              className="h-full w-full"
-            >
+          <div className="relative flex-1">
+            <MapContainer center={position} zoom={17} className="h-full w-full">
               <ForceMapResize />
               <TileLayer
                 attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
@@ -95,10 +116,10 @@ export const OpenMap = ({
               <CurrentLocationButton />
               <LocationWatcher onChange={setPosition} />
             </MapContainer>
-            <div className="pointer-events-none absolute z-1000 inset-0 flex items-center justify-center">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center z-1000">
               <motion.div
-                animate={{ y: [0, -16, 0] }}
-                transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }}
+                animate={{ y: [0, -12, 0] }}
+                transition={{ repeat: Infinity, duration: 2 }}
                 className="text-6xl text-red-600 drop-shadow-2xl"
               >
                 <RiMapPin2Fill />
@@ -110,3 +131,5 @@ export const OpenMap = ({
     </Dialog>
   );
 };
+
+export default OpenMap;

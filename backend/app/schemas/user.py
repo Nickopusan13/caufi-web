@@ -97,15 +97,15 @@ class PlaceDetails(BaseConfigModel):
     lat: float
     lng: float
     place_id: str
-    formatted_address: str  # Universal structured fields (work in 200+ countries)
+    formatted_address: str
     street_number: Optional[str] = None
     route: Optional[str] = None
-    street: Optional[str] = None  # street_number + route
+    street: Optional[str] = None 
     neighborhood: Optional[str] = None
-    city: Optional[str] = None  # locality or postal_town
-    district: Optional[str] = None  # administrative_area_level_2 or 3
-    state: Optional[str] = None  # administrative_area_level_1
-    country_code: Optional[str] = None  # ISO 2-letter code
+    city: Optional[str] = None
+    district: Optional[str] = None
+    state: Optional[str] = None
+    country_code: Optional[str] = None
     postal_code: Optional[str] = None
     best_display_address: str
 
@@ -123,3 +123,24 @@ class AutocompleteResult(BaseConfigModel):
 
 class AutocompleteResponse(BaseConfigModel):
     predictions: list[AutocompleteResult]
+
+
+class ReverseGeocodingResult(BaseConfigModel):
+    formatted_address: str
+    place_id: Optional[str] = None
+    lat: float
+    lng: float
+    street_number: Optional[str] = None
+    route: Optional[str] = None
+    sublocality: Optional[str] = None
+    city: Optional[str] = None
+    district: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    country_code: Optional[str] = None
+    postal_code: Optional[str] = None
+
+
+class ReverseGeocodingResponse(BaseConfigModel):
+    results: list[ReverseGeocodingResult]
+    status: str

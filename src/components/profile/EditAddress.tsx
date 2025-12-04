@@ -1,6 +1,6 @@
-// components/EditAddress.tsx
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import {
   Dialog,
@@ -14,10 +14,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import React, { useCallback, useEffect, useState } from "react";
 import { BiMapPin } from "react-icons/bi";
-import { OpenMap } from "./components/maps/OpenMap";
 import { useUpdateUserAddress, useCreateAddress } from "@/hooks/useLogin";
 import { UserAddressOut } from "@/api/user";
 import toast from "react-hot-toast";
+const OpenMap = dynamic(() => import("./components/maps/OpenMap"), {
+  ssr: false,
+});
 interface EditAddressProps {
   addressToEdit?: UserAddressOut | null;
   onClose: () => void;
@@ -28,8 +30,6 @@ export default function EditAddress({
   onClose,
 }: EditAddressProps) {
   const isEditMode = !!addressToEdit;
-
-  // Form state
   const [addressLabel, setAddressLabel] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");

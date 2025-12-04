@@ -37,8 +37,6 @@ export default function InputSearch({
     }
   }, [placeDetails, onSelect]);
 
-  const displayAddress = placeDetails?.formattedAddress || initialAddress;
-
   const handleSelect = (place: AutocompleteResult) => {
     setSelectedPlaceId(place.placeId);
     setQuery(place.structuredFormatting.mainText);
@@ -51,8 +49,8 @@ export default function InputSearch({
   };
 
   const handleConfirm = () => {
-    if (displayAddress) {
-      onSelectLocation(displayAddress);
+    if (initialAddress) {
+      onSelectLocation(initialAddress);
       onClose();
     }
   };
@@ -121,7 +119,7 @@ export default function InputSearch({
         </p>
         <div className="p-5 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl border border-zinc-200 dark:border-zinc-700 min-h-24">
           <p className="text-base font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed wrap-break-words">
-            {displayAddress || (
+            {initialAddress || (
               <span className="text-zinc-500 italic">
                 Search an address or drag the pin to select a location
               </span>
@@ -131,7 +129,7 @@ export default function InputSearch({
       </div>
       <button
         onClick={handleConfirm}
-        disabled={!displayAddress}
+        disabled={!initialAddress}
         className="mt-6 w-full h-14 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-zinc-400 disabled:to-zinc-500 disabled:cursor-not-allowed text-white font-bold text-lg rounded-2xl shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3"
       >
         Confirm This Location

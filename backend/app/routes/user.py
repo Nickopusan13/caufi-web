@@ -48,7 +48,7 @@ from app.utils.r2_service import (
 )
 from app.utils.filters import apply_user_filters
 from app.utils.email_service import send_mail
-from app.utils.geocode import get_place_details, autocomplete_place
+from app.utils.geocode import get_place_details, autocomplete_place, reverse_geocoding
 from app.security.oauth import oauth
 from app.utils.generate_username import generate_username
 from sqlalchemy import select, delete, func, update
@@ -424,3 +424,7 @@ async def geocode(place_id: str):
 @router.get("/places/autocomplete", response_model=AutocompleteResponse)
 async def places_autocomplete(input: str = Query(..., min_length=1)):
     return await autocomplete_place(input)
+
+@router.get("/reverse-geocode")
+async def get_address_from_coords(lat: float, lng: float):
+    return await reverse_geocoding(lat, lng)

@@ -115,8 +115,30 @@ export interface AutocompleteResult {
   description: string;
   structuredFormatting: StructuredFormatting;
 }
+
 export interface AutocompleteResponse {
   predictions: AutocompleteResult[];
+}
+
+export interface ReverseGeocodingResult {
+  formattedAddress: string;
+  placeId?: string;
+  lat: number;
+  lng: number;
+  streetNumber?: string;
+  router?: string;
+  sublocality?: string;
+  city?: string;
+  district?: string;
+  state?: string;
+  country?: string;
+  countryCode?: string;
+  postalCode?: string;
+}
+
+export interface ReverseGeocodingResponse {
+  results: ReverseGeocodingResult[];
+  status: string;
 }
 
 export async function fetchUserRegister(data: UserRegister) {
@@ -352,6 +374,33 @@ export async function mapsAutocomplete(
       `${API_URL}/api/user/places/autocomplete`,
       {
         params: { input: input },
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export async function mapsReverseGeocoding(
+  lat: number,
+  lng: number
+): Promise<ReverseGeocodingResponse> {
+  try {
+    const res = await axios.get<ReverseGeocodingResponse>(
+      `${API_URL}/api/user/reverse-geocode`,
+      {
+        params: { lat, lng },
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
