@@ -6,7 +6,6 @@ import { Lenis } from "lenis/react";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import "leaflet/dist/leaflet.css";
 import ToasterProvider from "@/components/ToasterProvider";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export const metadata: Metadata = {
   title: "Caufi",
@@ -48,26 +47,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="scrollbar-thin">
-      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
-        <head />
-        <body
-          className={`${loveYaLikeASister.variable} ${poppinsFont.variable} ${interFont.variable} ${kalamFont.variable} antialiased h-full`}
-        >
-          <ReactQueryProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <Lenis root>
-                <ToasterProvider />
-                {children}
-              </Lenis>
-            </ThemeProvider>
-          </ReactQueryProvider>
-        </body>
-      </GoogleOAuthProvider>
+      <head />
+      <body
+        className={`${loveYaLikeASister.variable} ${poppinsFont.variable} ${interFont.variable} ${kalamFont.variable} antialiased h-full`}
+      >
+        <ReactQueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Lenis root>
+              <ToasterProvider />
+              {children}
+            </Lenis>
+          </ThemeProvider>
+        </ReactQueryProvider>
+      </body>
     </html>
   );
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("access_token");
 
   if (!token) {
@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
     url.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
-  console.log("Middleware running:", request.nextUrl.pathname);
+  console.log("Proxy running:", request.nextUrl.pathname);
   return NextResponse.next();
 }
 
