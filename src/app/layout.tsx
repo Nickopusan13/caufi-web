@@ -48,7 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="scrollbar-thin">
-      <GoogleOAuthProvider clientId={process.env.NEXT_GOOGLE_CLIENT_ID!}>
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
         <head />
         <body
           className={`${loveYaLikeASister.variable} ${poppinsFont.variable} ${interFont.variable} ${kalamFont.variable} antialiased h-full`}
