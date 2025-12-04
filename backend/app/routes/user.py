@@ -33,7 +33,12 @@ from app.schemas.user import (
     AutocompleteResponse,
 )
 from app.security.hash import verify_password
-from app.security.jwt import create_jwt_token, JWT_TOKEN_EXPIRE_DAYS, get_current_user
+from app.security.jwt import (
+    create_jwt_token,
+    JWT_TOKEN_EXPIRE_DAYS,
+    get_current_user,
+    get_admin_user,
+)
 from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
 from authlib.integrations.starlette_client import OAuthError
 from app.security.reset_password import (
@@ -170,6 +175,7 @@ async def api_user_logout(response: Response):
     "/get/all", response_model=List[UserProfileOut], status_code=status.HTTP_200_OK
 )
 async def api_get_all_user(
+    admin: User = Depends(get_admin_user),
     f: UserListFilters = Depends(),
     db: AsyncSession = Depends(get_db),
     page: int = Query(1, ge=1),
@@ -188,7 +194,11 @@ async def api_get_all_user(
 @router.get(
     "/get/{user_id}", response_model=UserProfile, status_code=status.HTTP_200_OK
 )
-async def api_get_user_profile(user_id: int, db: AsyncSession = Depends(get_db)):
+async def api_get_user_profile(
+    user_id: int,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     user = await get_user(db=db, user_id=user_id)
     if not user:
         raise HTTPException(
@@ -201,7 +211,11 @@ async def api_get_user_profile(user_id: int, db: AsyncSession = Depends(get_db))
     "/delete/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def api_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
+async def api_delete_user(
+    user_id: int,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     user = await get_user(db=db, user_id=user_id)
     if not user:
         raise HTTPException(
@@ -216,7 +230,11 @@ async def api_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
     "/delete/all",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def api_delete_all_user(data: UserDeleteMany, db: AsyncSession = Depends(get_db)):
+async def api_delete_all_user(
+    data: UserDeleteMany,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     if not data.user_ids:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
@@ -424,6 +442,7 @@ async def geocode(place_id: str):
 @router.get("/places/autocomplete", response_model=AutocompleteResponse)
 async def places_autocomplete(input: str = Query(..., min_length=1)):
     return await autocomplete_place(input)
+
 
 @router.get("/reverse-geocode")
 async def get_address_from_coords(lat: float, lng: float):

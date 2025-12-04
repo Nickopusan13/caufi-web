@@ -7,7 +7,7 @@ from app.schemas.user import (
     AutocompleteResult,
     StructuredFormatting,
     ReverseGeocodingResponse,
-    ReverseGeocodingResult
+    ReverseGeocodingResult,
 )
 from typing import Dict, Any, Optional
 import os
@@ -99,6 +99,7 @@ async def autocomplete_place(input: str) -> AutocompleteResponse:
         )
     return AutocompleteResponse(predictions=predictions)
 
+
 async def reverse_geocoding(lat: float, lng: float) -> ReverseGeocodingResponse:
     url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {
@@ -114,12 +115,12 @@ async def reverse_geocoding(lat: float, lng: float) -> ReverseGeocodingResponse:
     except requests.RequestException as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Google Geocoding API error: {e}"
+            detail=f"Google Geocoding API error: {e}",
         )
     if data.get("status") != "OK":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Geocoding failed: {data.get('status')} - {data.get('error_message', '')}"
+            detail=f"Geocoding failed: {data.get('status')} - {data.get('error_message', '')}",
         )
     results = []
     for result in data.get("results", []):
@@ -164,7 +165,4 @@ async def reverse_geocoding(lat: float, lng: float) -> ReverseGeocodingResponse:
 
         results.append(structured)
 
-    return ReverseGeocodingResponse(
-        results=results,
-        status=data["status"]
-    )
+    return ReverseGeocodingResponse(results=results, status=data["status"])

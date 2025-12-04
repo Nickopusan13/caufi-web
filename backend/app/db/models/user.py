@@ -30,6 +30,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     birthday: Mapped[Optional[str]] = mapped_column(Date, nullable=True)

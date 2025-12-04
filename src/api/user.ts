@@ -58,6 +58,7 @@ export interface UserProfileOut {
   gender?: string;
   addresses: UserAddressOut[];
   createdAt: string;
+  isAdmin: boolean;
   isActive: boolean;
 }
 

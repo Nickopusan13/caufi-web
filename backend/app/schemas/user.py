@@ -64,6 +64,7 @@ class UserProfileUpdate(BaseConfigModel):
 class UserProfileOut(UserProfile):
     id: int = Field(gt=0)
     created_at: datetime
+    is_admin: bool
     is_active: bool
     addresses: list[UserAddressOut] = Field(default_factory=list)
 
@@ -100,7 +101,7 @@ class PlaceDetails(BaseConfigModel):
     formatted_address: str
     street_number: Optional[str] = None
     route: Optional[str] = None
-    street: Optional[str] = None 
+    street: Optional[str] = None
     neighborhood: Optional[str] = None
     city: Optional[str] = None
     district: Optional[str] = None

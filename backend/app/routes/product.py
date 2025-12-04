@@ -14,6 +14,8 @@ from app.schemas.product import (
     ProductImageOut,
     ProductUpdate,
 )
+from app.db.models.user import User
+from app.security.jwt import get_admin_user
 from app.db.session import AsyncSession
 from app.db.dependencies import get_db
 from app.db.models import Product
@@ -36,7 +38,11 @@ router = APIRouter(prefix="/api/product")
     response_model=ProductDataOut,
     status_code=status.HTTP_201_CREATED,
 )
-async def api_product_add(data: ProductData, db: AsyncSession = Depends(get_db)):
+async def api_product_add(
+    data: ProductData,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     product_dict = data.model_dump(exclude={"material", "sizes", "images", "colors"})
     product_dict["slug"] = await get_slug(product_dict["name"], db=db)
     product_dict["sku"] = get_sku()
@@ -59,6 +65,7 @@ async def api_product_add(data: ProductData, db: AsyncSession = Depends(get_db))
 async def add_images_to_product(
     product_id: int,
     files: List[UploadFile] = File(..., description="Select product images"),
+    admin: User = Depends(get_admin_user),
     db: AsyncSession = Depends(get_db),
 ):
     product = await db.get(Product, product_id)
@@ -90,7 +97,11 @@ async def add_images_to_product(
 
 
 @router.delete("/images/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_image(image_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_image(
+    image_id: int,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     result = await db.execute(select(ProductImage).where(ProductImage.id == image_id))
     image = result.scalar_one_or_none()
     if not image:
@@ -176,7 +187,9 @@ async def api_product_detail(identifier: str, db: AsyncSession = Depends(get_db)
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def api_delete_all_product(
-    data: ProductDeleteMany, db: AsyncSession = Depends(get_db)
+    data: ProductDeleteMany,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
 ):
     if not data.product_ids:
         raise HTTPException(
@@ -209,7 +222,11 @@ async def api_delete_all_product(
     "/delete/{product_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def api_delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
+async def api_delete_product(
+    product_id: int,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     product = await get_product(db=db, product_id=product_id)
     if not product:
         raise HTTPException(
@@ -235,7 +252,10 @@ async def api_delete_product(product_id: int, db: AsyncSession = Depends(get_db)
     response_model=ProductDataOut,
 )
 async def api_update_product(
-    product_id: int, data: ProductUpdate, db: AsyncSession = Depends(get_db)
+    product_id: int,
+    data: ProductUpdate,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
 ):
     product = await get_product(db=db, product_id=product_id)
     if not product:
