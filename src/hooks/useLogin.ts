@@ -28,14 +28,15 @@ import type {
 } from "@/api/user";
 import { useRouter } from "next/navigation";
 
-export function useRegister() {
+export function useRegister(onToggle: () => void) {
   return useMutation<UserProfileOut, Error, UserRegister>({
     mutationFn: fetchUserRegister,
     onError: (error: Error) => {
       toast.error(error.message || "Registration failed");
     },
-    onSuccess: (data: UserProfileOut) => {
-      toast.success(`Welcome, ${data.name.split(" ")[0]}!`);
+    onSuccess: () => {
+      toast.success("Registration Success, Please Login");
+      if (onToggle) onToggle();
     },
   });
 }

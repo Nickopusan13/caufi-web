@@ -53,7 +53,7 @@ export default function MyProfile() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              {["Edit Profile", "Edit Address"].map((label) => (
+              {["Edit Profile", "Add Address"].map((label) => (
                 <motion.button
                   key={label}
                   whileHover={{ scale: 1.06 }}
@@ -123,7 +123,7 @@ export default function MyProfile() {
           {edit === "Edit Profile" && (
             <EditProfile onClose={() => setEdit(null)} />
           )}
-          {edit === "Edit Address" && (
+          {edit === "Add Address" && (
             <EditAddress onClose={() => setEdit(null)} />
           )}
         </div>

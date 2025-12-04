@@ -20,13 +20,18 @@ import { FilterButton } from "../OrderEdit";
 import Link from "next/link";
 import Image from "next/image";
 import ToasterProvider from "@/components/ToasterProvider";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { LuLanguages } from "react-icons/lu";
 import { IoLogOutSharp } from "react-icons/io5";
 import { OpenSettings, SettingsItem } from "../SettingsEdit";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ViewDetailsAddress } from "../components/ViewDetailsAddress";
+import { UserAddressOut } from "@/api/user";
 
 export const ProfileInfo = () => {
   const { data: user, isLoading, error } = useGetCurrentUser();
@@ -144,29 +149,29 @@ export const ProfileInfo = () => {
 
 export const AddressInfo = () => {
   const { data: user, isLoading, error } = useGetCurrentUser();
+  const [selectedAddress, setSelectedAddress] = useState<UserAddressOut | null>(
+    null
+  );
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-center lg:text-start">
-          Shipping Address
-        </h1>
-        <div className="flex flex-col gap-4">
+      <div className="space-y-8">
+        <Skeleton className="h-10 w-64 mx-auto lg:mx-0" />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(3)].map((_, i) => (
-            <div
+            <motion.div
               key={i}
-              className="space-y-3 p-5 rounded-2xl bg-white dark:bg-zinc-900/70 border border-zinc-200/70 dark:border-zinc-800/70"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.15 }}
             >
-              <Skeleton className="h-6 w-32 mb-3" />
-              {[...Array(5)].map((_, j) => (
-                <div key={j} className="flex items-center gap-4">
-                  <Skeleton className="h-12 w-12 rounded-xl" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-5 w-56" />
-                  </div>
-                </div>
-              ))}
-            </div>
+              <Card className="p-6 space-y-4">
+                <Skeleton className="h-6 w-24" />
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-20 w-full rounded-lg" />
+                <Skeleton className="h-10 w-full rounded-lg" />
+              </Card>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -174,77 +179,158 @@ export const AddressInfo = () => {
   }
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-5">
-        <BiHome className="w-16 h-16 text-zinc-400" />
-        <p className="text-zinc-500 dark:text-zinc-400 text-lg">
-          Failed to load address
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex flex-col items-center justify-center py-20 text-center"
+      >
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
         >
-          Retry
-        </button>
-      </div>
+          <BiHome className="w-20 h-20 text-zinc-300 dark:text-zinc-700" />
+        </motion.div>
+        <p className="text-xl font-medium text-zinc-600 dark:text-zinc-400 mt-6">
+          Oops! Failed to load addresses
+        </p>
+        <Button
+          onClick={() => window.location.reload()}
+          className="mt-6 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+        >
+          Try Again
+        </Button>
+      </motion.div>
     );
   }
   if (!user?.addresses || user.addresses.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <BiHome className="w-20 h-20 text-zinc-300 dark:text-zinc-700 mx-auto mb-4" />
-        <p className="text-xl font-medium text-zinc-600 dark:text-zinc-400">
-          No address added yet
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="flex flex-col items-center justify-center py-24 text-center px-6"
+      >
+        <motion.div
+          animate={{ rotate: [0, 10, -10, 0], y: [0, -8, 0] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+        >
+          <BiHome className="w-24 h-24 text-zinc-200 dark:text-zinc-800" />
+        </motion.div>
+        <h3 className="text-2xl font-bold mt-8 text-zinc-800 dark:text-zinc-200">
+          No address yet
+        </h3>
+        <p className="text-zinc-500 dark:text-zinc-400 mt-3 max-w-sm">
+          Add your first shipping address to make checkout faster and easier
         </p>
-        <p className="text-sm text-zinc-500 mt-2">
-          Add your first shipping address to continue shopping
-        </p>
-      </div>
+      </motion.div>
     );
   }
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
-      <h1 className="text-2xl font-bold text-center lg:text-start">
-        Shipping Address{user.addresses.length > 1 ? "es" : ""}
-      </h1>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {user.addresses.map((addr) => (
-          <div
-            key={addr.id}
-            className="p-5 rounded-xl bg-white/70 dark:bg-zinc-900/70 
-                   border border-zinc-200/60 dark:border-zinc-800 
-                   shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            <div className="flex justify-between items-start">
-              <span className="text-xs px-2 py-1 rounded-md bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
-                {addr.addressLabel || "Address"}
-              </span>
-              {addr.isSelected && (
-                <span className="text-xs text-green-600 dark:text-green-400 font-medium">
-                  Default
-                </span>
-              )}
-            </div>
-
-            <div className="mt-3">
-              <h3 className="font-semibold text-lg">{addr.recipientName}</h3>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                {addr.phoneNumber}
-              </p>
-
-              <p className="text-sm mt-2 text-zinc-700 dark:text-zinc-300 line-clamp-2">
-                {addr.fullAddress}
-              </p>
-            </div>
-            <button
-              className="mt-4 w-full py-2 text-sm font-medium rounded-lg 
-                     bg-zinc-100 dark:bg-zinc-800 
-                     hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"
+    <div className="space-y-8">
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-3xl font-bold text-center lg:text-start bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+      >
+        My Shipping Address{user.addresses.length > 1 ? "es" : ""}
+      </motion.h1>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: {
+            transition: {
+              staggerChildren: 0.12,
+            },
+          },
+        }}
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        <AnimatePresence>
+          {user.addresses.map((addr, index) => (
+            <motion.div
+              key={addr.id}
+              layout
+              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              whileHover={{
+                y: -12,
+                transition: { duration: 0.3 },
+              }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 100,
+              }}
+              className="group"
             >
-              View Details
-            </button>
-          </div>
-        ))}
-      </div>
+              <Card
+                className="relative overflow-hidden bg-white/80 dark:bg-zinc-900/90 
+                         backdrop-blur-xl border border-white/20 dark:border-zinc-800/50
+                         shadow-lg hover:shadow-2xl hover:shadow-purple-500/10
+                         transition-all duration-500"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  layoutId={`glow-${addr.id}`}
+                />
+
+                <div className="relative p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <Badge
+                      variant="secondary"
+                      className="bg-linear-to-r from-indigo-500 to-purple-500 text-white border-0"
+                    >
+                      {addr.addressLabel || "Home"}
+                    </Badge>
+                    {addr.isSelected && (
+                      <motion.div
+                        layoutId="default-badge"
+                        className="px-3 py-1 rounded-full bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold flex items-center gap-1"
+                      >
+                        <motion.div
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ repeat: Infinity, duration: 2 }}
+                          className="w-2 h-2 bg-green-500 rounded-full"
+                        />
+                        Default
+                      </motion.div>
+                    )}
+                  </div>
+                  <h3 className="font-bold text-lg text-zinc-900 dark:text-zinc-100">
+                    {addr.recipientName}
+                  </h3>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+                    {addr.phoneNumber}
+                  </p>
+
+                  <p className="text-sm text-zinc-700 dark:text-zinc-300 mt-4 leading-relaxed line-clamp-3">
+                    {addr.fullAddress}
+                  </p>
+                  <Button
+                    onClick={() => setSelectedAddress(addr)}
+                    variant="outline"
+                    className="mt-5 w-full group-hover:border-purple-500 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-all"
+                  >
+                    View Details
+                  </Button>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+        {selectedAddress && (
+          <ViewDetailsAddress
+            address={selectedAddress}
+            open={true}
+            onOpenChange={(open) => {
+              if (!open) setSelectedAddress(null);
+            }}
+          />
+        )}
+      </motion.div>
     </div>
   );
 };
@@ -366,9 +452,7 @@ export const OrderInfo = () => {
             <div className="px-6 py-4 bg-white border-t border-gray-100">
               <p className="text-sm text-gray-600">
                 Delivered to:{" "}
-                <span className="font-medium">
-                  {order.address.fullAddress}, {order.address.city}
-                </span>
+                <span className="font-medium">{order.address.fullAddress}</span>
               </p>
             </div>
           </div>

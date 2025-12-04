@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { motion } from "framer-motion";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,18 +28,14 @@ type Gender = "male" | "female" | "other";
 export const EditProfile = ({ onClose }: { onClose: () => void }) => {
   const { data: user, isPending: loadingUser } = useGetCurrentUser();
   const mutation = useUpdateUserProfile();
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [gender, setGender] = useState<Gender>("other");
-  const [birthday, setBirthday] = useState<Date | undefined>(undefined);
-  useEffect(() => {
-    if (user) {
-      setName(user.name ?? "");
-      setPhoneNumber(user.phoneNumber ?? "");
-      setGender((user.gender as Gender) ?? "other");
-      setBirthday(user.birthday ? new Date(user.birthday) : undefined);
-    }
-  }, [user]);
+  const [name, setName] = useState(() => user?.name ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(() => user?.phoneNumber ?? "");
+  const [gender, setGender] = useState(
+    () => (user?.gender as Gender) ?? "other"
+  );
+  const [birthday, setBirthday] = useState<Date | undefined>(() =>
+    user?.birthday ? new Date(user.birthday) : undefined
+  );
   const isDirty =
     name !== (user?.name ?? "") ||
     phoneNumber !== (user?.phoneNumber ?? "") ||
@@ -65,7 +60,9 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
         birthday: birthday ? birthday.toISOString().split("T")[0] : undefined,
       },
       {
-        onSuccess: () => onClose(),
+        onSuccess: () => {
+          onClose();
+        },
       }
     );
   };

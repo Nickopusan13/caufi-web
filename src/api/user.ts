@@ -24,7 +24,6 @@ export interface UserAddressOut {
   recipientName: string;
   fullAddress: string;
   addressLabel: string;
-  city: string;
   phoneNumber: string;
   notesCourier: string;
   isSelected: boolean;
@@ -34,7 +33,6 @@ export interface UserAddress {
   recipientName: string;
   fullAddress: string;
   addressLabel: string;
-  city: string;
   phoneNumber: string;
   notesCourier?: string;
   isSelected: boolean;
@@ -44,7 +42,6 @@ export interface UserAddressUpdate {
   recipientName?: string;
   fullAddress?: string;
   addressLabel?: string;
-  city?: string;
   phoneNumber?: string;
   notesCourier?: string;
   isSelected?: boolean;

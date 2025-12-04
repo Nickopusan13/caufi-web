@@ -126,3 +126,8 @@
 body {
   font-family: var(--font-poppins);
 }
+
+#react-hot-toast {
+  @apply z-999999;
+}
+

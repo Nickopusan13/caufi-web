@@ -5,6 +5,7 @@ import "./globals.css";
 import { Lenis } from "lenis/react";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import "leaflet/dist/leaflet.css";
+import ToasterProvider from "@/components/ToasterProvider";
 
 export const metadata: Metadata = {
   title: "Caufi",
@@ -57,7 +58,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Lenis root>{children}</Lenis>
+            <Lenis root>
+              <ToasterProvider />
+              {children}
+            </Lenis>
           </ThemeProvider>
         </ReactQueryProvider>
       </body>

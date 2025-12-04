@@ -12,10 +12,12 @@ export default function InputSearch({
   address: initialAddress = "",
   onSelect,
   onSelectLocation,
+  onClose,
 }: {
   address?: string;
   onSelect: (lat: number, lng: number) => void;
   onSelectLocation: (address: string) => void;
+  onClose: () => void;
 }) {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 400);
@@ -51,6 +53,7 @@ export default function InputSearch({
   const handleConfirm = () => {
     if (displayAddress) {
       onSelectLocation(displayAddress);
+      onClose();
     }
   };
   return (

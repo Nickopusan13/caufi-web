@@ -13,6 +13,7 @@ import {
   RecenterMap,
 } from "./MapComponents";
 import InputSearch from "./InputSearch";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 export const OpenMap = ({
   open,
@@ -42,9 +43,9 @@ export const OpenMap = ({
         <div className="absolute top-0 left-0 right-0 z-50 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center justify-between px-5 py-4">
             <div>
-              <h3 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <DialogTitle className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Set Delivery Location
-              </h3>
+              </DialogTitle>
               <p className="text-sm text-muted-foreground mt-1">
                 Search or drag the pin to your exact address
               </p>
@@ -66,6 +67,7 @@ export const OpenMap = ({
                   setFromSearch(true);
                   setPosition([lat, lng]);
                 }}
+                onClose={onClose}
                 onSelectLocation={(addr) => {
                   setAddress(addr);
                   onSelectLocation(addr);

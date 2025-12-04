@@ -51,7 +51,7 @@ from app.utils.email_service import send_mail
 from app.utils.geocode import get_place_details, autocomplete_place
 from app.security.oauth import oauth
 from app.utils.generate_username import generate_username
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, func, update
 from dotenv import load_dotenv
 import logging
 import secrets
@@ -246,14 +246,51 @@ async def api_add_address(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    addr = UserAddress(user_id=current_user.id, **data.model_dump())
+    count = await db.scalar(
+        select(func.count(UserAddress.id)).where(UserAddress.user_id == current_user.id)
+    )
+    if count >= 3:
+        raise HTTPException(400, "Maximum 3 addresses allowed.")
+    await db.execute(
+        update(UserAddress)
+        .where(UserAddress.user_id == current_user.id, UserAddress.is_selected == True)
+        .values(is_selected=False)
+    )
+    addr_data = data.model_dump()
+    addr_data["is_selected"] = True
+    addr = UserAddress(user_id=current_user.id, **addr_data)
     db.add(addr)
     await db.commit()
     await db.refresh(addr)
     return addr
 
 
-@router.patch("/me/address{address_id}", response_model=UserAddressOut)
+@router.delete("/me/address/{address_id}", status_code=204)
+async def api_delete_address(
+    address_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    addr = await db.get(UserAddress, address_id)
+    if not addr or addr.user_id != current_user.id:
+        raise HTTPException(404, "Address not found")
+    was_selected = addr.is_selected
+    await db.delete(addr)
+    await db.commit()
+    if was_selected:
+        another_addr = await db.scalar(
+            select(UserAddress)
+            .where(UserAddress.user_id == current_user.id)
+            .order_by(UserAddress.id.desc())
+        )
+        if another_addr:
+            another_addr.is_selected = True
+            db.add(another_addr)
+            await db.commit()
+    return None
+
+
+@router.patch("/me/address/{address_id}", response_model=UserAddressOut)
 async def api_update_address(
     address_id: int,
     data: UserAddressUpdate,
@@ -264,6 +301,16 @@ async def api_update_address(
     if not addr or addr.user_id != current_user.id:
         raise HTTPException(404, "Address not found")
     update_data = data.model_dump(exclude_unset=True)
+    if update_data.get("is_selected") is True:
+        await db.execute(
+            update(UserAddress)
+            .where(
+                UserAddress.user_id == current_user.id,
+                UserAddress.id != address_id,
+                UserAddress.is_selected == True,
+            )
+            .values(is_selected=False)
+        )
     for field, value in update_data.items():
         setattr(addr, field, value)
     await db.commit()

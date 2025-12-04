@@ -13,7 +13,7 @@ export default function Register({ onToggle }: { onToggle: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const mutation = useRegister();
+  const mutation = useRegister(onToggle);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

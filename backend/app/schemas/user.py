@@ -20,7 +20,6 @@ class UserAddressCreate(BaseConfigModel):
     recipient_name: str = Field(min_length=1, max_length=255)
     full_address: str = Field(min_length=1, max_length=255)
     address_label: str = Field(min_length=1, max_length=255)
-    city: str = Field(min_length=1, max_length=255)
     phone_number: str = Field(min_length=1, max_length=20)
     notes_courier: Optional[str] = Field(default=None)
     is_selected: bool = Field(default=False)
@@ -30,7 +29,6 @@ class UserAddressUpdate(BaseConfigModel):
     recipient_name: Optional[str] = Field(default=None, min_length=1, max_length=255)
     full_address: Optional[str] = Field(default=None, min_length=1, max_length=255)
     address_label: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    city: Optional[str] = Field(default=None, min_length=1, max_length=255)
     phone_number: Optional[str] = Field(default=None, min_length=1, max_length=20)
     notes_courier: Optional[str] = Field(default=None, max_length=255)
     is_selected: Optional[bool] = Field(default=False)
@@ -96,10 +94,20 @@ class UserListFilters(BaseConfigModel):
 
 
 class PlaceDetails(BaseConfigModel):
-    lat: float = Field(..., description="Latitude of the selected place")
-    lng: float = Field(..., description="Longitude of the selected place")
-    formatted_address: str = Field(..., min_length=1, max_length=255)
-    place_id: str = Field(..., min_length=1, max_length=255)
+    lat: float
+    lng: float
+    place_id: str
+    formatted_address: str  # Universal structured fields (work in 200+ countries)
+    street_number: Optional[str] = None
+    route: Optional[str] = None
+    street: Optional[str] = None  # street_number + route
+    neighborhood: Optional[str] = None
+    city: Optional[str] = None  # locality or postal_town
+    district: Optional[str] = None  # administrative_area_level_2 or 3
+    state: Optional[str] = None  # administrative_area_level_1
+    country_code: Optional[str] = None  # ISO 2-letter code
+    postal_code: Optional[str] = None
+    best_display_address: str
 
 
 class StructuredFormatting(BaseConfigModel):
