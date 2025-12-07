@@ -2,10 +2,9 @@ from app.security.hash import hash_token, hash_password
 from app.db.session import AsyncSession
 from app.crud.user import get_user
 from fastapi import HTTPException, status
-from app.db.models.user import UserPasswordResetToken
+from app.db.models.user import UserPasswordResetToken, User
 from sqlalchemy import delete, insert, select, update
 from datetime import datetime, timedelta, timezone
-from app.db.models.user import User
 
 
 async def save_token_forgot_password(

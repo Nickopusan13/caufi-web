@@ -44,8 +44,6 @@ async def upload_product_images(
         uploaded.append(
             {
                 "image_url": public_url,
-                "image_size": len(contents),
-                "image_name": original_name,
                 "filename": final_filename,
             }
         )

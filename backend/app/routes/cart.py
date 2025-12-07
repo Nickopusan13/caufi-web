@@ -39,8 +39,6 @@ async def api_cart_add(
         select(CartItem.quantity).where(
             CartItem.cart_id == cart.id,
             CartItem.product_id == data.product_id,
-            CartItem.size == data.size,
-            CartItem.color == data.color,
         )
     )
     current_qty = current_result.scalar_one_or_none() or 0
@@ -55,9 +53,7 @@ async def api_cart_add(
         select(CartItem)
         .options(
             selectinload(CartItem.product).selectinload(Product.images),
-            selectinload(CartItem.product).selectinload(Product.colors),
-            selectinload(CartItem.product).selectinload(Product.sizes),
-            selectinload(CartItem.product).selectinload(Product.material),
+            selectinload(CartItem.product).selectinload(Product.materials),
         )
         .where(CartItem.id == item_id)
     )
@@ -78,9 +74,7 @@ async def api_cart_all(
         select(CartItem)
         .options(
             selectinload(CartItem.product).selectinload(Product.images),
-            selectinload(CartItem.product).selectinload(Product.colors),
-            selectinload(CartItem.product).selectinload(Product.sizes),
-            selectinload(CartItem.product).selectinload(Product.material),
+            selectinload(CartItem.product).selectinload(Product.materials),
         )
         .where(CartItem.cart_id == cart.id)
     )
@@ -109,9 +103,7 @@ async def api_delete_cart(
         select(CartItem)
         .options(
             selectinload(CartItem.product).selectinload(Product.images),
-            selectinload(CartItem.product).selectinload(Product.colors),
-            selectinload(CartItem.product).selectinload(Product.sizes),
-            selectinload(CartItem.product).selectinload(Product.material),
+            selectinload(CartItem.product).selectinload(Product.materials),
         )
         .where(CartItem.id == item_id, CartItem.cart_id == cart.id)
     )
@@ -175,9 +167,7 @@ async def api_update_cart_item(
         select(CartItem)
         .options(
             selectinload(CartItem.product).selectinload(Product.images),
-            selectinload(CartItem.product).selectinload(Product.colors),
-            selectinload(CartItem.product).selectinload(Product.sizes),
-            selectinload(CartItem.product).selectinload(Product.material),
+            selectinload(CartItem.product).selectinload(Product.materials),
         )
         .where(CartItem.cart_id == cart.id)
         .order_by(CartItem.id)

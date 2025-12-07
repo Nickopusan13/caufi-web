@@ -1,7 +1,7 @@
 from pydantic import Field
 from app.schemas.to_camel import BaseConfigModel
 from app.schemas.user import UserAddressOut, UserProfileOut
-from app.db.models.user import OrderStatus
+from app.db.models.order import OrderStatus
 from datetime import datetime
 from typing import Optional, List
 from decimal import Decimal

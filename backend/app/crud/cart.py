@@ -14,8 +14,6 @@ async def upsert_cart_item(
             product_id=data.product_id,
             quantity=data.quantity,
             price=product.regular_price,
-            size=data.size,
-            color=data.color,
         )
         .on_conflict_do_update(
             constraint="uix_cart_product_variant",

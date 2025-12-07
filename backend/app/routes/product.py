@@ -1,14 +1,13 @@
 from app.db.models.product import (
-    ProductColor,
     ProductImage,
     ProductMaterial,
-    ProductSize,
+    ProductVariant
 )
 from typing import List
 from fastapi import APIRouter, HTTPException, status, Depends, Query, UploadFile, File
 from app.schemas.product import (
     ProductDataOut,
-    ProductData,
+    ProductDataBase,
     ProductDeleteMany,
     ProductListFilters,
     ProductImageOut,
@@ -39,17 +38,20 @@ router = APIRouter(prefix="/api/product")
     status_code=status.HTTP_201_CREATED,
 )
 async def api_product_add(
-    data: ProductData,
+    data: ProductDataBase,
     admin: User = Depends(get_admin_user),
     db: AsyncSession = Depends(get_db),
 ):
-    product_dict = data.model_dump(exclude={"material", "sizes", "images", "colors"})
+    product_dict = data.model_dump(exclude={"materials","images", "variants"})
     product_dict["slug"] = await get_slug(product_dict["name"], db=db)
-    product_dict["sku"] = get_sku()
     product = Product(**product_dict)
-    product.colors = [ProductColor(**c.model_dump()) for c in data.colors]
-    product.sizes = [ProductSize(**s.model_dump()) for s in data.sizes]
-    product.material = [ProductMaterial(**m.model_dump()) for m in data.material]
+    product.variants = []
+    for v in (data.variants or []):
+        variant_dict = v.model_dump()
+        variant_dict["sku"] = get_sku()
+        variant = ProductVariant(**variant_dict)
+        product.variants.append(variant)
+    product.materials = [ProductMaterial(**m.model_dump()) for m in data.materials]
     db.add(product)
     await db.commit()
     await db.refresh(product)
@@ -84,8 +86,6 @@ async def add_images_to_product(
         ProductImage(
             product_id=product_id,
             image_url=img["image_url"],
-            image_size=img["image_size"],
-            image_name=img["image_name"],
         )
         for img in uploaded_images
     ]
@@ -261,24 +261,16 @@ async def api_update_product(
     if not product:
         raise HTTPException(404, "Product not found.")
     payload = data.model_dump(
-        exclude_unset=True, exclude={"colors", "sizes", "material", "images"}
+        exclude_unset=True, exclude={"materials", "images"}
     )
     if "name" in payload and payload["name"] != product.name:
         product.slug = await get_slug(payload["name"], db=db)
     for field, value in payload.items():
         setattr(product, field, value)
-    if data.colors is not None:
-        product.colors.clear()
-        for c in data.colors:
-            product.colors.append(ProductColor(**c.model_dump()))
-    if data.sizes is not None:
-        product.sizes.clear()
-        for s in data.sizes:
-            product.sizes.append(ProductSize(**s.model_dump()))
-    if data.material is not None:
-        product.material.clear()
-        for m in data.material:
-            product.material.append(ProductMaterial(**m.model_dump()))
+    if data.materials is not None:
+        product.materials.clear()
+        for m in data.materials:
+            product.materials.append(ProductMaterial(**m.model_dump()))
     if data.images is not None:
         product.images.clear()
         for i in data.images:

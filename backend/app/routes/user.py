@@ -113,10 +113,10 @@ async def api_user_login(
         or not verify_password(data.password, user.password)
     ):
         response.delete_cookie(
-                    key="access_token",
-                    path="/",
-                    domain=".nickopusan.dev",
-                )
+            key="access_token",
+            path="/",
+            domain=".nickopusan.dev",
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password.",
@@ -127,12 +127,12 @@ async def api_user_login(
         key="access_token",
         value=jwt_token,
         httponly=True,
-        secure=True,
-        samesite="none",
+        secure=False,
+        samesite="lax",
         max_age=expire_duration,
         path="/",
-        partitioned=True,
-        domain=".nickopusan.dev",
+        # partitioned=True,
+        # domain="/",
     )
     return UserToken(
         message="Login successful",

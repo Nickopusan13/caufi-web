@@ -11,10 +11,8 @@ async def get_product(
     product_slug: Optional[int] = None,
 ) -> Optional[Product]:
     query = select(Product).options(
-        selectinload(Product.material),
-        selectinload(Product.sizes),
+        selectinload(Product.materials),
         selectinload(Product.images),
-        selectinload(Product.colors),
     )
     if product_id is not None:
         query = query.where(Product.id == product_id)

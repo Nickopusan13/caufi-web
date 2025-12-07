@@ -6,7 +6,7 @@ from app.db.session import AsyncSession
 from app.db.dependencies import get_db
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select, update
-from app.db.models.user import Order, OrderStatus, OrderItem
+from app.db.models.order import Order, OrderStatus, OrderItem
 from app.schemas.order import OrderOut, OrderCreate
 from app.db.models.product import Product
 from decimal import Decimal
