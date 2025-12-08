@@ -1,14 +1,7 @@
 from datetime import datetime
 from app.db.base import Base
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import (
-    Integer,
-    ForeignKey,
-    Numeric,
-    DateTime,
-    func,
-    Enum
-)
+from sqlalchemy import Integer, ForeignKey, Numeric, DateTime, func, Enum
 from enum import StrEnum
 from decimal import Decimal
 from app.db.models.user import User, UserAddress
@@ -50,6 +43,7 @@ class Order(Base):
         cascade="all, delete-orphan",
         lazy="selectin",
     )
+
 
 class OrderItem(Base):
     __tablename__ = "order_items"

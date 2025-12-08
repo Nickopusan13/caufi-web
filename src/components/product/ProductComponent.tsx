@@ -131,7 +131,7 @@ export const ColorDropDown = ({
   selectedColor,
   onSelectColor,
 }: ColorDropDownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -177,20 +177,13 @@ export const ColorDropDown = ({
                 relative w-14 h-14 rounded-2xl border-4 shadow-lg transition-all
                 ${
                   isSelected
-                    ? "border-black dark:border-white scale-110 ring-4 ring-purple-400/30"
-                    : "border-gray-300 dark:border-zinc-600 hover:border-gray-400"
+                    ? "dark:border-white scale-110 ring-4 ring-purple-400/30"
+                    : "dark:border-zinc-600 hover:border-gray-400"
                 }
               `}
               style={{ backgroundColor: color.hex || "#e5e7eb" }}
               aria-label={`Select ${color.name}`}
-            >
-              {isSelected && (
-                <motion.div
-                  layoutId="selectedColorIndicator"
-                  className="absolute inset-0 rounded-2xl border-4 bg-white/30 dark:bg-black/30"
-                />
-              )}
-            </motion.button>
+            />
           );
         })}
       </div>

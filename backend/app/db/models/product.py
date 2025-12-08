@@ -65,7 +65,9 @@ class ProductMaterial(Base):
     __tablename__ = "product_material"
     id: Mapped[int] = mapped_column(primary_key=True)
     material: Mapped[str] = mapped_column(String(100), nullable=False)
-    product_id: Mapped[int] = mapped_column(Integer, ForeignKey("product.id", ondelete="CASCADE"))
+    product_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("product.id", ondelete="CASCADE")
+    )
     product: Mapped["Product"] = relationship(
         "Product", back_populates="materials", lazy="selectin"
     )
@@ -113,6 +115,7 @@ class ProductImage(Base):
         "Product", back_populates="images", lazy="selectin"
     )
 
+
 class Cart(Base):
     __tablename__ = "cart"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -136,7 +139,9 @@ class Cart(Base):
 class CartItem(Base):
     __tablename__ = "cart_item"
     id: Mapped[int] = mapped_column(primary_key=True)
-    cart_id: Mapped[int] = mapped_column(Integer, ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
+    cart_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("cart.id", ondelete="CASCADE"), nullable=False
+    )
     variant_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("product_variant.id", ondelete="CASCADE"), nullable=False
     )
@@ -148,7 +153,5 @@ class CartItem(Base):
         "Cart", back_populates="cart_items", lazy="selectin"
     )
     __table_args__ = (
-        UniqueConstraint(
-            "cart_id", "variant_id", name="uix_cart_product_variant"
-        ),
+        UniqueConstraint("cart_id", "variant_id", name="uix_cart_product_variant"),
     )

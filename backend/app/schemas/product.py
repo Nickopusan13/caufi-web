@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import Field
 from decimal import Decimal
 
-    
+
 class ProductImageOut(BaseConfigModel):
     id: int = Field(default=1)
     image_url: str = Field(min_length=1, max_length=255)
@@ -14,6 +14,7 @@ class ProductImageOut(BaseConfigModel):
 class ProductMaterialOut(BaseConfigModel):
     material: str = Field(min_length=1, max_length=100)
 
+
 class ProductVariantDataBase(BaseConfigModel):
     regular_price: Decimal = Field(gt=0)
     discount_price: Decimal | None = Field(default=None, ge=0)
@@ -22,12 +23,13 @@ class ProductVariantDataBase(BaseConfigModel):
     color: Optional[str] = Field(min_length=1, max_length=255)
     hex: Optional[str] = Field(min_length=1, max_length=255)
 
+
 class ProductVariantDataOut(ProductVariantDataBase):
     id: int = Field(gt=0)
-    slug: str = Field(min_length=1, max_length=255)
     sku: str = Field(min_length=1, max_length=255)
     created_at: datetime
     updated_at: datetime
+
 
 class ProductVariantUpdate(BaseConfigModel):
     regular_price: Optional[Decimal] = Field(default=None, gt=0)
@@ -36,7 +38,8 @@ class ProductVariantUpdate(BaseConfigModel):
     stock: Optional[int] = Field(default=None)
     color: Optional[str] = Field(default=None, min_length=1, max_length=255)
     hex: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    
+
+
 class ProductDataBase(BaseConfigModel):
     name: str = Field(min_length=1, max_length=100)
     stock_type: str = Field(min_length=1, max_length=100)
@@ -50,8 +53,10 @@ class ProductDataBase(BaseConfigModel):
     materials: list[ProductMaterialOut] = Field(default_factory=list)
     images: Optional[list[ProductImageOut]] = None
     variants: list[ProductVariantDataBase]
+    slug: str = Field(min_length=1, max_length=255)
     is_featured: bool = Field(default=False)
     is_active: bool = Field(default=True)
+
 
 class ProductDataOut(ProductDataBase):
     id: int = Field(gt=0)

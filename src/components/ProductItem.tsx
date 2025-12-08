@@ -59,7 +59,7 @@ export default function ProductItem({ cloths }: ProductItemProps) {
         return (
           <MotionLink
             href={`/product/${product.slug}`}
-            key={product.sku || idx}
+            key={idx}
             className="group relative flex-none w-64 lg:w-72"
             whileHover={{ y: -8 }}
             transition={{ type: "spring", stiffness: 300 }}

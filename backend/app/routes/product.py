@@ -1,8 +1,4 @@
-from app.db.models.product import (
-    ProductImage,
-    ProductMaterial,
-    ProductVariant
-)
+from app.db.models.product import ProductImage, ProductMaterial, ProductVariant
 from typing import List
 from fastapi import APIRouter, HTTPException, status, Depends, Query, UploadFile, File
 from app.schemas.product import (
@@ -42,11 +38,11 @@ async def api_product_add(
     admin: User = Depends(get_admin_user),
     db: AsyncSession = Depends(get_db),
 ):
-    product_dict = data.model_dump(exclude={"materials","images", "variants"})
+    product_dict = data.model_dump(exclude={"materials", "images", "variants"})
     product_dict["slug"] = await get_slug(product_dict["name"], db=db)
     product = Product(**product_dict)
     product.variants = []
-    for v in (data.variants or []):
+    for v in data.variants or []:
         variant_dict = v.model_dump()
         variant_dict["sku"] = get_sku()
         variant = ProductVariant(**variant_dict)
@@ -260,9 +256,7 @@ async def api_update_product(
     product = await get_product(db=db, product_id=product_id)
     if not product:
         raise HTTPException(404, "Product not found.")
-    payload = data.model_dump(
-        exclude_unset=True, exclude={"materials", "images"}
-    )
+    payload = data.model_dump(exclude_unset=True, exclude={"materials", "images"})
     if "name" in payload and payload["name"] != product.name:
         product.slug = await get_slug(payload["name"], db=db)
     for field, value in payload.items():

@@ -190,7 +190,7 @@ export default function ProductInfo({ product }: { product: ProductData }) {
             className="order-1 lg:order-2 space-y-8"
           >
             <div>
-              <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
                 {product.name}
               </h1>
               <div className="mt-4">
@@ -204,7 +204,7 @@ export default function ProductInfo({ product }: { product: ProductData }) {
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-6">
-                <span className="text-5xl font-bold text-black dark:text-white">
+                <span className="text-4xl font-bold text-black dark:text-white">
                   ${displayPrice.toFixed(2)}
                 </span>
                 {hasDiscount && (
