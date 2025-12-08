@@ -89,6 +89,7 @@ class CartItemOut(CartItemCreate):
     id: int = Field(gt=0)
     price: Decimal = Field(gt=0)
     product: ProductDataOut
+    variant: ProductVariantDataOut
 
 
 class CartOut(BaseConfigModel):
@@ -99,6 +100,7 @@ class CartOut(BaseConfigModel):
 
 class CartItemUpdate(BaseConfigModel):
     product_id: int = Field(gt=0)
+    variant_id: int = Field(gt=0)
     quantity: Optional[int] = Field(ge=0)
 
 

@@ -6,7 +6,7 @@ export default function Profile() {
   return (
     <>
       <Navbar />
-      <main className="bg-white/50 dark:bg-zinc-900 py-24">
+      <main className="bg-white/50 dark:bg-zinc-900 py-40">
         <ProductCart />
       </main>
       <Footer />

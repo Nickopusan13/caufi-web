@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export default function EmptyCart() {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-zinc-900 dark:to-zinc-800 py-10 px-6 rounded-2xl shadow-xl dark:shadow-gray-800">
+    <div className="flex flex-col items-center justify-center gap-3 px-6 rounded-2xl">
       <LuBaggageClaim className="text-gray-400 text-[100px] lg:text-[180px] dark:text-gray-500 animate-bounce" />
       <div className="text-center space-y-2">
         <h1 className="text-2xl lg:text-4xl md:text-4xl font-extrabold text-gray-800 dark:text-gray-100">

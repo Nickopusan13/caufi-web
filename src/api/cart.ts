@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { ProductData } from "./product";
+import { ProductData, ProductVariant } from "./product";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -10,6 +10,7 @@ interface ApiErrorResponse {
 
 export interface CartItemCreate {
   productId: number;
+  variantId: number;
   quantity: number;
   size: number;
   color: number;
@@ -23,6 +24,7 @@ export interface CartItemOut {
   color: number;
   price: number;
   product: ProductData;
+  variant: ProductVariant;
 }
 
 export interface CartOut {
@@ -32,7 +34,8 @@ export interface CartOut {
 }
 
 export interface CartItemUpdate {
-  productId: number;
+  productId?: number;
+  variantId: number;
   quantity?: number;
 }
 

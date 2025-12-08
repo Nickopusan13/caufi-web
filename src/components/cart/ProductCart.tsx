@@ -1,3 +1,4 @@
+// app/cart/page.tsx or components/ProductCart.tsx
 "use client";
 
 import { useGetCart, useDeleteCart, useUpdateUserCart } from "@/hooks/useCart";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import EmptyCart from "./EmptyCart";
 
 const MotionCard = motion.create(Card);
 
@@ -15,15 +17,16 @@ export default function ProductCart() {
   const deleteMutation = useDeleteCart();
   const updateMutation = useUpdateUserCart();
   const { data: cart, isLoading } = useGetCart();
-  const handleUpdate = (productId: number, quantity: number) => {
-    updateMutation.mutate({
-      productId: productId,
-      quantity: quantity,
-    });
+
+  const handleUpdate = (variantId: number, quantity: number) => {
+    if (quantity < 1) return;
+    updateMutation.mutate({ variantId, quantity });
   };
-  const handleDelete = (itemId: number) => {
-    deleteMutation.mutate(itemId);
+
+  const handleDelete = (cartItemId: number) => {
+    deleteMutation.mutate(cartItemId);
   };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -33,42 +36,42 @@ export default function ProductCart() {
   }
 
   if (!cart || cart.cartItems.length === 0) {
-    return (
-      <div className="min-h-screen max-w-6xl mx-auto py-20 text-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Your cart is empty
-        </h1>
-        <p className="text-gray-600">
-          {`Looks like you haven't added anything yet.`}
-        </p>
-      </div>
-    );
+    return <EmptyCart />;
   }
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 bg-gray-50 dark:bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-8">
           Your Cart ({cart.totalItems}{" "}
           {cart.totalItems === 1 ? "item" : "items"})
         </h1>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div
-            className="lg:col-span-2 space-y-6 max-h-screen md:max-h-400 overflow-y-auto pr-4 scrollbar-thin"
-            data-lenis-prevent
-            data-lenis-prevent-touch
-          >
+          {/* Cart Items */}
+          <div className="lg:col-span-2 space-y-6">
             <AnimatePresence mode="popLayout">
               {cart.cartItems.map((item, index) => {
+                // THIS IS THE KEY: Use the variant that was added to cart
+                const variant = item.variant;
                 const product = item.product;
-                const regularPrice = parseFloat(product.regularPrice);
-                const discountPrice = product.discountPrice
-                  ? parseFloat(product.discountPrice)
+
+                const regularPrice = parseFloat(variant.regularPrice);
+                const discountPrice = variant.discountPrice
+                  ? parseFloat(variant.discountPrice)
                   : null;
-                const priceToUse = discountPrice || regularPrice;
+                const priceToUse = discountPrice ?? regularPrice;
                 const savings = discountPrice
                   ? regularPrice - discountPrice
                   : 0;
+                const isLowStock = variant.stock
+                  ? item.quantity >= variant.stock - 5 &&
+                    item.quantity < variant.stock
+                  : false;
+                const isMaxStock = variant.stock
+                  ? item.quantity >= variant.stock
+                  : false;
+
                 return (
                   <MotionCard
                     key={item.id}
@@ -80,6 +83,7 @@ export default function ProductCart() {
                     className="p-6 shadow-sm hover:shadow-md transition-shadow"
                   >
                     <div className="flex flex-col sm:flex-row gap-6">
+                      {/* Product Image */}
                       <Link
                         href={`/product/${product.slug}`}
                         className="relative w-full sm:w-48 h-64 sm:h-48 shrink-0"
@@ -93,14 +97,21 @@ export default function ProductCart() {
                           className="object-cover rounded-lg"
                         />
                       </Link>
+
+                      {/* Details */}
                       <div className="flex-1 space-y-4">
                         <div>
-                          <h3 className="text-xl line-clamp-1 font-semibold text-gray-900 dark:text-white">
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">
                             {product.name}
                           </h3>
                           <p className="text-sm text-gray-500 mt-1">
-                            {item.color} • Size {item.size}
+                            {variant.color} • Size {variant.size}
                           </p>
+                          {variant.sku && (
+                            <p className="text-xs text-gray-400 mt-1">
+                              SKU: {variant.sku}
+                            </p>
+                          )}
                         </div>
 
                         {/* Price */}
@@ -119,13 +130,15 @@ export default function ProductCart() {
                             </>
                           )}
                         </div>
+
+                        {/* Quantity Controls */}
                         <div className="flex items-center gap-4">
-                          <div className="flex items-center border border-gray-300 rounded-lg">
+                          <div className="flex items-center border border-gray-300 dark:border-zinc-700 rounded-lg">
                             <Button
                               variant="ghost"
                               size="icon"
                               onClick={() =>
-                                handleUpdate(item.productId, item.quantity - 1)
+                                handleUpdate(item.id, item.quantity - 1)
                               }
                               disabled={item.quantity <= 1}
                             >
@@ -138,13 +151,14 @@ export default function ProductCart() {
                               variant="ghost"
                               size="icon"
                               onClick={() =>
-                                handleUpdate(item.productId, item.quantity + 1)
+                                handleUpdate(item.id, item.quantity + 1)
                               }
-                              disabled={item.quantity >= product.stock}
+                              disabled={isMaxStock}
                             >
                               <Plus className="h-4 w-4" />
                             </Button>
                           </div>
+
                           <Button
                             variant="ghost"
                             size="sm"
@@ -155,19 +169,21 @@ export default function ProductCart() {
                             Remove
                           </Button>
                         </div>
-                        {item.quantity >= product.stock - 5 &&
-                          item.quantity < product.stock && (
-                            <p className="text-sm text-orange-600">
-                              Only {product.stock - item.quantity} left in
-                              stock!
-                            </p>
-                          )}
-                        {item.quantity >= product.stock && (
+
+                        {/* Stock Warnings */}
+                        {isLowStock && (
+                          <p className="text-sm text-orange-600 font-medium">
+                            Only {variant.stock! - item.quantity} left in stock!
+                          </p>
+                        )}
+                        {isMaxStock && (
                           <p className="text-sm text-red-600 font-medium">
                             Maximum stock reached
                           </p>
                         )}
                       </div>
+
+                      {/* Item Total */}
                       <div className="text-right sm:ml-auto">
                         <p className="text-sm text-gray-500">Item total</p>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -180,118 +196,61 @@ export default function ProductCart() {
               })}
             </AnimatePresence>
           </div>
+
+          {/* Order Summary */}
           <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-6 bg-white dark:bg-gray-900 border shadow-lg max-h-screen md:max-h-400">
+            <Card className="p-6 sticky top-6 bg-white dark:bg-zinc-900 border shadow-lg">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Order Summary
               </h2>
-              <div
-                className="space-y-5 max-h-50 overflow-y-auto scrollbar-none"
-                data-lenis-prevent
-                data-lenis-prevent-touch
-              >
-                {cart.cartItems.map((item, idx) => {
-                  const product = item.product;
-                  const displayPrice = product.discountPrice
-                    ? parseFloat(product.discountPrice)
-                    : parseFloat(product.regularPrice);
+
+              <div className="space-y-4 mb-6">
+                {cart.cartItems.map((item) => {
+                  const v = item.variant;
+                  const price = v.discountPrice
+                    ? parseFloat(v.discountPrice)
+                    : parseFloat(v.regularPrice);
                   return (
-                    <div
-                      key={idx}
-                      className="flex gap-4 pb-5 border-b border-gray-200 dark:border-gray-700 last:border-0"
-                    >
-                      <div className="relative w-16 h-16 shrink-0 rounded-md overflow-hidden bg-gray-100">
-                        <Image
-                          src={
-                            product.images[0]?.imageUrl || "/placeholder.jpg"
-                          }
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 dark:text-white line-clamp-2">
-                          {product.name}
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                          {item.color} • Size {item.size}
-                        </p>
-                        <div className="mt-2 flex items-center justify-between">
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            ${displayPrice.toFixed(2)} × {item.quantity}
-                          </span>
-                          <span className="font-semibold text-gray-900 dark:text-white">
-                            ${(displayPrice * item.quantity).toFixed(2)}
-                          </span>
-                        </div>
-                        {product.discountPrice && (
-                          <p className="text-xs text-green-600 font-medium mt-1">
-                            You save $
-                            {(
-                              parseFloat(product.regularPrice) - displayPrice
-                            ).toFixed(2)}{" "}
-                            per item
-                          </p>
-                        )}
-                      </div>
+                    <div key={item.id} className="flex justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {item.product.name} ({v.color} • {v.size})
+                      </span>
+                      <span className="font-medium">
+                        ${(price * item.quantity).toFixed(2)}
+                      </span>
                     </div>
                   );
                 })}
               </div>
+
               <Separator className="my-6" />
+
               <div className="space-y-4 text-lg">
-                <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span className="font-medium">${cart.cartTotal}</span>
                 </div>
-                <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                <div className="flex justify-between text-green-600">
                   <span>Shipping</span>
-                  <span className="text-green-600 font-medium">FREE</span>
-                </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Estimated Tax</span>
-                  <span>$0.00</span>
+                  <span className="font-medium">FREE</span>
                 </div>
                 <Separator />
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Total
-                  </span>
-                  <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                    ${cart.cartTotal}
-                  </span>
+                <div className="flex justify-between items-center pt-4">
+                  <span className="text-2xl font-bold">Total</span>
+                  <span className="text-3xl font-bold">${cart.cartTotal}</span>
                 </div>
-                {cart.cartItems.some((i) => i.product.discountPrice) && (
-                  <p className="text-sm text-green-600 font-medium text-center">
-                    🎉 You’re saving a total of $
-                    {cart.cartItems
-                      .reduce((acc, item) => {
-                        const reg = parseFloat(item.product.regularPrice);
-                        const disc = item.product.discountPrice
-                          ? parseFloat(item.product.discountPrice)
-                          : reg;
-                        return acc + (reg - disc) * item.quantity;
-                      }, 0)
-                      .toFixed(2)}{" "}
-                    on this order!
-                  </p>
-                )}
               </div>
+
               <Button
                 size="lg"
-                className="w-full mt-8 text-lg h-14 font-semibold"
+                className="w-full mt-8 h-14 text-lg font-semibold"
               >
                 Proceed to Checkout
               </Button>
-              <div className="mt-6 space-y-2 text-center text-sm text-gray-500 dark:text-gray-400">
-                <p className="flex items-center justify-center gap-2">
-                  <span>Free standard shipping</span>
-                </p>
-                <p>
-                  30-day returns • Secure checkout • Carbon-neutral delivery
-                </p>
-              </div>
+
+              <p className="text-center text-sm text-gray-500 mt-6">
+                Free shipping • 30-day returns • Secure payment
+              </p>
             </Card>
           </div>
         </div>
