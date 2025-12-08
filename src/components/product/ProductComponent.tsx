@@ -1,36 +1,51 @@
+// components/ProductComponent.tsx
 "use client";
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  FaHeart,
-  FaRegHeart,
-  FaChevronDown,
-  FaStar,
-  FaRegStar,
-} from "react-icons/fa";
-import { Star } from "lucide-react";
+import { FaHeart, FaRegHeart, FaRegStar, FaStar } from "react-icons/fa";
+import { Star as LucideStar } from "lucide-react";
 
 interface LikeButtonProps {
   size?: number;
+  initialLiked?: boolean;
+  onToggle?: (liked: boolean) => void;
 }
 
-export const LikeButton = ({ size = 28 }: LikeButtonProps) => {
-  const [liked, setLiked] = useState(false);
+export const LikeButton = ({
+  size = 28,
+  initialLiked = false,
+  onToggle,
+}: LikeButtonProps) => {
+  const [liked, setLiked] = useState(initialLiked);
+
+  const handleClick = () => {
+    setLiked(!liked);
+    onToggle?.(!liked);
+  };
 
   return (
     <motion.button
       whileHover={{ scale: 1.2 }}
       whileTap={{ scale: 0.9 }}
-      onClick={() => setLiked(!liked)}
-      className="p-2 rounded-full bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-all"
+      onClick={handleClick}
+      className="p-3 rounded-full bg-white/90 dark:bg-zinc-800/90 backdrop-blur-md shadow-lg hover:shadow-xl transition-all border border-zinc-200 dark:border-zinc-700"
       aria-label={liked ? "Unlike" : "Like"}
     >
-      {liked ? (
-        <FaHeart size={size} className="text-red-500 drop-shadow-sm" />
-      ) : (
-        <FaRegHeart size={size} className="text-gray-600 dark:text-gray-400" />
-      )}
+      <motion.div
+        initial={false}
+        animate={{ scale: liked ? 1.1 : 1 }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      >
+        {liked ? (
+          <FaHeart size={size} className="text-red-500 drop-shadow-md" />
+        ) : (
+          <FaRegHeart
+            size={size}
+            className="text-gray-600 dark:text-gray-400"
+          />
+        )}
+      </motion.div>
     </motion.button>
   );
 };
@@ -48,23 +63,20 @@ export const StarRating = ({
   size = 18,
   maxStars = 5,
 }: StarRatingProps) => {
-  const safeRating = Math.max(0, Math.min(Number(rating) || 0, maxStars));
+  const safeRating = Math.max(0, Math.min(rating || 0, maxStars));
   const fullStars = Math.floor(safeRating);
   const hasHalfStar = safeRating - fullStars >= 0.5;
 
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-1">
-        {/* Full Stars */}
         {Array.from({ length: fullStars }, (_, i) => (
-          <Star
-            key={i}
+          <LucideStar
+            key={`full-${i}`}
             size={size}
             className="fill-yellow-400 text-yellow-400 drop-shadow-sm"
           />
         ))}
-
-        {/* Half Star */}
         {hasHalfStar && (
           <div className="relative">
             <FaRegStar
@@ -72,12 +84,10 @@ export const StarRating = ({
               className="text-gray-300 dark:text-gray-600"
             />
             <div className="absolute inset-0 overflow-hidden w-1/2">
-              <FaStar size={size} className="fill-yellow-400 text-yellow-400" />
+              <FaStar size={size} className="text-yellow-400 fill-yellow-400" />
             </div>
           </div>
         )}
-
-        {/* Empty Stars */}
         {Array.from(
           { length: maxStars - fullStars - (hasHalfStar ? 1 : 0) },
           (_, i) => (
@@ -91,7 +101,7 @@ export const StarRating = ({
       </div>
 
       <div className="flex items-center gap-2 text-sm">
-        <span className="font-semibold text-zinc-700 dark:text-zinc-300">
+        <span className="font-bold text-zinc-800 dark:text-zinc-200">
           {safeRating.toFixed(1)}
         </span>
         {reviewCount !== undefined && (
@@ -104,16 +114,26 @@ export const StarRating = ({
   );
 };
 
-interface ColorDropDownProps {
-  color: string[];
+// Updated Color Interface
+interface ColorOption {
+  name: string;
+  hex?: string;
 }
 
-export const ColorDropDown = ({ color }: ColorDropDownProps) => {
+interface ColorDropDownProps {
+  colors: ColorOption[];
+  selectedColor: string | null;
+  onSelectColor: (color: string) => void;
+}
+
+export const ColorDropDown = ({
+  colors,
+  selectedColor,
+  onSelectColor,
+}: ColorDropDownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(color[0]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -127,86 +147,115 @@ export const ColorDropDown = ({ color }: ColorDropDownProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const formatColor = (c: string) => c.charAt(0).toUpperCase() + c.slice(1);
+  const displayColor = selectedColor
+    ? colors.find((c) => c.name.toLowerCase() === selectedColor.toLowerCase())
+    : colors[0];
+
+  const formatColor = (name: string) =>
+    name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 
   return (
-    <div className="space-y-2">
-      <p className="text-sm opacity-70">Color</p>
-      <div ref={dropdownRef} className="relative">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between px-5 py-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
-        >
-          <span className="font-medium">{formatColor(selectedColor)}</span>
-          <FaChevronDown
-            className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-          />
-        </button>
+    <div className="space-y-3">
+      <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+        Color:{" "}
+        <span className="font-bold text-zinc-900 dark:text-white">
+          {formatColor(displayColor?.name || "Select")}
+        </span>
+      </p>
 
-        {isOpen && (
-          <motion.ul
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute z-20 w-full mt-2 bg-white dark:bg-zinc-800 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden"
-          >
-            {color.map((c) => (
-              <li
-                key={c}
-                onClick={() => {
-                  setSelectedColor(c);
-                  setIsOpen(false);
-                }}
-                className={`px-5 py-3 hover:bg-purple-50 dark:hover:bg-purple-900/30 cursor-pointer transition-all ${
-                  selectedColor === c
-                    ? "bg-purple-100 dark:bg-purple-900/50 font-bold"
-                    : ""
-                }`}
-              >
-                {formatColor(c)}
-              </li>
-            ))}
-          </motion.ul>
-        )}
+      <div className="flex flex-wrap gap-4">
+        {colors.map((color) => {
+          const isSelected =
+            selectedColor?.toLowerCase() === color.name.toLowerCase();
+          return (
+            <motion.button
+              key={color.name}
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onSelectColor(color.name)}
+              className={`
+                relative w-14 h-14 rounded-2xl border-4 shadow-lg transition-all
+                ${
+                  isSelected
+                    ? "border-black dark:border-white scale-110 ring-4 ring-purple-400/30"
+                    : "border-gray-300 dark:border-zinc-600 hover:border-gray-400"
+                }
+              `}
+              style={{ backgroundColor: color.hex || "#e5e7eb" }}
+              aria-label={`Select ${color.name}`}
+            >
+              {isSelected && (
+                <motion.div
+                  layoutId="selectedColorIndicator"
+                  className="absolute inset-0 rounded-2xl border-4 bg-white/30 dark:bg-black/30"
+                />
+              )}
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );
 };
 
 interface ProductSizeProps {
-  size: string[];
+  sizes: string[];
+  selectedSize: string | null;
+  onSelectSize: (size: string) => void;
+  disabledSizes?: string[]; // optional: sizes that are out of stock
 }
 
-export const ProductSize = ({ size }: ProductSizeProps) => {
-  const [selectedSize, setSelectedSize] = useState(size[0]);
+export const ProductSize = ({
+  sizes,
+  selectedSize,
+  onSelectSize,
+  disabledSizes = [],
+}: ProductSizeProps) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm opacity-70">Size</p>
+        <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          Size:{" "}
+          <span className="font-bold text-zinc-900 dark:text-white">
+            {selectedSize || "Select"}
+          </span>
+        </p>
         <a
-          href="#"
-          className="text-xs underline underline-offset-2 hover:opacity-100 opacity-70 transition"
+          href="#size-guide"
+          className="text-xs underline underline-offset-2 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition"
         >
           Size Guide
         </a>
       </div>
-      <div className="flex flex-wrap gap-3">
-        {size.map((s) => (
-          <button
-            key={s}
-            onClick={() => setSelectedSize(s)}
-            className={`w-14 h-14 rounded-2xl font-medium transition-all ${
-              selectedSize === s
-                ? "bg-black text-white shadow-lg scale-105"
-                : "bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-            }`}
-          >
-            {s}
-          </button>
-        ))}
-      </div>
 
-      <div className="h-px bg-zinc-300 dark:bg-zinc-700" />
+      <div className="flex flex-wrap gap-3">
+        {sizes.map((size) => {
+          const isSelected = selectedSize === size;
+          const isDisabled = disabledSizes.includes(size);
+
+          return (
+            <motion.button
+              key={size}
+              whileHover={!isDisabled ? { scale: 1.05 } : {}}
+              whileTap={!isDisabled ? { scale: 0.95 } : {}}
+              onClick={() => !isDisabled && onSelectSize(size)}
+              disabled={isDisabled}
+              className={`
+                w-16 h-16 rounded-2xl font-bold text-lg transition-all shadow-md
+                ${
+                  isSelected
+                    ? "bg-black dark:bg-white text-white dark:text-black shadow-2xl scale-105"
+                    : isDisabled
+                    ? "bg-gray-100 dark:bg-zinc-800 text-gray-400 line-through cursor-not-allowed opacity-60"
+                    : "bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
+                }
+              `}
+            >
+              {size}
+            </motion.button>
+          );
+        })}
+      </div>
     </div>
   );
 };

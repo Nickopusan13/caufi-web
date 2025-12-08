@@ -22,15 +22,39 @@ export default function ProductItem({ cloths }: ProductItemProps) {
   return (
     <>
       {cloths.map((product, idx) => {
-        const regularPrice = parseFloat(product.regularPrice);
-        const discountPrice = product.discountPrice
-          ? parseFloat(product.discountPrice)
-          : null;
+        const variants = product.variants || [];
+        const validVariants = variants.filter(
+          (v) => parseFloat(v.regularPrice) > 0
+        );
+        const regularPrices = validVariants.map((v) =>
+          parseFloat(v.regularPrice)
+        );
+        const discountPrices = validVariants
+          .map((v) => (v.discountPrice ? parseFloat(v.discountPrice) : null))
+          .filter((p) => p !== null && p > 0) as number[];
+        const minRegular = Math.min(...regularPrices);
+        const minDiscount =
+          discountPrices.length > 0 ? Math.min(...discountPrices) : null;
+        const regularPrice = minRegular;
+        const discountPrice = minDiscount;
         const hasDiscount =
           discountPrice !== null && discountPrice < regularPrice;
         const discountPercent = hasDiscount
-          ? Math.round(((regularPrice - discountPrice) / regularPrice) * 100)
+          ? Math.round(((regularPrice - discountPrice!) / regularPrice) * 100)
           : 0;
+        const colors = Array.from(
+          new Map(
+            variants
+              .filter((v) => v.color && v.hex)
+              .map((v) => [
+                v.color!.toLowerCase(),
+                { color: v.color!, hex: v.hex! },
+              ])
+          ).values()
+        );
+        const sizes = Array.from(
+          new Set(variants.map((v) => v.size).filter(Boolean))
+        );
         const primaryImage = product.images[0]?.imageUrl;
         return (
           <MotionLink
@@ -102,11 +126,11 @@ export default function ProductItem({ cloths }: ProductItemProps) {
                     )}
                   </div>
                 </div>
-                {product.colors.length > 0 && (
+                {colors.length > 0 && (
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs text-zinc-500">Colors:</span>
                     <div className="flex gap-1.5">
-                      {product.colors.slice(0, 4).map((color, i) => (
+                      {colors.slice(0, 4).map((color, i) => (
                         <HoverCard key={i}>
                           <HoverCardTrigger asChild>
                             <button
@@ -119,29 +143,29 @@ export default function ProductItem({ cloths }: ProductItemProps) {
                           </HoverCardContent>
                         </HoverCard>
                       ))}
-                      {product.colors.length > 4 && (
+                      {colors.length > 4 && (
                         <span className="text-xs text-zinc-500 ml-1">
-                          +{product.colors.length - 4}
+                          +{colors.length - 4}
                         </span>
                       )}
                     </div>
                   </div>
                 )}
-                {product.sizes.length > 0 && (
+                {sizes.length > 0 && (
                   <div className="flex items-center gap-1 flex-wrap">
                     <span className="text-xs text-zinc-500">Sizes:</span>
-                    {product.sizes.slice(0, 5).map((size) => (
+                    {sizes.slice(0, 5).map((size) => (
                       <Badge
-                        key={size.size}
+                        key={size}
                         variant="secondary"
                         className="text-xs py-0.5 px-2"
                       >
-                        {size.size}
+                        {size}
                       </Badge>
                     ))}
-                    {product.sizes.length > 5 && (
+                    {sizes.length > 5 && (
                       <span className="text-xs text-zinc-500">
-                        +{product.sizes.length - 5}
+                        +{sizes.length - 5}
                       </span>
                     )}
                   </div>
