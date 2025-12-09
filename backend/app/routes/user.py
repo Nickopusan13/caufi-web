@@ -124,7 +124,7 @@ async def api_user_login(
         )
     jwt_token = await create_jwt_token(
             data={
-                "sub": str(user.id),           # ← standard claim
+                "user_id": user.id,           # ← standard claim
                 "email": user.email,
                 "role": "admin" if user.is_admin else "user",
                 "iat": datetime.now(timezone.utc),
