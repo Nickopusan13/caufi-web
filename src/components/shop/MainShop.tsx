@@ -30,14 +30,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { motion } from "framer-motion";
 
 const categories = [
   { name: "All Products", value: "", count: 1248 },
   { name: "Men", value: "Men", count: 524 },
   { name: "Women", value: "Women", count: 612 },
-  { name: "Kids", value: "kids", count: 112 },
-  { name: "Accessories", value: "accessories", count: 89 },
+  { name: "Bag", value: "Bag", count: 112 },
+  { name: "Shoes", value: "Shoes", count: 89 },
 ];
 
 const sortOptions = [

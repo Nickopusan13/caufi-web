@@ -2,88 +2,112 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { menus, productItems } from "./Items";
+import { motion } from "framer-motion";
 import clsx from "clsx";
 import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 
-const MotionLink = motion(Link);
+const navigationMenus = [
+  { title: "Home", href: "/" },
+  {
+    title: "Products",
+    href: "/shop",
+    items: [
+      {
+        title: "All Products",
+        href: "/shop",
+        description: "Shop everything",
+      },
+      {
+        title: "Men",
+        href: "/shop?category=Men&page=1",
+        description: "Just landed",
+      },
+      {
+        title: "Women",
+        href: "/shop?category=Women&page=1",
+        description: "Most loved",
+      },
+      { title: "Sale", href: "/products/sale", description: "Up to 70% off" },
+    ],
+  },
+  { title: "About", href: "/about" },
+  { title: "Blog", href: "/blog" },
+  { title: "Contact", href: "/contact" },
+];
 
 export default function MenuBar() {
   const pathname = usePathname();
-
   return (
     <NavigationMenu>
-      <NavigationMenuList className="flex items-center justify-center gap-1">
-        {menus.map((menu, index) => {
+      <NavigationMenuList className="flex items-center gap-1 p-2">
+        {navigationMenus.map((menu) => {
           const isActive =
-            pathname === menu.href || pathname.startsWith(menu.href + "/");
+            pathname === menu.href || pathname.startsWith(`${menu.href}/`);
           return (
             <NavigationMenuItem key={menu.title}>
-              <MotionLink
-                href={menu.href}
-                className="group relative"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
+              {/* Use NavigationMenuLink for simple links, Trigger only when has dropdown */}
+              {menu.items ? (
                 <NavigationMenuTrigger
                   className={clsx(
-                    "relative px-4 py-2 text-sm font-medium transition-all duration-300",
-                    "hover:text-primary focus:outline-none",
-                    "data-[state=open]:text-primary",
-                    isActive ? "text-primary" : "text-muted-foreground"
+                    "px-4 py-2 text-sm font-medium rounded-md transition-colors",
+                    isActive ? "text-foreground" : "text-muted-foreground",
+                    "hover:text-foreground hover:bg-accent/50 data-[state=open]:bg-accent/80"
                   )}
                 >
-                  <motion.span
-                    className="relative z-10 flex items-center gap-1.5"
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  {menu.title}
+                </NavigationMenuTrigger>
+              ) : (
+                <NavigationMenuLink asChild>
+                  <Link
+                    href={menu.href}
+                    className={clsx(
+                      "px-4 py-2 text-sm font-medium rounded-md transition-colors block",
+                      isActive
+                        ? "text-foreground bg-accent/70"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    )}
                   >
                     {menu.title}
-                  </motion.span>
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute inset-0 rounded-md bg-primary/10"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{
-                          type: "spring",
-                          bounce: 0.3,
-                          duration: 0.6,
-                        }}
-                      />
-                    )}
-                  </AnimatePresence>
-                </NavigationMenuTrigger>
-              </MotionLink>
-              <NavigationMenuContent asChild>
+                  </Link>
+                </NavigationMenuLink>
+              )}
+              {isActive && !menu.items && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="min-w-[200px] rounded-lg border bg-popover p-4 shadow-lg"
-                >
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-foreground">
-                      {menu.title}
-                    </h4>
-                    {productItems.map((item, idx) => {
-                      return <p key={idx}>{item.items}</p>;
-                    })}
-                  </div>
-                </motion.div>
-              </NavigationMenuContent>
+                  layoutId="navbar-active-indicator"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              {menu.items && (
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-6 md:w-96 lg:grid-cols-2">
+                    {menu.items.map((item) => (
+                      <li key={item.href}>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href={item.href}
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium">
+                              {item.title}
+                            </div>
+                            <p className="line-clamp-2 text-sm text-muted-foreground">
+                              {item.description}
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              )}
             </NavigationMenuItem>
           );
         })}

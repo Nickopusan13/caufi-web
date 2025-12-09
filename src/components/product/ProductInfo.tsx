@@ -168,7 +168,6 @@ export default function ProductInfo({ product }: { product: ProductData }) {
     <section className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20">
-          {/* Image Gallery */}
           <div className="order-2 lg:order-1">
             <div className="flex flex-col-reverse lg:flex-row gap-6">
               <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-visible scrollbar-hide">
@@ -234,22 +233,6 @@ export default function ProductInfo({ product }: { product: ProductData }) {
                   maxStars={5}
                 />
               </div>
-            </div>
-            <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg text-sm font-mono">
-              <p>
-                Selected Color: <strong>{selectedColor}</strong>
-              </p>
-              <p>
-                Selected Size: <strong>{selectedSize}</strong>
-              </p>
-              <p>
-                Found Variant ID:{" "}
-                <strong>{selectedVariant?.id || "NOT FOUND"}</strong>
-              </p>
-              <p>
-                Stock: {stock} | Out of stock: {isOutOfStock ? "YES" : "NO"}
-              </p>
-              <p>Can add: {canAddToCart ? "YES" : "NO"}</p>
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-6">
