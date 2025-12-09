@@ -1,4 +1,3 @@
-// app/cart/page.tsx or components/ProductCart.tsx
 "use client";
 
 import { useGetCart, useDeleteCart, useUpdateUserCart } from "@/hooks/useCart";
@@ -40,7 +39,7 @@ export default function ProductCart() {
   }
 
   return (
-    <div className="min-h-screen py-8 bg-gray-50 dark:bg-zinc-950">
+    <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-8">
           Your Cart ({cart.totalItems}{" "}
@@ -83,7 +82,6 @@ export default function ProductCart() {
                     className="p-6 shadow-sm hover:shadow-md transition-shadow"
                   >
                     <div className="flex flex-col sm:flex-row gap-6">
-                      {/* Product Image */}
                       <Link
                         href={`/product/${product.slug}`}
                         className="relative w-full sm:w-48 h-64 sm:h-48 shrink-0"
@@ -97,8 +95,6 @@ export default function ProductCart() {
                           className="object-cover rounded-lg"
                         />
                       </Link>
-
-                      {/* Details */}
                       <div className="flex-1 space-y-4">
                         <div>
                           <h3 className="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">
@@ -113,8 +109,6 @@ export default function ProductCart() {
                             </p>
                           )}
                         </div>
-
-                        {/* Price */}
                         <div className="flex items-center gap-3">
                           <span className="text-2xl font-bold text-gray-900 dark:text-white">
                             ${priceToUse.toFixed(2)}
@@ -130,15 +124,13 @@ export default function ProductCart() {
                             </>
                           )}
                         </div>
-
-                        {/* Quantity Controls */}
                         <div className="flex items-center gap-4">
                           <div className="flex items-center border border-gray-300 dark:border-zinc-700 rounded-lg">
                             <Button
                               variant="ghost"
                               size="icon"
                               onClick={() =>
-                                handleUpdate(item.id, item.quantity - 1)
+                                handleUpdate(variant.id, item.quantity - 1)
                               }
                               disabled={item.quantity <= 1}
                             >
@@ -151,14 +143,13 @@ export default function ProductCart() {
                               variant="ghost"
                               size="icon"
                               onClick={() =>
-                                handleUpdate(item.id, item.quantity + 1)
+                                handleUpdate(variant.id, item.quantity + 1)
                               }
                               disabled={isMaxStock}
                             >
                               <Plus className="h-4 w-4" />
                             </Button>
                           </div>
-
                           <Button
                             variant="ghost"
                             size="sm"
@@ -169,8 +160,6 @@ export default function ProductCart() {
                             Remove
                           </Button>
                         </div>
-
-                        {/* Stock Warnings */}
                         {isLowStock && (
                           <p className="text-sm text-orange-600 font-medium">
                             Only {variant.stock! - item.quantity} left in stock!
@@ -182,8 +171,6 @@ export default function ProductCart() {
                           </p>
                         )}
                       </div>
-
-                      {/* Item Total */}
                       <div className="text-right sm:ml-auto">
                         <p className="text-sm text-gray-500">Item total</p>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -196,14 +183,11 @@ export default function ProductCart() {
               })}
             </AnimatePresence>
           </div>
-
-          {/* Order Summary */}
           <div className="lg:col-span-1">
             <Card className="p-6 sticky top-6 bg-white dark:bg-zinc-900 border shadow-lg">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Order Summary
               </h2>
-
               <div className="space-y-4 mb-6">
                 {cart.cartItems.map((item) => {
                   const v = item.variant;
@@ -222,9 +206,7 @@ export default function ProductCart() {
                   );
                 })}
               </div>
-
               <Separator className="my-6" />
-
               <div className="space-y-4 text-lg">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
@@ -247,7 +229,6 @@ export default function ProductCart() {
               >
                 Proceed to Checkout
               </Button>
-
               <p className="text-center text-sm text-gray-500 mt-6">
                 Free shipping • 30-day returns • Secure payment
               </p>

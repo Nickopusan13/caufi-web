@@ -16,6 +16,7 @@ export interface ProductImage {
 }
 
 export interface ProductVariant {
+  id: number;
   regularPrice: string;
   discountPrice: string;
   size?: string;
@@ -37,7 +38,7 @@ export interface ProductData {
   description: string;
   careGuide: string;
   slug: string;
-  material: ProductMaterial[];
+  materials: ProductMaterial[];
   images: ProductImage[];
   variants: ProductVariant[];
   isFeatured: boolean;

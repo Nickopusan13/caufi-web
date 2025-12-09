@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from app.db.session import AsyncSession
-from app.db.models.product import Cart, Product, CartItem
+from app.db.models.product import Cart, Product, CartItem, ProductVariant
 from app.db.models.user import User
 from app.crud.cart import upsert_cart_item
 from app.security.jwt import get_current_user
@@ -29,31 +29,44 @@ async def api_cart_add(
         cart = Cart(user_id=current_user.id)
         db.add(cart)
         await db.flush()
-    product = await db.get(Product, data.product_id)
-    if not product or not product.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found or unavailable",
+    variant_result = await db.execute(
+        select(ProductVariant)
+        .where(ProductVariant.id == data.variant_id)
+        .options(
+            selectinload(ProductVariant.product).selectinload(Product.images),
+            selectinload(ProductVariant.product).selectinload(Product.materials),
         )
+    )
+    variant = variant_result.scalar_one_or_none()
     current_result = await db.execute(
         select(CartItem.quantity).where(
             CartItem.cart_id == cart.id,
-            CartItem.product_id == data.product_id,
+            CartItem.variant_id == data.variant_id,
         )
     )
     current_qty = current_result.scalar_one_or_none() or 0
-    if current_qty + data.quantity > product.stock:
+    if current_qty + data.quantity > variant.stock:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Not enough stock. Only {product.stock - current_qty} available.",
+            detail=f"Not enough stock. Only {variant.stock - current_qty} available.",
         )
-    item_id = await upsert_cart_item(db=db, cart_id=cart.id, product=product, data=data)
+    item_id = await upsert_cart_item(db=db, cart_id=cart.id, variant=variant, data=data)
     await db.commit()
     result = await db.execute(
         select(CartItem)
         .options(
-            selectinload(CartItem.product).selectinload(Product.images),
-            selectinload(CartItem.product).selectinload(Product.materials),
+            selectinload(CartItem.variant),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.images),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.materials),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.variants),
         )
         .where(CartItem.id == item_id)
     )
@@ -73,8 +86,18 @@ async def api_cart_all(
     result = await db.execute(
         select(CartItem)
         .options(
-            selectinload(CartItem.product).selectinload(Product.images),
-            selectinload(CartItem.product).selectinload(Product.materials),
+            selectinload(CartItem.variant),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.images),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.materials),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.variants),
         )
         .where(CartItem.cart_id == cart.id)
     )
@@ -102,8 +125,18 @@ async def api_delete_cart(
     result = await db.execute(
         select(CartItem)
         .options(
-            selectinload(CartItem.product).selectinload(Product.images),
-            selectinload(CartItem.product).selectinload(Product.materials),
+            selectinload(CartItem.variant),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.images),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.materials),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.variants),
         )
         .where(CartItem.id == item_id, CartItem.cart_id == cart.id)
     )
@@ -144,7 +177,7 @@ async def api_update_cart_item(
         raise HTTPException(status_code=404, detail="Cart not found")
     query = select(CartItem).where(
         CartItem.cart_id == cart.id,
-        CartItem.product_id == data.product_id,
+        CartItem.variant_id == data.variant_id,
     )
     result = await db.execute(query)
     cart_item = result.scalar_one_or_none()
@@ -153,21 +186,31 @@ async def api_update_cart_item(
     if data.quantity <= 0:
         await db.delete(cart_item)
     else:
-        product = await db.get(Product, data.product_id)
-        if not product:
+        variant = await db.get(ProductVariant, data.variant_id)
+        if not variant:
             raise HTTPException(status_code=404, detail="Product not found")
-        if data.quantity > product.stock:
+        if data.quantity > variant.stock:
             raise HTTPException(
                 status_code=400,
-                detail=f"Only {product.stock} in stock. Cannot set quantity to {data.quantity}.",
+                detail=f"Only {variant.stock} in stock. Cannot set quantity to {data.quantity}.",
             )
         cart_item.quantity = data.quantity
     await db.commit()
     result = await db.execute(
         select(CartItem)
         .options(
-            selectinload(CartItem.product).selectinload(Product.images),
-            selectinload(CartItem.product).selectinload(Product.materials),
+            selectinload(CartItem.variant),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.images),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.materials),
+            selectinload(CartItem.variant)
+                .selectinload(ProductVariant.product)
+                .selectinload(Product.variants),
         )
         .where(CartItem.cart_id == cart.id)
         .order_by(CartItem.id)

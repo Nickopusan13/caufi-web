@@ -126,8 +126,8 @@ export default function ProductDescription({
                       Materials
                     </h4>
                     <div className="flex flex-wrap gap-3">
-                      {product.material && product.material.length > 0 ? (
-                        product.material.map((mat, i) => (
+                      {product.materials && product.materials.length > 0 ? (
+                        product.materials.map((mat, i) => (
                           <span
                             key={i}
                             className="px-4 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm font-medium transition-transform hover:scale-105"

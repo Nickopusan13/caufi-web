@@ -9,6 +9,7 @@ from app.db.models.product import (
     ProductMaterial,
     Cart,
     CartItem,
+    ProductVariant
 )
 from app.db.models.order import Order, OrderItem
 
@@ -19,6 +20,7 @@ __all__ = [
     "Product",
     "ProductImage",
     "ProductMaterial",
+    "ProductVariant",
     "Cart",
     "CartItem",
     "Order",

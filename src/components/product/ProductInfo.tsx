@@ -1,11 +1,17 @@
-// components/ProductInfo.tsx
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useState, useEffect, useMemo } from "react";
-import { ShoppingCart, Package, Truck, Shield } from "lucide-react";
-
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  ShoppingCart,
+  Package,
+  Truck,
+  Shield,
+  Plus,
+  Minus,
+} from "lucide-react";
+import { useAddOrder } from "@/hooks/userOrder";
 import { ProductData } from "@/api/product";
 import {
   ProductSize,
@@ -27,31 +33,77 @@ const paymentMethods = [
 ];
 
 export default function ProductInfo({ product }: { product: ProductData }) {
+  const orderMutation = useAddOrder();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const images = product.images.map((img) => img.imageUrl);
+  const selectedVariant = useMemo(() => {
+    if (!selectedColor || !selectedSize) return null;
+    const normalizedColor = selectedColor.trim().toLowerCase();
+    const normalizedSize = selectedSize.trim().toLowerCase();
+    return (
+      product.variants.find((v) => {
+        const variantColor = v.color?.trim().toLowerCase();
+        const variantSize = v.size?.trim().toLowerCase();
+
+        return (
+          variantColor === normalizedColor && variantSize === normalizedSize
+        );
+      }) || null
+    );
+  }, [product.variants, selectedColor, selectedSize]);
+
+  const fallbackVariant = useMemo(() => {
+    if (!selectedColor) return null;
+    return product.variants.find(
+      (v) => v.color?.toLowerCase() === selectedColor.toLowerCase()
+    );
+  }, [product.variants, selectedColor]);
+  const activeVariant =
+    selectedVariant || fallbackVariant || product.variants[0];
+  const variantId = activeVariant?.id;
+  const stock = activeVariant?.stock || 0;
+  const isOutOfStock = stock <= 0;
+
+  const regularPrice = activeVariant
+    ? parseFloat(activeVariant.regularPrice)
+    : 0;
+  const discountPrice = activeVariant?.discountPrice
+    ? parseFloat(activeVariant.discountPrice)
+    : null;
+  const displayPrice =
+    discountPrice && discountPrice < regularPrice
+      ? discountPrice
+      : regularPrice;
+  const hasDiscount = !!discountPrice && discountPrice < regularPrice;
+  const savedAmount = hasDiscount ? regularPrice - discountPrice : 0;
+
   const availableColors = useMemo(() => {
     return Array.from(
       new Map(
         product.variants
-          .filter((v) => v.color)
+          .filter((v) => v.color && v.stock && v.stock > 0)
           .map((v) => [v.color!.toLowerCase(), { name: v.color!, hex: v.hex }])
       ).values()
     );
   }, [product.variants]);
+
   const availableSizes = useMemo(() => {
     return Array.from(
       new Set(
         product.variants
+          .filter((v) => v.stock && v.stock > 0)
           .map((v) => v.size)
           .filter((size): size is string => !!size && size.trim() !== "")
       )
     ).sort();
   }, [product.variants]);
+
   const disabledSizes = useMemo(() => {
     if (!selectedColor) return [];
-    const availableSizesForColor = product.variants
+    const sizesInStock = product.variants
       .filter(
         (v) =>
           v.color?.toLowerCase() === selectedColor.toLowerCase() &&
@@ -60,20 +112,20 @@ export default function ProductInfo({ product }: { product: ProductData }) {
       )
       .map((v) => v.size)
       .filter((size): size is string => !!size);
-    return availableSizes.filter(
-      (size) => !availableSizesForColor.includes(size)
-    );
+
+    return availableSizes.filter((size) => !sizesInStock.includes(size));
   }, [selectedColor, product.variants, availableSizes]);
   useEffect(() => {
     if (availableColors.length > 0 && !selectedColor) {
       setSelectedColor(availableColors[0].name);
     }
-  }, [availableColors]);
+  }, [availableColors, selectedSize, selectedColor]);
   useEffect(() => {
     if (!selectedColor) {
       setSelectedSize(null);
       return;
     }
+
     const validSizes = product.variants
       .filter(
         (v) =>
@@ -84,58 +136,39 @@ export default function ProductInfo({ product }: { product: ProductData }) {
       )
       .map((v) => v.size!)
       .filter(Boolean);
-    const uniqueValidSizes = Array.from(new Set(validSizes)).sort();
-    if (uniqueValidSizes.length > 0) {
-      if (!selectedSize || !uniqueValidSizes.includes(selectedSize)) {
-        setSelectedSize(uniqueValidSizes[0]);
-      }
-    } else {
-      setSelectedSize(null);
+
+    const uniqueSizes = Array.from(new Set(validSizes)).sort();
+    if (
+      uniqueSizes.length > 0 &&
+      (!selectedSize || !uniqueSizes.includes(selectedSize))
+    ) {
+      setSelectedSize(uniqueSizes[0]);
     }
-  }, [selectedColor, product.variants]);
-  const selectedVariant = useMemo(() => {
-    if (!selectedColor || !selectedSize) return null;
-    return (
-      product.variants.find(
-        (v) =>
-          v.color?.toLowerCase() === selectedColor.toLowerCase() &&
-          v.size?.trim() === selectedSize.trim()
-      ) || null
-    );
-  }, [product.variants, selectedColor, selectedSize]);
+  }, [selectedColor, product.variants, selectedSize]);
 
-  const fallbackVariant = useMemo(() => {
-    if (!selectedColor) return null;
-    return (
-      product.variants.find(
-        (v) => v.color?.toLowerCase() === selectedColor.toLowerCase()
-      ) || null
-    );
-  }, [product.variants, selectedColor]);
+  const handleQuantityChange = (newQty: number) => {
+    if (newQty < 1) return;
+    if (newQty > stock) {
+      alert(`Only ${stock} item${stock > 1 ? "s" : ""} left in stock!`);
+      setQuantity(stock);
+    } else {
+      setQuantity(newQty);
+    }
+  };
 
-  const activeVariant =
-    selectedVariant ||
-    fallbackVariant ||
-    product.variants.find((v) => parseFloat(v.regularPrice) > 0) ||
-    product.variants[0];
-  const regularPrice = activeVariant
-    ? parseFloat(activeVariant.regularPrice)
-    : 0;
-  const discountPrice = activeVariant?.discountPrice
-    ? parseFloat(activeVariant.discountPrice)
-    : null;
-
-  const displayPrice =
-    discountPrice && discountPrice < regularPrice
-      ? discountPrice
-      : regularPrice;
-  const hasDiscount = !!discountPrice && discountPrice < regularPrice;
-  const savedAmount = hasDiscount ? regularPrice - discountPrice : 0;
-  const isOutOfStock = activeVariant?.stock === 0;
+  const handleAddToCart = () => {
+    if (!variantId || isOutOfStock || !selectedVariant) {
+      alert("Please select a valid color and size.");
+      return;
+    }
+    orderMutation.mutate({ variantId, quantity });
+  };
+  const canAddToCart = !!variantId && !!selectedVariant && !isOutOfStock;
   return (
     <section className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20">
+          {/* Image Gallery */}
           <div className="order-2 lg:order-1">
             <div className="flex flex-col-reverse lg:flex-row gap-6">
               <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-visible scrollbar-hide">
@@ -157,7 +190,7 @@ export default function ProductInfo({ product }: { product: ProductData }) {
               </div>
               <motion.div
                 layout
-                className="relative aspect-square lg:aspect-auto lg:h-[680px] w-full rounded-3xl overflow-hidden bg-linear-to-br from-zinc-100 to-zinc-200 dark:from-zinc-900 dark:to-black shadow-2xl"
+                className="relative aspect-square lg:aspect-auto lg:h-[680px] w-full rounded-3xl overflow-hidden shadow-2xl"
               >
                 <AnimatePresence mode="wait">
                   <MotionImage
@@ -202,6 +235,22 @@ export default function ProductInfo({ product }: { product: ProductData }) {
                 />
               </div>
             </div>
+            <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg text-sm font-mono">
+              <p>
+                Selected Color: <strong>{selectedColor}</strong>
+              </p>
+              <p>
+                Selected Size: <strong>{selectedSize}</strong>
+              </p>
+              <p>
+                Found Variant ID:{" "}
+                <strong>{selectedVariant?.id || "NOT FOUND"}</strong>
+              </p>
+              <p>
+                Stock: {stock} | Out of stock: {isOutOfStock ? "YES" : "NO"}
+              </p>
+              <p>Can add: {canAddToCart ? "YES" : "NO"}</p>
+            </div>
             <div className="space-y-4">
               <div className="flex items-center gap-6">
                 <span className="text-4xl font-bold text-black dark:text-white">
@@ -222,9 +271,13 @@ export default function ProductInfo({ product }: { product: ProductData }) {
                   </>
                 )}
               </div>
-              {isOutOfStock && (
-                <p className="text-red-600 font-semibold">Out of Stock</p>
-              )}
+              {isOutOfStock ? (
+                <p className="text-red-600 font-bold text-xl">Out of Stock</p>
+              ) : stock <= 5 ? (
+                <p className="text-orange-600 font-medium">
+                  Only {stock} left — Order soon!
+                </p>
+              ) : null}
             </div>
             <div className="space-y-8 pt-6">
               <ColorDropDown
@@ -238,25 +291,48 @@ export default function ProductInfo({ product }: { product: ProductData }) {
                 onSelectSize={setSelectedSize}
                 disabledSizes={disabledSizes}
               />
+              <div className="flex items-center gap-6">
+                <span className="text-lg font-medium">Quantity:</span>
+                <div className="flex items-center border border-gray-300 dark:border-zinc-700 rounded-xl">
+                  <button
+                    onClick={() => handleQuantityChange(quantity - 1)}
+                    disabled={quantity <= 1}
+                    className="p-4 hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-50"
+                  >
+                    <Minus size={18} />
+                  </button>
+                  <span className="w-16 text-center font-semibold text-lg">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => handleQuantityChange(quantity + 1)}
+                    disabled={quantity >= stock}
+                    className="p-4 hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-50"
+                  >
+                    <Plus size={18} />
+                  </button>
+                </div>
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-8">
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                disabled={!selectedColor || !selectedSize || isOutOfStock}
-                className="h-16 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold text-xl flex items-center justify-center gap-4 shadow-2xl hover:shadow-3xl transition-all disabled:opacity-300 disabled:cursor-not-allowed"
+                whileHover={{ scale: canAddToCart ? 1.02 : 1 }}
+                whileTap={{ scale: canAddToCart ? 0.98 : 1 }}
+                onClick={handleAddToCart}
+                disabled={!canAddToCart || orderMutation.isPending}
+                className="h-16 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold text-xl flex items-center justify-center gap-3 shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ShoppingCart size={26} />
+                {orderMutation.isPending ? "Adding..." : "Add to Cart"}
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: canAddToCart ? 1.02 : 1 }}
+                whileTap={{ scale: canAddToCart ? 0.98 : 1 }}
+                disabled={!canAddToCart || orderMutation.isPending}
+                className="h-16 bg-linear-to-r from-red-600 to-pink-600 text-white rounded-2xl font-bold text-xl flex items-center justify-center gap-3 shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ShoppingCart size={26} />
                 Buy Now
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                disabled={!selectedColor || !selectedSize || isOutOfStock}
-                className="h-16 bg-linear-to-r from-red-600 to-pink-600 text-white rounded-2xl font-bold text-xl flex items-center justify-center gap-4 shadow-2xl hover:shadow-3xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ShoppingCart size={26} />
-                Add to Cart
               </motion.button>
             </div>
             <div className="grid grid-cols-3 gap-6 py-10 border-t border-gray-200 dark:border-zinc-800">

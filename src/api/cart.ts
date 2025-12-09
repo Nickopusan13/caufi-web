@@ -9,19 +9,14 @@ interface ApiErrorResponse {
 }
 
 export interface CartItemCreate {
-  productId: number;
   variantId: number;
   quantity: number;
-  size: number;
-  color: number;
 }
 
 export interface CartItemOut {
   id: number;
-  productId: number;
+  variantId: number;
   quantity: number;
-  size: number;
-  color: number;
   price: number;
   product: ProductData;
   variant: ProductVariant;
@@ -34,7 +29,6 @@ export interface CartOut {
 }
 
 export interface CartItemUpdate {
-  productId?: number;
   variantId: number;
   quantity?: number;
 }
@@ -74,6 +68,24 @@ export async function updateUserCart(
 export async function deleteUserCart(itemId: number): Promise<CartItemOut> {
   try {
     const res = await axios.delete(`${API_URL}/api/cart/delete/${itemId}`, {
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.detail);
+    }
+    throw new Error(error.message);
+  }
+}
+
+export async function addUserCart(data: CartItemCreate): Promise<CartOut> {
+  try {
+    const res = await axios.post(`${API_URL}/api/cart/add`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
       withCredentials: true,
     });
     return res.data;
