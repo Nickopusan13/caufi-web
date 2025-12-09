@@ -58,6 +58,7 @@ from app.security.oauth import oauth
 from app.utils.generate_username import generate_username
 from sqlalchemy import select, delete, func, update
 from dotenv import load_dotenv
+from datetime import datetime, timedelta, timezone
 import logging
 import secrets
 import os
@@ -121,18 +122,25 @@ async def api_user_login(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password.",
         )
-    jwt_token = await create_jwt_token(data={"user_id": user.id, "email": user.email})
+    jwt_token = await create_jwt_token(
+            data={
+                "sub": str(user.id),           # ← standard claim
+                "email": user.email,
+                "role": user.role or "user",   # ← important for RLS/auth
+                "iat": datetime.now(timezone.utc).replace(tzinfo=None),
+                "exp": datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=JWT_TOKEN_EXPIRE_DAYS),
+                "jti": secrets.token_urlsafe(16),  # ← prevents replay
+            }
+        )
     expire_duration = JWT_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     response.set_cookie(
         key="access_token",
-        value=jwt_token,
+        value=f"Bearer{jwt_token}",
         httponly=True,
-        secure=False,
+        secure=True,
         samesite="lax",
         max_age=expire_duration,
         path="/",
-        # partitioned=True,
-        # domain="/",
     )
     return UserToken(
         message="Login successful",
