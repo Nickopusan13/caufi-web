@@ -127,8 +127,8 @@ async def api_user_login(
                 "sub": str(user.id),           # ← standard claim
                 "email": user.email,
                 "role": "admin" if user.is_admin else "user",
-                "iat": datetime.now(timezone.utc).replace(tzinfo=None),
-                "exp": datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=JWT_TOKEN_EXPIRE_DAYS),
+                "iat": datetime.now(timezone.utc),
+                "exp": datetime.now(timezone.utc) + timedelta(days=JWT_TOKEN_EXPIRE_DAYS),
                 "jti": secrets.token_urlsafe(16),  # ← prevents replay
             }
         )
