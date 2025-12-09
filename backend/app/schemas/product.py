@@ -16,7 +16,6 @@ class ProductMaterialOut(BaseConfigModel):
 
 
 class ProductVariantDataBase(BaseConfigModel):
-    id: int = Field(gt=0)
     regular_price: Decimal = Field(gt=0)
     discount_price: Decimal | None = Field(default=None, ge=0)
     size: Optional[str] = Field(min_length=1, max_length=255)
@@ -26,7 +25,8 @@ class ProductVariantDataBase(BaseConfigModel):
 
 
 class ProductVariantDataOut(ProductVariantDataBase):
-    sku: str = Field(min_length=1, max_length=255)
+    id: Optional[int] = Field(default=None, gt=0)
+    sku: Optional[str] = Field(default=None, min_length=1, max_length=255)
 
 
 class ProductVariantUpdate(BaseConfigModel):
@@ -51,7 +51,7 @@ class ProductDataBase(BaseConfigModel):
     materials: list[ProductMaterialOut] = Field(default_factory=list)
     images: Optional[list[ProductImageOut]] = None
     variants: list[ProductVariantDataOut]
-    slug: str = Field(min_length=1, max_length=255)
+    slug: Optional[str] = Field(default=None, min_length=1, max_length=255)
     is_featured: bool = Field(default=False)
     is_active: bool = Field(default=True)
 
