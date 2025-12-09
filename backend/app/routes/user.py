@@ -135,7 +135,7 @@ async def api_user_login(
     expire_duration = JWT_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     response.set_cookie(
         key="access_token",
-        value=f"Bearer{jwt_token}",
+        value=jwt_token,
         httponly=True,
         secure=True,
         samesite="lax",
