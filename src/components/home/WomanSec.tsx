@@ -48,8 +48,8 @@ export default function WomenSection() {
                 pagination={{ clickable: true }}
                 className="h-96 rounded-3xl overflow-hidden shadow-xl"
               >
-                {allMensProducts.map((product) => (
-                  <SwiperSlide key={product.sku}>
+                {allMensProducts.map((product, idx) => (
+                  <SwiperSlide key={idx}>
                     <Link href={`/product/${product.slug}`}>
                       <div className="relative h-full group cursor-pointer">
                         <Image
@@ -88,8 +88,8 @@ export default function WomenSection() {
                 pagination={{ clickable: true }}
                 className="h-96 rounded-3xl overflow-hidden shadow-2xl"
               >
-                {newArrivalsProducts.map((product) => (
-                  <SwiperSlide key={product.sku}>
+                {newArrivalsProducts.map((product, idx) => (
+                  <SwiperSlide key={idx}>
                     <Link href={`/product/${product.slug}`}>
                       <div className="relative h-full group cursor-pointer">
                         <Image
