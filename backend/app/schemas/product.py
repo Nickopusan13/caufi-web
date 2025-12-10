@@ -61,6 +61,13 @@ class ProductDataOut(ProductDataBase):
     created_at: datetime
     updated_at: datetime
 
+class ProductListResponse(BaseConfigModel):
+    products: list[ProductDataOut]
+    total: int
+    current_page: int
+    category_counts: dict[str, int]
+    total_pages: int
+
 
 class ProductUpdate(BaseConfigModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)

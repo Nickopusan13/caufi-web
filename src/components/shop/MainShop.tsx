@@ -31,12 +31,12 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const categories = [
-  { name: "All Products", value: "", count: 1248 },
-  { name: "Men", value: "Men", count: 524 },
-  { name: "Women", value: "Women", count: 612 },
-  { name: "Bag", value: "Bag", count: 112 },
-  { name: "Shoes", value: "Shoes", count: 89 },
+const categoryList = [
+  { name: "All Products", value: "" },
+  { name: "Men", value: "Men" },
+  { name: "Women", value: "Women" },
+  { name: "Bag", value: "Bag" },
+  { name: "Shoes", value: "Shoes" },
 ];
 
 const sortOptions = [
@@ -53,8 +53,8 @@ export default function ShopPage() {
   const currentCategory = searchParams.get("category") || "";
   const currentSort = searchParams.get("sort") || "";
   const priceRange = searchParams.get("price") || "0-500";
-  const [minPrice, maxPrice] = priceRange.split("-").map(Number);
   const currentPage = Number(searchParams.get("page")) || 1;
+  const [minPrice, maxPrice] = priceRange.split("-").map(Number);
   const [priceValue, setPriceValue] = useState<[number, number]>([
     minPrice,
     maxPrice,
@@ -63,6 +63,7 @@ export default function ShopPage() {
     const [newMin, newMax] = priceRange.split("-").map(Number);
     setPriceValue([newMin, newMax]);
   }, [priceRange]);
+
   const updateFilters = (newParams: Record<string, string | number | null>) => {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -77,8 +78,7 @@ export default function ShopPage() {
     router.push(`/shop?${params.toString()}`, { scroll: false });
   };
 
-  // Fetch products with current filters
-  const { data: cloths = [], isLoading } = useProducts({
+  const { data, isLoading } = useProducts({
     category: currentCategory || undefined,
     minPrice: priceValue[0] === 0 ? undefined : priceValue[0],
     maxPrice: priceValue[1] === 500 ? undefined : priceValue[1],
@@ -87,8 +87,13 @@ export default function ShopPage() {
     limit: 20,
     onlyActive: true,
   });
-
-  const totalPages = 10;
+  const products = data?.products ?? [];
+  const totalPages = data?.totalPages ?? 1;
+  const categoryCounts = data?.categoryCounts ?? { "": 0 };
+  const categories = categoryList.map((cat) => ({
+    ...cat,
+    count: categoryCounts[cat.value] ?? 0,
+  }));
   return (
     <div className="min-h-screen">
       <div className="border-b">
@@ -121,7 +126,9 @@ export default function ShopPage() {
                       <button
                         onClick={() => updateFilters({ category: cat.value })}
                         className={`w-full text-left flex justify-between items-center px-3 py-2 rounded-md transition ${
-                          currentCategory === cat.value && "bg-black text-white"
+                          currentCategory === cat.value
+                            ? "bg-black text-white"
+                            : "hover:bg-gray-100"
                         }`}
                       >
                         <span>{cat.name}</span>
@@ -178,9 +185,9 @@ export default function ShopPage() {
                         {categories.map((cat) => (
                           <button
                             key={cat.value}
-                            onClick={() => {
-                              updateFilters({ category: cat.value });
-                            }}
+                            onClick={() =>
+                              updateFilters({ category: cat.value })
+                            }
                             className={`block w-full text-left px-4 py-3 rounded-md mb-2 ${
                               currentCategory === cat.value
                                 ? "bg-black text-white"
@@ -197,7 +204,9 @@ export default function ShopPage() {
                         </h3>
                         <Slider
                           value={priceValue}
-                          //   onValueChange={setPriceValue}
+                          onValueChange={(value) =>
+                            setPriceValue(value as [number, number])
+                          }
                           onValueCommit={(v) =>
                             updateFilters({ price: `${v[0]}-${v[1]}` })
                           }
@@ -241,10 +250,14 @@ export default function ShopPage() {
                   />
                 ))}
               </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-20 text-gray-500">
+                No products found. Try adjusting your filters.
+              </div>
             ) : (
               <>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                  <ProductItem cloths={cloths} />
+                  <ProductItem cloths={products} />
                 </div>
                 {totalPages > 1 && (
                   <div className="flex justify-center mt-12">
@@ -260,7 +273,6 @@ export default function ShopPage() {
                             }}
                           />
                         </PaginationItem>
-
                         {[...Array(totalPages)].map((_, i) => (
                           <PaginationItem key={i + 1}>
                             <PaginationLink

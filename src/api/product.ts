@@ -45,6 +45,14 @@ export interface ProductData {
   isActive: boolean;
 }
 
+export interface ProductListResponse {
+  products: ProductData[];
+  total: number;
+  currentPage: number;
+  categoryCounts: Record<string, number>;
+  totalPages: number;
+}
+
 export interface ProductFilters {
   page?: number;
   limit?: number;
@@ -57,7 +65,7 @@ export interface ProductFilters {
 
 export async function fetchProductData(
   filters: ProductFilters = {}
-): Promise<ProductData[]> {
+): Promise<ProductListResponse> {
   if (!API_URL) {
     console.error("API_URL is not defined");
     throw new Error("API_URL is not defined");

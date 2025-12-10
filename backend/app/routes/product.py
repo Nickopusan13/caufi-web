@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException, status, Depends, Query, UploadFile, File
 from app.schemas.product import (
     ProductDataOut,
+    ProductListResponse,
     ProductDataBase,
     ProductDeleteMany,
     ProductListFilters,
@@ -16,7 +17,7 @@ from app.db.dependencies import get_db
 from app.db.models import Product
 from app.utils.slug import get_slug, get_sku
 from app.crud.product import get_product
-from sqlalchemy import select
+from sqlalchemy import select, func
 from app.utils.filters import apply_product_filters, get_base_product_query
 from app.utils.r2_service import (
     upload_product_images,
@@ -113,7 +114,7 @@ async def delete_image(
 
 
 @router.get(
-    "/get/all", response_model=List[ProductDataOut], status_code=status.HTTP_200_OK
+    "/get/all", response_model=ProductListResponse, status_code=status.HTTP_200_OK
 )
 async def api_product_all(
     f: ProductListFilters = Depends(),
@@ -123,13 +124,32 @@ async def api_product_all(
 ):
     query = get_base_product_query()
     query = apply_product_filters(query, f)
+    total = (await db.execute(select(func.count()).select_from(query.subquery()))).scalar_one()
+    cat_query = (
+        select(
+            func.coalesce(Product.category, "").label("cat"),
+            func.count()
+        )
+        .select_from(query.subquery())
+        .group_by("cat")
+    )
+    cat_result = await db.execute(cat_query)
+    category_counts = {"": total}  # "All Products"
+    for cat, cnt in cat_result.all():
+        category_counts[cat or ""] = cnt
     query = query.order_by(Product.created_at.desc())
     products = (
         (await db.execute(query.offset((page - 1) * limit).limit(limit)))
         .scalars()
         .all()
     )
-    return products
+    return {
+        "products": products,
+        "total": total,
+        "category_counts": category_counts,
+        "current_page": page,
+        "total_pages": (total + limit - 1) // limit,
+    }
 
 
 @router.get(

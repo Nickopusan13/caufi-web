@@ -12,15 +12,14 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 export default function WomenSection() {
-  const { data: cloths = [], isLoading } = useProducts({
+  const { data, isLoading } = useProducts({
     category: "Women",
     onlyActive: true,
     limit: 5,
   });
-  const allMensProducts = cloths.slice(0, 6);
-  const newArrivalsProducts =
-    cloths.filter((p) => p.name).slice(0, 6) || cloths.slice(2, 8);
-
+  const products = data?.products ?? [];
+  const allMensProducts = products.slice(0, 6);
+  const newArrivalsProducts = products.slice(0, 6);
   return (
     <section className="mt-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
@@ -140,7 +139,7 @@ export default function WomenSection() {
                 />
               ))
             ) : (
-              <ProductItem cloths={cloths} />
+              <ProductItem cloths={products} />
             )}
           </div>
         </div>
