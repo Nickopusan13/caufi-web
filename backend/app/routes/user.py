@@ -116,6 +116,10 @@ async def api_user_login(
         response.delete_cookie(
             key="access_token",
             path="/",
+            httponly=True,
+            secure=True,
+            samesite="none",
+            domain=".nickopusan.dev",
         )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -181,7 +185,8 @@ async def api_user_logout(response: Response):
         path="/",
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="none",
+        domain=".nickopusan.dev",
     )
     return {"message": "Logout successful"}
 
