@@ -116,7 +116,6 @@ async def api_user_login(
         response.delete_cookie(
             key="access_token",
             path="/",
-            domain=".nickopusan.dev",
         )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -124,12 +123,12 @@ async def api_user_login(
         )
     jwt_token = await create_jwt_token(
             data={
-                "user_id": user.id,           # ← standard claim
+                "user_id": user.id,
                 "email": user.email,
                 "role": "admin" if user.is_admin else "user",
                 "iat": datetime.now(timezone.utc),
                 "exp": datetime.now(timezone.utc) + timedelta(days=JWT_TOKEN_EXPIRE_DAYS),
-                "jti": secrets.token_urlsafe(16),  # ← prevents replay
+                "jti": secrets.token_urlsafe(16),
             }
         )
     expire_duration = JWT_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
@@ -141,6 +140,7 @@ async def api_user_login(
         samesite="none",
         max_age=expire_duration,
         path="/",
+        partitioned=True,
     )
     return UserToken(
         message="Login successful",
