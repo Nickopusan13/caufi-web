@@ -126,15 +126,15 @@ async def api_user_login(
             detail="Invalid email or password.",
         )
     jwt_token = await create_jwt_token(
-            data={
-                "user_id": user.id,
-                "email": user.email,
-                "role": "admin" if user.is_admin else "user",
-                "iat": datetime.now(timezone.utc),
-                "exp": datetime.now(timezone.utc) + timedelta(days=JWT_TOKEN_EXPIRE_DAYS),
-                "jti": secrets.token_urlsafe(16),
-            }
-        )
+        data={
+            "user_id": user.id,
+            "email": user.email,
+            "role": "admin" if user.is_admin else "user",
+            "iat": datetime.now(timezone.utc),
+            "exp": datetime.now(timezone.utc) + timedelta(days=JWT_TOKEN_EXPIRE_DAYS),
+            "jti": secrets.token_urlsafe(16),
+        }
+    )
     expire_duration = JWT_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     response.set_cookie(
         key="access_token",
@@ -144,8 +144,8 @@ async def api_user_login(
         samesite="none",
         max_age=expire_duration,
         path="/",
-        partitioned=True,
-        domain=".nickopusan.dev",
+        # partitioned=True,
+        # domain=".nickopusan.dev",
     )
     return UserToken(
         message="Login successful",

@@ -61,6 +61,7 @@ class ProductDataOut(ProductDataBase):
     created_at: datetime
     updated_at: datetime
 
+
 class ProductListResponse(BaseConfigModel):
     products: list[ProductDataOut]
     total: int

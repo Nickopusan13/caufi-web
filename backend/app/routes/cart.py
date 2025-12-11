@@ -56,17 +56,16 @@ async def api_cart_add(
         select(CartItem)
         .options(
             selectinload(CartItem.variant),
+            selectinload(CartItem.variant).selectinload(ProductVariant.product),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.images),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.images),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.materials),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.materials),
-            selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.variants),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.variants),
         )
         .where(CartItem.id == item_id)
     )
@@ -87,17 +86,16 @@ async def api_cart_all(
         select(CartItem)
         .options(
             selectinload(CartItem.variant),
+            selectinload(CartItem.variant).selectinload(ProductVariant.product),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.images),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.images),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.materials),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.materials),
-            selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.variants),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.variants),
         )
         .where(CartItem.cart_id == cart.id)
     )
@@ -126,17 +124,16 @@ async def api_delete_cart(
         select(CartItem)
         .options(
             selectinload(CartItem.variant),
+            selectinload(CartItem.variant).selectinload(ProductVariant.product),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.images),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.images),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.materials),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.materials),
-            selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.variants),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.variants),
         )
         .where(CartItem.id == item_id, CartItem.cart_id == cart.id)
     )
@@ -200,17 +197,16 @@ async def api_update_cart_item(
         select(CartItem)
         .options(
             selectinload(CartItem.variant),
+            selectinload(CartItem.variant).selectinload(ProductVariant.product),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.images),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.images),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.materials),
             selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.materials),
-            selectinload(CartItem.variant)
-                .selectinload(ProductVariant.product)
-                .selectinload(Product.variants),
+            .selectinload(ProductVariant.product)
+            .selectinload(Product.variants),
         )
         .where(CartItem.cart_id == cart.id)
         .order_by(CartItem.id)

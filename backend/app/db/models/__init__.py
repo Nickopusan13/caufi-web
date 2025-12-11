@@ -9,7 +9,7 @@ from app.db.models.product import (
     ProductMaterial,
     Cart,
     CartItem,
-    ProductVariant
+    ProductVariant,
 )
 from app.db.models.order import Order, OrderItem
 

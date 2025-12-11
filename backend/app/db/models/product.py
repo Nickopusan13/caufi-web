@@ -152,7 +152,7 @@ class CartItem(Base):
     cart: Mapped["Cart"] = relationship(
         "Cart", back_populates="cart_items", lazy="selectin"
     )
-    
+
     @property
     def price(self) -> Decimal:
         # derive current price from the variant; prefer discount if present
@@ -163,6 +163,7 @@ class CartItem(Base):
     @property
     def product(self):
         return getattr(self.variant, "product", None)
+
     __table_args__ = (
         UniqueConstraint("cart_id", "variant_id", name="uix_cart_product_variant"),
     )

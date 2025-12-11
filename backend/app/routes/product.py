@@ -113,33 +113,35 @@ async def delete_image(
     return {"meessage": "Delete success"}
 
 
-@router.get(
-    "/get/all", response_model=ProductListResponse, status_code=status.HTTP_200_OK
-)
+@router.get("/get/all", response_model=ProductListResponse)
 async def api_product_all(
     f: ProductListFilters = Depends(),
     page: int = Query(1, ge=1),
     limit: int = Query(24, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
-    query = get_base_product_query()
-    query = apply_product_filters(query, f)
-    total = (await db.execute(select(func.count()).select_from(query.subquery()))).scalar_one()
-    cat_query = (
-        select(
-            func.coalesce(Product.category, "").label("cat"),
-            func.count()
+    filtered_query = get_base_product_query()
+    filtered_query = apply_product_filters(filtered_query, f)
+    filtered_sub = filtered_query.subquery()
+    total = await db.scalar(select(func.count()).select_from(filtered_sub))
+    all_query = get_base_product_query()
+    all_sub = all_query.subquery()
+    cat_rows = await db.execute(
+        select(all_sub.c.category, func.count(all_sub.c.id)).group_by(
+            all_sub.c.category
         )
-        .select_from(query.subquery())
-        .group_by("cat")
     )
-    cat_result = await db.execute(cat_query)
-    category_counts = {"": total}  # "All Products"
-    for cat, cnt in cat_result.all():
-        category_counts[cat or ""] = cnt
-    query = query.order_by(Product.created_at.desc())
+    category_counts = {"": await db.scalar(select(func.count()).select_from(all_sub))}
+    for category, count in cat_rows.all():
+        category_counts[category] = count
     products = (
-        (await db.execute(query.offset((page - 1) * limit).limit(limit)))
+        (
+            await db.execute(
+                filtered_query.order_by(Product.created_at.desc())
+                .offset((page - 1) * limit)
+                .limit(limit)
+            )
+        )
         .scalars()
         .all()
     )
