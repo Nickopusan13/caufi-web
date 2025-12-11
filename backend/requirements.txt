@@ -33,7 +33,9 @@ httplib2==0.31.0
 httpx==0.28.1
 idna==3.11
 itsdangerous==2.2.0
+Jinja2==3.1.6
 jmespath==1.0.1
+MarkupSafe==3.0.3
 midtransclient==1.4.2
 passlib==1.7.4
 pendulum==3.1.0
@@ -55,6 +57,7 @@ rsa==4.9.1
 ruff==0.14.8
 s3transfer==0.16.0
 six==1.17.0
+sqladmin==0.22.0
 SQLAlchemy==2.0.44
 starlette==0.50.0
 tenacity==9.1.2
@@ -66,3 +69,4 @@ uritemplate==4.2.0
 urllib3==2.6.0
 uvicorn==0.38.0
 websockets==15.0.1
+WTForms==3.1.2
