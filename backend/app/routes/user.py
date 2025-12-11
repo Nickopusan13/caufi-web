@@ -38,6 +38,7 @@ from app.security.jwt import (
     JWT_TOKEN_EXPIRE_DAYS,
     get_current_user,
     get_admin_user,
+    verify_jwt_token
 )
 from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
 from authlib.integrations.starlette_client import OAuthError
@@ -93,6 +94,20 @@ async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_d
             email=data.email,
             password=data.password,
             user_name=user_name,
+            is_verified=False
+        )
+        token = await create_jwt_token(
+            data={
+                "email": new_user.email,
+                "exp": datetime.now(timezone.utc) + timedelta(minutes=60),
+                "jti": secrets.token_urlsafe(16)
+            }
+        )
+        verify_link = f"{ALLOWED_ORIGINS}/login/verify-email?token={token}"
+        send_mail(
+            to_email=new_user.email,
+            subject="Verify your Caufi Email.",
+            html=f"Click to verify your email >>> {verify_link}"
         )
         return new_user
     except Exception as e:
@@ -102,6 +117,18 @@ async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_d
             detail="An error occurred while creating the user.",
         )
 
+@router.get("/verify-email", status_code=status.HTTP_200_OK)
+async def verify_email(token: str, db: AsyncSession = Depends(get_db)):
+    payload = await verify_jwt_token(token=token)
+    email = payload["email"]
+    user = await get_user(db=db, user_email=email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.is_verified:
+        return {"message": "Your email is already verified."}
+    user.is_verified = True
+    await db.commit()
+    return {"message": "Email verification successful!"}
 
 @router.post("/login", response_model=UserToken, status_code=status.HTTP_200_OK)
 async def api_user_login(

@@ -60,6 +60,7 @@ export interface UserProfileOut {
   createdAt: string;
   isAdmin: boolean;
   isActive: boolean;
+  isVerified: boolean;
 }
 
 export interface UserProfile {
@@ -158,6 +159,24 @@ export async function fetchUserRegister(data: UserRegister) {
       throw new Error(errorData.detail || "Register failed");
     } else {
       throw new Error(error.message || "Register failed");
+    }
+  }
+}
+
+export async function createVerifyEmail(token: string) {
+  try {
+    const res = await axios.get(`${API_URL}/api/user/verify-email`, {
+      params: { token },
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
     }
   }
 }

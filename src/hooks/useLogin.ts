@@ -14,6 +14,7 @@ import {
   mapsAutocomplete,
   createUserAddress,
   mapsReverseGeocoding,
+  createVerifyEmail,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -40,6 +41,16 @@ export function useRegister(onToggle: () => void) {
       toast.success("Registration Success, Please Login");
       if (onToggle) onToggle();
     },
+  });
+}
+
+export function useVerifyEmail(token: string | null) {
+  return useQuery({
+    queryKey: ["verify-email", token],
+    queryFn: () => createVerifyEmail(token!),
+    enabled: !!token,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 }
 

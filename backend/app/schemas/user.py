@@ -66,6 +66,7 @@ class UserProfileOut(UserProfile):
     created_at: datetime
     is_admin: bool
     is_active: bool
+    is_verified: bool
     addresses: list[UserAddressOut] = Field(default_factory=list)
 
 

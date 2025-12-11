@@ -34,6 +34,7 @@ class User(Base):
     )
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     birthday: Mapped[Optional[str]] = mapped_column(Date, nullable=True)
     profile_image: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
