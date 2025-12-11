@@ -41,10 +41,11 @@ const categoryList = [
 
 const sortOptions = [
   { label: "Featured", value: "" },
-  { label: "Price: Low to High", value: "price-asc" },
-  { label: "Price: High to Low", value: "price-desc" },
+  { label: "Price: Low to High", value: "price_low" },
+  { label: "Price: High to Low", value: "price_high" },
   { label: "Newest First", value: "newest" },
-  { label: "Best Selling", value: "bestselling" },
+  { label: "Name: A to Z", value: "asc" },
+  { label: "Name: Z to A", value: "desc" },
 ];
 
 export default function ShopPage() {
@@ -52,7 +53,7 @@ export default function ShopPage() {
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category") || "";
   const currentSort = searchParams.get("sort") || "";
-  const priceRange = searchParams.get("price") || "0-500";
+  const priceRange = searchParams.get("price") || "0-10000";
   const currentPage = Number(searchParams.get("page")) || 1;
   const [minPrice, maxPrice] = priceRange.split("-").map(Number);
   const [priceValue, setPriceValue] = useState<[number, number]>([
@@ -82,7 +83,7 @@ export default function ShopPage() {
     category: currentCategory || undefined,
     minPrice: priceValue[0] === 0 ? undefined : priceValue[0],
     maxPrice: priceValue[1] === 500 ? undefined : priceValue[1],
-    // sort: currentSort || undefined,
+    sort: currentSort || undefined,
     page: currentPage,
     limit: 20,
     onlyActive: true,
@@ -127,8 +128,8 @@ export default function ShopPage() {
                         onClick={() => updateFilters({ category: cat.value })}
                         className={`w-full text-left flex justify-between items-center px-3 py-2 rounded-md transition ${
                           currentCategory === cat.value
-                            ? "bg-black text-white"
-                            : "hover:bg-zinc-950"
+                            ? "dark:bg-black bg-zinc-400 text-white"
+                            : "dark:hover:bg-zinc-950 hover:bg-zinc-200"
                         }`}
                       >
                         <span>{cat.name}</span>
@@ -150,7 +151,7 @@ export default function ShopPage() {
                   onValueCommit={(value) => {
                     updateFilters({ price: `${value[0]}-${value[1]}` });
                   }}
-                  max={500}
+                  max={10000}
                   step={10}
                   className="mb-4"
                 />

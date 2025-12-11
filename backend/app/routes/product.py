@@ -126,22 +126,17 @@ async def api_product_all(
     total = await db.scalar(select(func.count()).select_from(filtered_sub))
     all_query = get_base_product_query()
     all_sub = all_query.subquery()
+    full_total = await db.scalar(select(func.count()).select_from(all_sub))
     cat_rows = await db.execute(
         select(all_sub.c.category, func.count(all_sub.c.id)).group_by(
             all_sub.c.category
         )
     )
-    category_counts = {"": await db.scalar(select(func.count()).select_from(all_sub))}
+    category_counts = {"": full_total}
     for category, count in cat_rows.all():
         category_counts[category] = count
     products = (
-        (
-            await db.execute(
-                filtered_query.order_by(Product.created_at.desc())
-                .offset((page - 1) * limit)
-                .limit(limit)
-            )
-        )
+        (await db.execute(filtered_query.offset((page - 1) * limit).limit(limit)))
         .scalars()
         .all()
     )

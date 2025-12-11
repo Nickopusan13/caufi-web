@@ -119,3 +119,4 @@ class ProductListFilters(BaseConfigModel):
     min_price: Optional[float] = None
     max_price: Optional[float] = None
     only_active: bool = True
+    sort: Optional[str] = "newest"

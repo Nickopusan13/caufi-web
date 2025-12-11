@@ -61,6 +61,7 @@ export interface ProductFilters {
   minPrice?: number;
   maxPrice?: number;
   onlyActive?: boolean;
+  sort?: string;
 }
 
 export async function fetchProductData(

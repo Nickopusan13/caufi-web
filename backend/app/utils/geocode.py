@@ -9,7 +9,7 @@ from app.schemas.user import (
     ReverseGeocodingResponse,
     ReverseGeocodingResult,
 )
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 import os
 
 load_dotenv()
