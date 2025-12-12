@@ -84,7 +84,7 @@ export default function VerifyEmail() {
     );
   }
   const isAlreadyVerified = data?.message?.includes("already verified");
-  const email = searchParams.get("email") || "your email"; // fallback if backend doesn't return it
+  const email = searchParams.get("email") || "your email";
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-cyan-900 to-purple-900 p-4 overflow-hidden">
       <ToasterProvider />

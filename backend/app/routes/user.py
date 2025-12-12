@@ -38,7 +38,7 @@ from app.security.jwt import (
     JWT_TOKEN_EXPIRE_DAYS,
     get_current_user,
     get_admin_user,
-    verify_jwt_token
+    verify_jwt_token,
 )
 from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
 from authlib.integrations.starlette_client import OAuthError
@@ -72,7 +72,6 @@ ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS")
 
 @router.post(
     "/register",
-    response_model=UserProfileOut,
     status_code=status.HTTP_201_CREATED,
 )
 async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_db)):
@@ -88,28 +87,21 @@ async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_d
         while await db.scalar(select(User).where(User.user_name == user_name)):
             user_name = generate_username(data.name or "user", data.email)
     try:
-        new_user = await create_user(
-            db=db,
-            name=data.name,
-            email=data.email,
-            password=data.password,
-            user_name=user_name,
-            is_verified=False
-        )
-        token = await create_jwt_token(
-            data={
-                "email": new_user.email,
-                "exp": datetime.now(timezone.utc) + timedelta(minutes=60),
-                "jti": secrets.token_urlsafe(16)
-            }
-        )
+        token = await create_jwt_token({
+            "email": data.email,
+            "name": data.name,
+            "user_name": data.user_name or "",
+            "password": data.password,
+            "exp": datetime.now(timezone.utc) + timedelta(minutes=5),
+            "jti": secrets.token_urlsafe(16),
+        })
         verify_link = f"{ALLOWED_ORIGINS}/login/verify-email?token={token}"
         send_mail(
-            to_email=new_user.email,
+            to_email=data.email,
             subject="Verify your Caufi Email.",
-            html=f"Click to verify your email >>> {verify_link}"
+            html=f"Click to verify your email, WILL BE VALID IN (5 MINUTES) >>> {verify_link}",
         )
-        return new_user
+        return {"message":"Verification email sent."}
     except Exception as e:
         logger.exception("Error creating user: %s", e)
         raise HTTPException(
@@ -117,18 +109,33 @@ async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_d
             detail="An error occurred while creating the user.",
         )
 
+
 @router.get("/verify-email", status_code=status.HTTP_200_OK)
 async def verify_email(token: str, db: AsyncSession = Depends(get_db)):
     payload = await verify_jwt_token(token=token)
     email = payload["email"]
-    user = await get_user(db=db, user_email=email)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if user.is_verified:
+    name = payload["name"]
+    password = payload["password"]
+    raw_username = payload.get("user_name", "")
+    existing_user = await get_user(db, user_email=email)
+    if existing_user and existing_user.is_verified:
         return {"message": "Your email is already verified."}
-    user.is_verified = True
-    await db.commit()
-    return {"message": "Email verification successful!"}
+    if existing_user and not existing_user.is_verified:
+        await db.delete(existing_user)
+        await db.commit()
+    user_name = raw_username.strip() or generate_username(name, email)
+    while await db.scalar(select(User).where(User.user_name == user_name)):
+        user_name = generate_username(name or "user", email)
+    new_user = await create_user(
+        db=db,
+        name=name,
+        email=email,
+        password=password,
+        user_name=user_name,
+        is_verified=True,
+    )
+    return new_user
+
 
 @router.post("/login", response_model=UserToken, status_code=status.HTTP_200_OK)
 async def api_user_login(

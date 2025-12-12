@@ -3,21 +3,33 @@ import logging
 from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from googleapiclient.discovery import build
+from google.auth.transport.requests import Request
+from dotenv import load_dotenv
 import base64
 import pickle
 # from sendgrid import SendGridAPIClient
 # from sendgrid.helpers.mail import Mail
 
+load_dotenv()
+TOKEN_PATH = os.getenv("TOKEN_PATH")
+CREDENTIALS_PATH = os.getenv("CREDENTIALS_PATH")
 logger = logging.getLogger(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TOKEN_PATH = os.path.join(BASE_DIR, "../key/token.pickle")
-TOKEN_PATH = os.path.abspath(TOKEN_PATH)
 load_dotenv()
 
+def gmail_credentials():
+    try:
+        with open(TOKEN_PATH, "rb") as token_file:
+            creds = pickle.load(token_file)
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        return creds
+    except Exception as e:
+        logger.exception("Failed to load Gmail credentials: %s", e)
+        raise
 
 def send_mail(to_email: str, subject: str, html: str):
-    with open(TOKEN_PATH, "rb") as token_file:
-        creds = pickle.load(token_file)
+    creds = gmail_credentials()
     service = build("gmail", "v1", credentials=creds)
     msg = MIMEText(html, "html")
     msg["to"] = to_email

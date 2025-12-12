@@ -16,7 +16,11 @@ async def create_user(
 ) -> User:
     hashed_password = hash_password(password) if password else None
     new_user = User(
-        name=name, email=email, password=hashed_password, user_name=user_name, is_verified=is_verified
+        name=name,
+        email=email,
+        password=hashed_password,
+        user_name=user_name,
+        is_verified=is_verified,
     )
     db.add(new_user)
     await db.commit()
