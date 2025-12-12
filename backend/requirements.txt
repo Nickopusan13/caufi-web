@@ -22,8 +22,9 @@ email-validator==2.3.0
 fastapi==0.124.0
 google-api-core==2.28.1
 google-api-python-client==2.187.0
-google-auth==2.43.0
+google-auth==2.41.1
 google-auth-httplib2==0.2.1
+google-auth-oauthlib==1.2.3
 google-genai==1.53.0
 googleapis-common-protos==1.72.0
 greenlet==3.3.0
@@ -37,6 +38,7 @@ Jinja2==3.1.6
 jmespath==1.0.1
 MarkupSafe==3.0.3
 midtransclient==1.4.2
+oauthlib==3.3.1
 passlib==1.7.4
 pendulum==3.1.0
 proto-plus==1.26.1
@@ -53,6 +55,7 @@ python-jose==3.5.0
 python-multipart==0.0.20
 python-slugify==8.0.4
 requests==2.32.5
+requests-oauthlib==2.0.0
 rsa==4.9.1
 ruff==0.14.8
 s3transfer==0.16.0
