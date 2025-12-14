@@ -4,11 +4,11 @@ import Link from "next/link";
 import { Input } from "../ui/input";
 import MenuBar from "./components/MenuBar";
 import ModeToggle from "./components/ModeToggle";
-import SignRegBtn from "./components/SignRegBtn";
 import { FaSearch } from "react-icons/fa";
 import { useLenis } from "lenis/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import ProfileButton from "./components/ProfileButton";
 
 export default function Navbar() {
   const [hide, setHide] = useState(false);
@@ -51,7 +51,7 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <SignRegBtn />
+          <ProfileButton />
           <ModeToggle />
         </div>
       </nav>

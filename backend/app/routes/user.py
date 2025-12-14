@@ -87,21 +87,23 @@ async def api_user_register(data: UserRegister, db: AsyncSession = Depends(get_d
         while await db.scalar(select(User).where(User.user_name == user_name)):
             user_name = generate_username(data.name or "user", data.email)
     try:
-        token = await create_jwt_token({
-            "email": data.email,
-            "name": data.name,
-            "user_name": data.user_name or "",
-            "password": data.password,
-            "exp": datetime.now(timezone.utc) + timedelta(minutes=5),
-            "jti": secrets.token_urlsafe(16),
-        })
+        token = await create_jwt_token(
+            {
+                "email": data.email,
+                "name": data.name,
+                "user_name": data.user_name or "",
+                "password": data.password,
+                "exp": datetime.now(timezone.utc) + timedelta(minutes=5),
+                "jti": secrets.token_urlsafe(16),
+            }
+        )
         verify_link = f"{ALLOWED_ORIGINS}/login/verify-email?token={token}"
         send_mail(
             to_email=data.email,
             subject="Verify your Caufi Email.",
             html=f"Click to verify your email, WILL BE VALID IN (5 MINUTES) >>> {verify_link}",
         )
-        return {"message":"Verification email sent."}
+        return {"message": "Verification email sent."}
     except Exception as e:
         logger.exception("Error creating user: %s", e)
         raise HTTPException(
@@ -178,8 +180,8 @@ async def api_user_login(
         samesite="none",
         max_age=expire_duration,
         path="/",
-        partitioned=True,
-        domain=".nickopusan.dev",
+        # partitioned=True,
+        # domain=".nickopusan.dev",
     )
     return UserToken(
         message="Login successful",

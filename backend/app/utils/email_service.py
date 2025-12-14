@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv()
 
+
 def gmail_credentials():
     try:
         with open(TOKEN_PATH, "rb") as token_file:
@@ -26,6 +27,7 @@ def gmail_credentials():
     except Exception as e:
         logger.exception("Failed to load Gmail credentials: %s", e)
         raise
+
 
 def send_mail(to_email: str, subject: str, html: str):
     creds = gmail_credentials()
