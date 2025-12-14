@@ -33,18 +33,13 @@ export default function About() {
 
   return (
     <div>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-linear-to-br from-purple-900 via-indigo-950 to-black py-24 md:py-32">
-        {/* Subtle grain overlay for premium feel */}
+      <section className="relative overflow-hidden bg-linear-to-br from-purple-900 via-indigo-950 to-black">
         <div className="absolute inset-0 bg-black opacity-50" />
         <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent" />
-
-        {/* Animated background accents */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
         </div>
-
         <div className="relative container mx-auto px-6 max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -63,16 +58,12 @@ export default function About() {
               that elevate your everyday life — designed with precision,
               delivered with care.
             </p>
-
-            {/* Optional subtle underline glow */}
             <div className="mt-10 flex justify-center">
               <div className="h-1 w-32 bg-linear-to-r from-purple-500 to-pink-500 rounded-full blur-xl opacity-50"></div>
             </div>
           </motion.div>
         </div>
       </section>
-
-      {/* Mission Section */}
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-5xl">
           <motion.div
@@ -108,8 +99,6 @@ export default function About() {
           </motion.div>
         </div>
       </section>
-
-      {/* Values / Features */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6 max-w-6xl">
           <motion.div
@@ -126,7 +115,6 @@ export default function About() {
               We stand behind every product we sell with unwavering commitment
             </p>
           </motion.div>
-
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <motion.div
@@ -149,8 +137,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      {/* Closing Section */}
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-4xl text-center">
           <motion.div
