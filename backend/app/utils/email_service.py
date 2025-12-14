@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
-from dotenv import load_dotenv
 import base64
 import pickle
 # from sendgrid import SendGridAPIClient

@@ -325,7 +325,7 @@ async def api_add_address(
         raise HTTPException(400, "Maximum 3 addresses allowed.")
     await db.execute(
         update(UserAddress)
-        .where(UserAddress.user_id == current_user.id, UserAddress.is_selected == True)
+        .where(UserAddress.user_id == current_user.id, UserAddress.is_selected)
         .values(is_selected=False)
     )
     addr_data = data.model_dump()
@@ -379,7 +379,7 @@ async def api_update_address(
             .where(
                 UserAddress.user_id == current_user.id,
                 UserAddress.id != address_id,
-                UserAddress.is_selected == True,
+                UserAddress.is_selected,
             )
             .values(is_selected=False)
         )
@@ -430,10 +430,12 @@ async def google_oauth_callback(
         key="access_token",
         value=jwt_token,
         httponly=True,
-        secure=False,
+        secure=True,
         samesite="none",
         max_age=expire_duration,
         path="/",
+        partitioned=True,
+        domain=".nickopusan.dev",
     )
     return UserToken(
         message="Login successful",
