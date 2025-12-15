@@ -9,6 +9,7 @@ import { useLenis } from "lenis/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import ProfileButton from "./components/ProfileButton";
+import SignRegBtn from "./components/SignRegBtn";
 
 export default function Navbar() {
   const [hide, setHide] = useState(false);
@@ -51,7 +52,8 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <ProfileButton />
+          <SignRegBtn />
+          {/* <ProfileButton /> */}
           <ModeToggle />
         </div>
       </nav>

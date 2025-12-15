@@ -15,6 +15,7 @@ import {
   createUserAddress,
   mapsReverseGeocoding,
   createVerifyEmail,
+  fetchContactCaufi,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -28,6 +29,7 @@ import type {
   UserAddressOut,
   UserAddress,
   ReverseGeocodingResponse,
+  ContactCaufi,
 } from "@/api/user";
 import { useRouter } from "next/navigation";
 
@@ -72,6 +74,18 @@ export function useLogin() {
     mutationFn: fetchUserLogin,
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data.user);
+    },
+  });
+}
+
+export function useContactCaufi() {
+  return useMutation<{ message: string }, Error, ContactCaufi>({
+    mutationFn: fetchContactCaufi,
+    onSuccess: () => {
+      toast.success("Email send!!");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
     },
   });
 }

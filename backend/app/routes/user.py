@@ -8,6 +8,7 @@ from fastapi import (
     Query,
     UploadFile,
     File,
+    BackgroundTasks,
 )
 from typing import List
 from sqlalchemy.orm import selectinload
@@ -18,6 +19,7 @@ from app.crud.user import create_user, get_user
 from app.schemas.user import (
     UserRegister,
     UserLogin,
+    ContactCaufi,
     UserResetPasswordRequest,
     UserResetPassword,
     UserProfile,
@@ -137,6 +139,29 @@ async def verify_email(token: str, db: AsyncSession = Depends(get_db)):
         is_verified=True,
     )
     return new_user
+
+
+@router.post("/contact-caufi", status_code=status.HTTP_200_OK)
+async def contact_caufi(data: ContactCaufi, background_tasks: BackgroundTasks):
+    html_body = f"""
+    <h2>New Message from Contact Form</h2>
+    <div style="background:#f9f9f9; padding:20px; border-radius:8px; font-family:Arial, sans-serif;">
+        <p><strong>Name:</strong> {data.first_name} {data.last_name}</p>
+        <p><strong>Email:</strong> <a href="mailto:{data.email}">{data.email}</a></p>
+        <p><strong>Subject:</strong> {data.subject}</p>
+        <hr>
+        <p><strong>Message:</strong></p>
+        <p style="white-space: pre-wrap;">{data.message}</p>
+    </div>
+    <p><small>Sent from nickopusan.dev contact form</small></p>
+    """
+    background_tasks.add_task(
+        send_mail(
+            to_email="nickowork13@gmail.com",
+            subject=f"[Contact Form] {data.subject}",
+            html=html_body,
+        )
+    )
 
 
 @router.post("/login", response_model=UserToken, status_code=status.HTTP_200_OK)

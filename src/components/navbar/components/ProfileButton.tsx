@@ -31,7 +31,6 @@ export default function ProfileButton() {
   if (!user) {
     return <SignRegBtn />;
   }
-
   const getInitials = () => {
     if (user.name) {
       return user.name

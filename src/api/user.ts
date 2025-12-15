@@ -100,6 +100,14 @@ export interface UserProfileUpdate {
   gender?: string;
 }
 
+export interface ContactCaufi {
+  firstName: string;
+  lastName: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
 export interface PlaceDetails {
   lat: number;
   lng: number;
@@ -246,6 +254,23 @@ export async function userLogout() {
 
 export async function userGoogleLogin() {
   window.location.href = `${API_URL}/api/user/auth/login/google`;
+}
+
+export async function fetchContactCaufi(data: ContactCaufi) {
+  try {
+    const res = await axios.post(`${API_URL}/api/user/contact-caufi`, data, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
 }
 
 export async function fetchUserResetPasswordRequest(

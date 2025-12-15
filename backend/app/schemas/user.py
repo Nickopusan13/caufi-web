@@ -146,3 +146,11 @@ class ReverseGeocodingResult(BaseConfigModel):
 class ReverseGeocodingResponse(BaseConfigModel):
     results: list[ReverseGeocodingResult]
     status: str
+
+
+class ContactCaufi(BaseConfigModel):
+    first_name: str
+    last_name: str
+    email: EmailStr
+    subject: str
+    message: str

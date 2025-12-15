@@ -13,8 +13,6 @@ load_dotenv()
 TOKEN_PATH = os.getenv("TOKEN_PATH")
 CREDENTIALS_PATH = os.getenv("CREDENTIALS_PATH")
 logger = logging.getLogger(__name__)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-load_dotenv()
 
 
 def gmail_credentials():
