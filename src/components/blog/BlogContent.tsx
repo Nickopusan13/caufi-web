@@ -20,7 +20,7 @@ interface BlogContentProps {
   date: string;
   category: string;
   cover: string;
-  readingTime?: string;
+  readingTime: string;
   children: React.ReactNode;
 }
 
@@ -29,7 +29,7 @@ export default function BlogContent({
   author,
   date,
   category,
-  readingTime = "8 min read",
+  readingTime,
   children,
 }: BlogContentProps) {
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
