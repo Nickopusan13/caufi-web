@@ -151,6 +151,16 @@ export interface ReverseGeocodingResponse {
   status: string;
 }
 
+export interface ChatRequest {
+  prompt: string;
+  sessionId?: string;
+}
+
+export interface ChatResponse {
+  reply: string;
+  sessionId?: string;
+}
+
 export async function fetchUserRegister(data: UserRegister) {
   try {
     const res = await axios.post(`${API_URL}/api/user/register`, data, {
@@ -450,6 +460,30 @@ export async function mapsReverseGeocoding(
         headers: {
           "Content-Type": "application/json",
         },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      throw new Error(errorData.detail);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export async function apiChatBot(data: ChatRequest) {
+  try {
+    const res = await axios.post<ChatResponse>(
+      `${API_URL}/api/chat/bot`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
       }
     );
     return res.data;
