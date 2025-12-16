@@ -2,10 +2,12 @@
 
 import { useContactCaufi } from "@/hooks/useLogin";
 import { motion, Variants } from "framer-motion";
-import { Mail, Phone, MapPin, Send, User, MessageSquare } from "lucide-react";
+import { Send } from "lucide-react";
+import { FaMailBulk, FaMapPin, FaPhoneAlt, FaUser } from "react-icons/fa";
 import Link from "next/link";
 import React, { useState } from "react";
 import type { ContactCaufi } from "@/api/user";
+import { FaMessage } from "react-icons/fa6";
 
 export default function Contact() {
   const [formData, setFormData] = useState<ContactCaufi>({
@@ -118,7 +120,7 @@ export default function Contact() {
                       {field === "firstName" ? "First Name" : "Last Name"}
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                      <FaUser className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                       <input
                         type="text"
                         id={field}
@@ -133,8 +135,6 @@ export default function Contact() {
                   </div>
                 ))}
               </div>
-
-              {/* Email */}
               <div>
                 <label
                   htmlFor="email"
@@ -143,7 +143,7 @@ export default function Contact() {
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                  <FaMailBulk className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                   <input
                     type="email"
                     id="email"
@@ -156,8 +156,6 @@ export default function Contact() {
                   />
                 </div>
               </div>
-
-              {/* Subject */}
               <div>
                 <label
                   htmlFor="subject"
@@ -176,8 +174,6 @@ export default function Contact() {
                   placeholder="How can we help you today?"
                 />
               </div>
-
-              {/* Message */}
               <div>
                 <label
                   htmlFor="message"
@@ -186,7 +182,7 @@ export default function Contact() {
                   Message
                 </label>
                 <div className="relative">
-                  <MessageSquare className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                  <FaMessage className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                   <textarea
                     id="message"
                     name="message"
@@ -199,8 +195,6 @@ export default function Contact() {
                   />
                 </div>
               </div>
-
-              {/* Submit Button */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -215,8 +209,6 @@ export default function Contact() {
                 <Send className="h-5 w-5" />
                 {mutation.isPending ? "Sending..." : "Send Message"}
               </motion.button>
-
-              {/* Error Message */}
               {mutation.isError && (
                 <div className="text-red-500 text-center font-medium">
                   {mutation.error?.message ||
@@ -241,7 +233,7 @@ export default function Contact() {
                 whileHover="hover"
                 className="bg-blue-100 dark:bg-blue-900/50 p-4 rounded-2xl"
               >
-                <MapPin className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <FaMapPin className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </motion.div>
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -266,7 +258,7 @@ export default function Contact() {
                 whileHover="hover"
                 className="bg-green-100 dark:bg-green-900/50 p-4 rounded-2xl"
               >
-                <Phone className="h-8 w-8 text-green-600 dark:text-green-400" />
+                <FaPhoneAlt className="h-8 w-8 text-green-600 dark:text-green-400" />
               </motion.div>
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -293,7 +285,7 @@ export default function Contact() {
                 whileHover="hover"
                 className="bg-purple-100 dark:bg-purple-900/50 p-4 rounded-2xl"
               >
-                <Mail className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <FaMailBulk className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               </motion.div>
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
