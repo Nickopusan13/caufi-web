@@ -22,7 +22,6 @@ with open(instruction_path, "r", encoding="utf-8") as f:
 @router.post("/chat/bot", response_model=ChatResponse, status_code=status.HTTP_200_OK)
 async def api_chat_bot(
     request: ChatRequest,
-    admin: User = Depends(get_current_user),
 ):
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
     session_id = request.session_id or str(uuid.uuid4())

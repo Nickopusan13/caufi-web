@@ -45,16 +45,12 @@ export default function ProductCart() {
           Your Cart ({cart.totalItems}{" "}
           {cart.totalItems === 1 ? "item" : "items"})
         </h1>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
             <AnimatePresence mode="popLayout">
               {cart.cartItems.map((item, index) => {
-                // THIS IS THE KEY: Use the variant that was added to cart
                 const variant = item.variant;
                 const product = item.product;
-
                 const regularPrice = parseFloat(variant.regularPrice);
                 const discountPrice = variant.discountPrice
                   ? parseFloat(variant.discountPrice)

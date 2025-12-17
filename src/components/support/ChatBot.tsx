@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Send, Bot } from "lucide-react";
 import { useChatBot } from "@/hooks/useChatBot";
+import type { ChatRequest, ChatResponse } from "@/api/user";
 
 interface Message {
   id: string;
@@ -21,60 +22,51 @@ export default function ChatBot() {
     },
   ]);
   const [input, setInput] = useState("");
+  const [sessionId, setSessionId] = useState<string | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   const mutation = useChatBot();
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || mutation.isPending) return;
-
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
       content: input.trim(),
     };
-
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input.trim();
     setInput("");
-
-    mutation.mutate(
-      { prompt: input.trim() },
-      {
-        onSuccess: (response) => {
-          const assistantMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: "assistant",
-            content:
-              response.reply ||
-              "Got it! Let me know if you need anything else.",
-          };
-          setMessages((prev) => [...prev, assistantMessage]);
-        },
-        onError: () => {
-          const errorMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: "assistant",
-            content:
-              "Oops! Something went wrong. Please try again in a moment.",
-          };
-          setMessages((prev) => [...prev, errorMessage]);
-        },
-      }
-    );
+    const request: ChatRequest = {
+      prompt: currentInput,
+      sessionId,
+    };
+    mutation.mutate(request, {
+      onSuccess: (response: ChatResponse) => {
+        if (response.sessionId && response.sessionId !== sessionId) {
+          setSessionId(response.sessionId);
+        }
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content:
+            response.reply || "Got it! Let me know if you need anything else.",
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+      },
+      onError: () => {
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: "Oops! Something went wrong. Please try again in a moment.",
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      },
+    });
   };
-
   return (
-    <section className="py-20 bg-linear-to-t from-blue-50 to-transparent dark:from-zinc-900">
-      <div className="max-w-4xl mx-auto px-6">
+    <section className="py-20">
+      <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -82,26 +74,26 @@ export default function ChatBot() {
           transition={{ duration: 0.8 }}
           className="bg-white dark:bg-zinc-800 rounded-3xl shadow-2xl overflow-hidden border border-zinc-200 dark:border-zinc-700"
         >
-          {/* Header */}
           <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6">
             <div className="flex items-center gap-4">
               <div className="relative">
                 <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
                   <Bot className="w-7 h-7" />
                 </div>
-                <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-4 border-white" />
+                <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-4 border-blue-700" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold">Live Support Chat</h2>
                 <p className="text-blue-100">
-                  {`We're online — average response time &lt; 1 minute`}
+                  {`We're online — average response time < 1 minute`}
                 </p>
               </div>
             </div>
           </div>
-
-          {/* Messages Area */}
-          <div className="h-96 overflow-y-auto p-6 space-y-5 bg-gray-50 dark:bg-zinc-900">
+          <div
+            data-lenis-prevent
+            className="h-108 overflow-y-auto p-6 space-y-5 bg-gray-50 dark:bg-zinc-900"
+          >
             {messages.map((msg) => (
               <motion.div
                 key={msg.id}
@@ -123,45 +115,25 @@ export default function ChatBot() {
                 </div>
               </motion.div>
             ))}
-
-            {/* Typing Indicator */}
             {mutation.isPending && (
               <div className="flex justify-start">
                 <div className="bg-white dark:bg-zinc-800 px-5 py-4 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex items-center gap-3">
                   <Bot className="w-5 h-5 text-blue-600" />
                   <div className="flex space-x-1">
-                    <motion.div
-                      animate={{ y: [0, -6, 0] }}
-                      transition={{ repeat: Infinity, duration: 0.8, delay: 0 }}
-                      className="w-2 h-2 bg-gray-400 rounded-full"
-                    />
-                    <motion.div
-                      animate={{ y: [0, -6, 0] }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 0.8,
-                        delay: 0.1,
-                      }}
-                      className="w-2 h-2 bg-gray-400 rounded-full"
-                    />
-                    <motion.div
-                      animate={{ y: [0, -6, 0] }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 0.8,
-                        delay: 0.2,
-                      }}
-                      className="w-2 h-2 bg-gray-400 rounded-full"
-                    />
+                    {[0, 0.1, 0.2].map((delay) => (
+                      <motion.div
+                        key={delay}
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{ repeat: Infinity, duration: 0.8, delay }}
+                        className="w-2 h-2 bg-gray-400 rounded-full"
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
             )}
-
             <div ref={messagesEndRef} />
           </div>
-
-          {/* Input Area */}
           <form
             onSubmit={handleSubmit}
             className="p-6 bg-white dark:bg-zinc-800 border-t border-zinc-200 dark:border-zinc-700"
