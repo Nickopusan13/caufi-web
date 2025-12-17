@@ -205,8 +205,8 @@ async def api_user_login(
         samesite="none",
         max_age=expire_duration,
         path="/",
-        partitioned=True,
-        domain=".nickopusan.dev",
+        # partitioned=True,
+        # domain=".nickopusan.dev",
     )
     return UserToken(
         message="Login successful",

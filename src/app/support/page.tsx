@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {};
 
-export default function AboutPage() {
+export default function Support() {
   return (
     <>
       <Navbar />

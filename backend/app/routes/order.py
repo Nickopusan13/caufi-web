@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy import select, update
 from app.db.models.order import Order, OrderStatus, OrderItem
 from app.schemas.order import OrderOut, OrderCreate
-from app.db.models.product import Product
+from app.db.models.product import Product, ProductVariant
 from decimal import Decimal
 
 router = APIRouter(prefix="/api/orders")
@@ -23,34 +23,48 @@ async def api_order_create(
     addr = await db.get(UserAddress, payload.address_id)
     if not addr or addr.user_id != current_user.id:
         raise HTTPException(status_code=400, detail="Invalid address")
-    product_ids = [item.product_id for item in payload.items]
+
+    variant_ids = [item.variant_id for item in payload.items]
     result = await db.execute(
-        select(Product).where(Product.id.in_(product_ids), Product.is_active.is_(True))
+        select(ProductVariant, Product)
+        .join(Product, ProductVariant.product_id == Product.id)
+        .where(ProductVariant.id.in_(variant_ids), Product.is_active.is_(True))
     )
-    products = result.scalars().all()
-    products_map = {p.id: p for p in products}
+    variants = result.all()
+    variants_map = {v[0].id: (v[0], v[1]) for v in variants}
+    print(variants_map)
     total_amount = Decimal("0")
     order_items = []
     for item in payload.items:
-        product = products_map.get(item.product_id)
-        if not product:
+        if item.variant_id not in variants_map:
             raise HTTPException(
-                status_code=400, detail=f"Product {item.product_id} not found"
+                status_code=400,
+                detail=f"Variant {item.variant_id} not found or product inactive",
             )
-
-        if product.stock < item.quantity:
+        variant, product = variants_map[item.variant_id]
+        if variant.product_id != item.product_id:
             raise HTTPException(
-                status_code=400, detail=f"Not enough stock for {product.name}"
+                status_code=400,
+                detail=f"Variant {item.variant_id} does not belong to product {item.product_id}",
             )
-        price = product.discount_price or product.regular_price
+        if variant.stock < item.quantity:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Not enough stock for {product.name} (variant {item.variant_id})",
+            )
+        price = variant.discount_price or variant.regular_price
         total_amount += price * item.quantity
         order_items.append(
             OrderItem(
-                product_id=item.product_id,
+                variant_id=item.variant_id,
                 quantity=item.quantity,
                 price_at_purchase=price,
+                name=product.name,
+                image_url=variant.image_url
+                or product.image_url,
             )
         )
+
     order = Order(
         user_id=current_user.id,
         address_id=payload.address_id,
@@ -62,12 +76,14 @@ async def api_order_create(
     for item in order_items:
         item.order_id = order.id
     db.add_all(order_items)
+
     for item in payload.items:
         await db.execute(
-            update(Product)
-            .where(Product.id == item.product_id)
-            .values(stock=Product.stock - item.quantity)
+            update(ProductVariant)
+            .where(ProductVariant.id == item.variant_id)
+            .values(stock=ProductVariant.stock - item.quantity)
         )
+
     await db.commit()
     await db.refresh(order)
     return OrderOut.model_validate(order)

@@ -1,13 +1,13 @@
-import ProductCart from "@/components/cart/ProductCart";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/navbar/Navbar";
+import Checkout from "@/components/checkout/CheckOut";
 
-export default function Cart() {
+export default function CheckoutPage() {
   return (
     <>
       <Navbar />
       <main className="bg-white/50 dark:bg-zinc-900 py-40">
-        <ProductCart />
+        <Checkout />
       </main>
       <Footer />
     </>

@@ -4,7 +4,7 @@ import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
 import MDXContent from "@/components/blog/types/ContentMap";
 
-export default async function BlogPage({
+export default async function BlogPageSlug({
   params,
 }: {
   params: Promise<{ slug: string }>;
