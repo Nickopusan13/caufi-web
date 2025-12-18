@@ -60,8 +60,7 @@ async def api_order_create(
                 quantity=item.quantity,
                 price_at_purchase=price,
                 name=product.name,
-                image_url=variant.image_url
-                or product.image_url,
+                image_url=variant.image_url or product.image_url,
             )
         )
 
@@ -131,9 +130,8 @@ async def api_get_my_orders(
         .order_by(Order.created_at.desc())
         .options(
             selectinload(Order.address),
-            selectinload(Order.items)
-            .selectinload(OrderItem.product)
-            .selectinload(Product.images),
+            selectinload(Order.items),
+            selectinload(OrderItem.variant),
         )
     )
     result = await db.execute(query.offset((page - 1) * limit).limit(limit))

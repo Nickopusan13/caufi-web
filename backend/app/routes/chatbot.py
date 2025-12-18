@@ -1,10 +1,8 @@
-from fastapi import APIRouter, HTTPException, status, Depends
-from app.db.models.user import User
+from fastapi import APIRouter, HTTPException, status
 from app.schemas.chatbot import ChatRequest, ChatResponse
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
-from app.security.jwt import get_current_user
 import uuid
 import os
 
