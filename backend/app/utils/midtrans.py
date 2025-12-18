@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from dotenv import load_dotenv
 from datetime import datetime, timezone, timedelta
-from app.schemas.order import OrderOut
+from app.schemas.order import OrderOut, MidtransTransactionOut
 from typing import Dict
 import midtransclient
 import os
@@ -21,16 +21,12 @@ def build_midtrans_customer_details(order_out: OrderOut) -> Dict:
     name_parts = full_name.split(" ", 1)
     first_name = name_parts[0]
     last_name = name_parts[1] if len(name_parts) > 1 else ""
-    phone = (user.phone_number or "081234567890").replace("-", "").replace(" ", "")
-    address_line = addr.address_line1
-    if addr.address_line2:
-        address_line += f", {addr.address_line2}"
+    phone = (user.phone_number).replace("-", "").replace(" ", "")
+    address_line = addr.full_address
     address_block = {
         "first_name": first_name,
         "last_name": last_name,
         "address": address_line,
-        "city": addr.city,
-        "postal_code": addr.postal_code,
         "phone": phone,
         "country_code": "IDN",
     }
@@ -61,7 +57,7 @@ def build_midtrans_item_details(order_out: OrderOut) -> list[dict]:
     return items
 
 
-def create_midtrans_transaction(order_out: OrderOut):
+def create_midtrans_transaction(order_out: OrderOut) -> MidtransTransactionOut:
     gross_amount = int(float(order_out.total_amount))
     order_id = f"CAUFI-{order_out.id}-{int(datetime.now().timestamp())}"
     param = {
@@ -96,13 +92,13 @@ def create_midtrans_transaction(order_out: OrderOut):
     }
     try:
         transaction = snap.create_transaction(param)
-        return {
-            "order_id": order_id,
-            "midtrans_order_id": transaction.get("order_id"),
-            "token": transaction["token"],
-            "redirect_url": transaction["redirect_url"],
-            "expires_at": param["expiry"]["start_time"],
-        }
+        print("Midtrans Param:", transaction)
+        return MidtransTransactionOut(
+            order_id=order_id,
+            token=transaction["token"],
+            redirect_url=transaction["redirect_url"],
+            expired_at=param["expiry"]["start_time"],
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Midtrans error: {str(e)}"

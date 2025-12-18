@@ -17,12 +17,23 @@ export type OrderStatus =
   | "cancelled"
   | "refunded";
 
+export interface OrderItemCreate {
+  productid: number;
+  variantId: number;
+  quantity: number;
+}
+
+export interface OrderCreate {
+  addressId: number;
+  items: OrderItemCreate[];
+}
+
 export interface OrderItemOut {
   id: number;
-  productId: number;
   quantity: number;
   priceAtPurchase: number;
   name: string;
+  subtotal: number;
   imageUrl?: string;
 }
 

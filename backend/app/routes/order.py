@@ -68,7 +68,7 @@ async def api_order_create(
         user_id=current_user.id,
         address_id=payload.address_id,
         total_amount=total_amount,
-        status=OrderStatus.PENDING,
+        status=OrderStatus.PENDING,       
     )
     db.add(order)
     await db.flush()

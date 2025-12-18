@@ -23,9 +23,6 @@ class OrderItemOut(OrderItemCreate):
     name: str = Field(min_length=1, max_length=100)
     price_at_purchase: Decimal = Field(gt=0)
     image_url: Optional[str] = Field(default=None)
-    color: Optional[str] = None
-    size: Optional[str] = None
-    hex: Optional[str] = None
     subtotal: Decimal = Field(gt=0)
 
 
@@ -44,3 +41,9 @@ class OrderOut(BaseConfigModel):
     address: UserAddressOut
     user: UserProfileOut
     items: List[OrderItemOut] = Field(default_factory=list)
+
+class MidtransTransactionOut(BaseConfigModel):
+    order_id: str = Field(gt=0)
+    token: str = Field(min_length=1)
+    redirect_url: str = Field(min_length=1)
+    expired_at: datetime
