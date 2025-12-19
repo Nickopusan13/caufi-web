@@ -5,37 +5,41 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaHeart, FaRegHeart, FaRegStar, FaStar } from "react-icons/fa";
 import { Star as LucideStar } from "lucide-react";
+import { useAddToWishlist, useRemoveFromwishlist } from "@/hooks/useWishlist";
 
 interface LikeButtonProps {
+  productId: number;
   size?: number;
   initialLiked?: boolean;
-  onToggle?: (liked: boolean) => void;
 }
 
 export const LikeButton = ({
+  productId,
   size = 28,
   initialLiked = false,
-  onToggle,
 }: LikeButtonProps) => {
+  const addMutation = useAddToWishlist();
+  const deleteMutation = useRemoveFromwishlist();
   const [liked, setLiked] = useState(initialLiked);
-
   const handleClick = () => {
     setLiked(!liked);
-    onToggle?.(!liked);
+    if (!liked) {
+      addMutation.mutate({ productId });
+    } else {
+      deleteMutation.mutate(productId);
+    }
   };
-
   return (
     <motion.button
       whileHover={{ scale: 1.2 }}
       whileTap={{ scale: 0.9 }}
       onClick={handleClick}
-      className="p-3 rounded-full bg-white/90 dark:bg-zinc-800/90 backdrop-blur-md shadow-lg hover:shadow-xl transition-all border border-zinc-200 dark:border-zinc-700"
       aria-label={liked ? "Unlike" : "Like"}
     >
       <motion.div
         initial={false}
         animate={{ scale: liked ? 1.1 : 1 }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        transition={{ type: "spring", stiffness: 300, damping: 10 }}
       >
         {liked ? (
           <FaHeart size={size} className="text-red-500 drop-shadow-md" />

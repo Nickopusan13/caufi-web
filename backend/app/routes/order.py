@@ -68,7 +68,7 @@ async def api_order_create(
         user_id=current_user.id,
         address_id=payload.address_id,
         total_amount=total_amount,
-        status=OrderStatus.PENDING,       
+        status=OrderStatus.PENDING,
     )
     db.add(order)
     await db.flush()
@@ -131,9 +131,31 @@ async def api_get_my_orders(
         .options(
             selectinload(Order.address),
             selectinload(Order.items),
-            selectinload(OrderItem.variant),
+            selectinload(Order.items).selectinload(OrderItem.variant),
         )
     )
     result = await db.execute(query.offset((page - 1) * limit).limit(limit))
     orders = result.scalars().all()
     return [OrderOut.model_validate(order) for order in orders]
+
+
+@router.get("/{order_id}", response_model=OrderOut, status_code=status.HTTP_200_OK)
+async def api_get_order_detail(
+    order_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(Order)
+        .where(Order.id == order_id, Order.user_id == current_user.id)
+        .options(
+            selectinload(Order.user),
+            selectinload(Order.address),
+            selectinload(Order.items),
+            selectinload(Order.items).selectinload(OrderItem.variant),
+        )
+    )
+    order = result.scalars().first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return OrderOut.model_validate(order)

@@ -1,6 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CartOut } from "@/api/cart";
-import { fetchUserCart, updateUserCart, deleteUserCart } from "@/api/cart";
+import type { CartItemCreate, CartOut } from "@/api/cart";
+import {
+  fetchUserCart,
+  updateUserCart,
+  deleteUserCart,
+  addUserCart,
+} from "@/api/cart";
 import toast from "react-hot-toast";
 
 export function useGetCart() {
@@ -34,6 +39,18 @@ export function useDeleteCart() {
     },
     onError: (error: Error) => {
       toast.error(error.message);
+    },
+  });
+}
+
+export function useAddToCart() {
+  return useMutation<CartOut, Error, CartItemCreate>({
+    mutationFn: addUserCart,
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Added Product To Cart");
     },
   });
 }

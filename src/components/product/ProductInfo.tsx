@@ -11,8 +11,8 @@ import {
   Plus,
   Minus,
 } from "lucide-react";
-import { useAddOrder } from "@/hooks/userOrder";
-import { ProductData } from "@/api/product";
+import { useAddToCart } from "@/hooks/useCart";
+import { ProductOut } from "@/api/product";
 import {
   ProductSize,
   ColorDropDown,
@@ -32,8 +32,8 @@ const paymentMethods = [
   { name: "Mandiri", src: "/icon/MANDIRI.webp" },
 ];
 
-export default function ProductInfo({ product }: { product: ProductData }) {
-  const orderMutation = useAddOrder();
+export default function ProductInfo({ product }: { product: ProductOut }) {
+  const orderMutation = useAddToCart();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -210,7 +210,7 @@ export default function ProductInfo({ product }: { product: ProductData }) {
                   transition={{ delay: 0.3 }}
                   className="absolute top-6 right-6 z-10"
                 >
-                  <LikeButton size={40} />
+                  <LikeButton productId={product.id} size={40} />
                 </motion.div>
               </motion.div>
             </div>

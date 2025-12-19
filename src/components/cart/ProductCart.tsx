@@ -16,16 +16,13 @@ export default function ProductCart() {
   const deleteMutation = useDeleteCart();
   const updateMutation = useUpdateUserCart();
   const { data: cart, isLoading } = useGetCart();
-
   const handleUpdate = (variantId: number, quantity: number) => {
     if (quantity < 1) return;
     updateMutation.mutate({ variantId, quantity });
   };
-
   const handleDelete = (cartItemId: number) => {
     deleteMutation.mutate(cartItemId);
   };
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -33,11 +30,9 @@ export default function ProductCart() {
       </div>
     );
   }
-
   if (!cart || cart.cartItems.length === 0) {
     return <EmptyCart />;
   }
-
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

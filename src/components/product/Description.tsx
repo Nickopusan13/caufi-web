@@ -23,7 +23,6 @@ export default function ProductDescription({
 
   const currentVariant = useMemo(() => {
     if (!selectedColor || !selectedSize) return product.variants[0] ?? null;
-
     return (
       product.variants.find(
         (v) =>

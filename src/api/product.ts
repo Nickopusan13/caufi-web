@@ -45,6 +45,12 @@ export interface ProductData {
   isActive: boolean;
 }
 
+export interface ProductOut extends ProductData {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ProductListResponse {
   products: ProductData[];
   total: number;
@@ -85,9 +91,9 @@ export async function fetchProductData(
   }
 }
 
-export async function getProductBySlug(slug: string): Promise<ProductData> {
+export async function getProductBySlug(slug: string): Promise<ProductOut> {
   try {
-    const res = await axios.get<ProductData>(
+    const res = await axios.get<ProductOut>(
       `${API_URL}/api/product/get/${slug}`
     );
     return res.data;

@@ -75,7 +75,6 @@ class OrderItem(Base):
 
     @property
     def product_id(self) -> int | None:
-        """Expose the related product id for serializers/schemas."""
         try:
             return self.variant.product_id if self.variant is not None else None
         except Exception:
@@ -83,5 +82,4 @@ class OrderItem(Base):
 
     @property
     def subtotal(self) -> Decimal:
-        """Computed subtotal (price_at_purchase * quantity)."""
         return (self.price_at_purchase or Decimal(0)) * (self.quantity or 0)

@@ -120,3 +120,13 @@ class ProductListFilters(BaseConfigModel):
     max_price: Optional[float] = None
     only_active: bool = True
     sort: Optional[str] = "newest"
+
+
+class WishlistOut(BaseConfigModel):
+    id: int = Field(gt=0)
+    product: ProductDataOut
+    created_at: datetime
+
+
+class WishlistCreate(BaseConfigModel):
+    product_id: int = Field(gt=0)

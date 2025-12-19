@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from app.db.init_db import create_table
 from starlette.middleware.sessions import SessionMiddleware
-from app.routes import user, chatbot, product, cart, order
+from app.routes import user, chatbot, product, cart, order, wishlist
 from sqladmin import Admin, ModelView
 from app.db.session import engine
 from app.db.models.user import User
@@ -48,3 +48,4 @@ app.include_router(chatbot.router)
 app.include_router(product.router)
 app.include_router(cart.router)
 app.include_router(order.router)
+app.include_router(wishlist.router)

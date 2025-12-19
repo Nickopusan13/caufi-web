@@ -10,6 +10,7 @@ from app.db.models.product import (
     Cart,
     CartItem,
     ProductVariant,
+    Wishlist,
 )
 from app.db.models.order import Order, OrderItem
 
@@ -25,4 +26,5 @@ __all__ = [
     "CartItem",
     "Order",
     "OrderItem",
+    "Wishlist",
 ]

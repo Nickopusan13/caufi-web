@@ -12,7 +12,7 @@ import { ImPhone } from "react-icons/im";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { useGetCurrentUser, useUserLogout } from "@/hooks/useLogin";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetCurrentOrder } from "@/hooks/userOrder";
+import { useGetCurrentOrder } from "@/hooks/useOrder";
 import { useState } from "react";
 import { OrderStatus } from "@/api/order";
 import { format } from "date-fns";

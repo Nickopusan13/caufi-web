@@ -42,6 +42,12 @@ class Product(Base):
         cascade="all, delete-orphan",
         lazy="selectin",
     )
+    wishlist: Mapped[list["Wishlist"]] = relationship(
+        "Wishlist",
+        back_populates="product",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
     category: Mapped[str] = mapped_column(String(255), nullable=False)
     product_summary: Mapped[str] = mapped_column(Text, nullable=False)
     manufacturer: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -98,7 +104,6 @@ class ProductVariant(Base):
     order_items: Mapped[list["OrderItem"]] = relationship(
         "OrderItem",
         back_populates="variant",
-        cascade="all, delete-orphan",
         lazy="selectin",
     )
 
@@ -155,7 +160,6 @@ class CartItem(Base):
 
     @property
     def price(self) -> Decimal:
-        # derive current price from the variant; prefer discount if present
         if not getattr(self, "variant", None):
             return Decimal("0")
         return self.variant.discount_price or self.variant.regular_price
@@ -166,4 +170,23 @@ class CartItem(Base):
 
     __table_args__ = (
         UniqueConstraint("cart_id", "variant_id", name="uix_cart_product_variant"),
+    )
+
+
+class Wishlist(Base):
+    __tablename__ = "wishlist"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    product_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("product.id", ondelete="CASCADE"), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    product: Mapped["Product"] = relationship(
+        "Product", back_populates="wishlist", lazy="selectin"
     )

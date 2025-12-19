@@ -1,10 +1,16 @@
 "use client";
 
+import { UserAddressOut } from "@/api/user";
+import { useGetCurrentUser } from "@/hooks/useLogin";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
 export default function OrderPage() {
   const [sameAsShipping, setSameAsShipping] = useState(true);
+  const { data: user, isLoading } = useGetCurrentUser();
+  const [selectedAddress, setSelectedAddress] = useState<UserAddressOut | null>(
+    null
+  );
   const cartItems = [
     {
       id: 1,
@@ -31,7 +37,7 @@ export default function OrderPage() {
   const total = subtotal + shipping + tax;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

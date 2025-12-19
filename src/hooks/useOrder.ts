@@ -10,15 +10,3 @@ export function useGetCurrentOrder() {
     queryFn: getUserOrder,
   });
 }
-
-export function useAddOrder() {
-  return useMutation<CartOut, Error, CartItemCreate>({
-    mutationFn: addUserCart,
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-    onSuccess: () => {
-      toast.success("Added to cart!!");
-    },
-  });
-}
