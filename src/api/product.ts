@@ -52,7 +52,7 @@ export interface ProductOut extends ProductData {
 }
 
 export interface ProductListResponse {
-  products: ProductData[];
+  products: ProductOut[];
   total: number;
   currentPage: number;
   categoryCounts: Record<string, number>;

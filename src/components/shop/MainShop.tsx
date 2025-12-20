@@ -30,6 +30,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import EmptyShop from "./EmptyShop";
 
 const categoryList = [
   { name: "All Products", value: "" },
@@ -67,7 +68,6 @@ export default function ShopPage() {
 
   const updateFilters = (newParams: Record<string, string | number | null>) => {
     const params = new URLSearchParams(searchParams.toString());
-
     Object.entries(newParams).forEach(([key, value]) => {
       if (value === "" || value === null) {
         params.delete(key);
@@ -252,9 +252,7 @@ export default function ShopPage() {
                 ))}
               </div>
             ) : products.length === 0 ? (
-              <div className="text-center py-20 text-gray-500">
-                No products found. Try adjusting your filters.
-              </div>
+              <EmptyShop />
             ) : (
               <>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">

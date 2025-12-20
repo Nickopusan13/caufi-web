@@ -9,16 +9,41 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Zap } from "lucide-react";
-import type { ProductData } from "@/api/product";
+import { Heart, Zap } from "lucide-react";
+import type { ProductOut } from "@/api/product";
+import {
+  useGetWishlist,
+  useAddToWishlist,
+  useRemoveFromwishlist,
+} from "@/hooks/useWishlist";
+import type { WishlistOut } from "@/api/wishlist";
 
 interface ProductItemProps {
-  cloths: ProductData[];
+  cloths: ProductOut[];
 }
 
 const MotionLink = motion.create(Link);
 
 export default function ProductItem({ cloths }: ProductItemProps) {
+  const { data: wishlist = [], isLoading: isWishlistLoading } = useGetWishlist({
+    limit: 100,
+    page: 1,
+  });
+  const addMutation = useAddToWishlist();
+  const removeMutation = useRemoveFromwishlist();
+
+  const wishlistIds = new Set(
+    wishlist.map((item: WishlistOut) => item.product.id)
+  );
+
+  const handleToggleWishlist = (productId: number, isWishlisted: boolean) => {
+    if (isWishlisted) {
+      removeMutation.mutate(productId);
+    } else {
+      addMutation.mutate({ productId });
+    }
+  };
+
   return (
     <>
       {cloths.map((product, idx) => {
@@ -56,6 +81,7 @@ export default function ProductItem({ cloths }: ProductItemProps) {
           new Set(variants.map((v) => v.size).filter(Boolean))
         );
         const primaryImage = product.images[0]?.imageUrl;
+        const isWishlisted = wishlistIds.has(product.id);
         return (
           <MotionLink
             href={`/product/${product.slug}`}
@@ -90,14 +116,42 @@ export default function ProductItem({ cloths }: ProductItemProps) {
                     </div>
                   )}
                 </AnimatePresence>
-                {idx < 3 && (
-                  <div className="absolute top-4 right-4 z-10">
+                <div className="absolute top-4 right-2 z-10 flex flex-col gap-2 items-center">
+                  {idx < 3 && (
                     <div className="flex items-center gap-1 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg">
                       <Zap className="h-4 w-4 text-yellow-500" />
                       <span className="text-xs font-bold">New</span>
                     </div>
-                  </div>
-                )}
+                  )}
+                  {!isWishlistLoading && (
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleToggleWishlist(product.id, isWishlisted);
+                      }}
+                      className="p-2.5 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-full shadow-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center justify-center"
+                      aria-label={
+                        isWishlisted
+                          ? "Remove from wishlist"
+                          : "Add to wishlist"
+                      }
+                      disabled={
+                        addMutation.isPending || removeMutation.isPending
+                      }
+                    >
+                      <Heart
+                        className={`h-5 w-5 ${
+                          isWishlisted
+                            ? "text-red-500 fill-red-500"
+                            : "text-red-500"
+                        }`}
+                      />
+                    </motion.button>
+                  )}
+                </div>
               </div>
               <div className="flex flex-col flex-1 p-3 space-y-1">
                 <div className="flex flex-col space-y-1.5">
