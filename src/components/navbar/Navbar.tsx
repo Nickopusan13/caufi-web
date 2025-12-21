@@ -10,8 +10,12 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import ProfileButton from "./components/ProfileButton";
 import SignRegBtn from "./components/SignRegBtn";
+import { useGetCurrentUser, useUserLogout } from "@/hooks/useLogin";
+import { Skeleton } from "../ui/skeleton";
 
 export default function Navbar() {
+  const { data: user, isLoading } = useGetCurrentUser();
+  const { mutate: logout } = useUserLogout();
   const [hide, setHide] = useState(false);
   useLenis(({ scroll, direction }) => {
     if (direction === 1 && scroll > 100) {
@@ -52,8 +56,13 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <SignRegBtn />
-          {/* <ProfileButton /> */}
+          {isLoading ? (
+            <Skeleton className="h-10 w-32 rounded-full" />
+          ) : user ? (
+            <ProfileButton logout={logout} user={user} />
+          ) : (
+            <SignRegBtn />
+          )}
           <ModeToggle />
         </div>
       </nav>

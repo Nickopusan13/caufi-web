@@ -1,6 +1,5 @@
 "use client";
 
-import { useGetCurrentUser } from "@/hooks/useLogin";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,27 +9,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { LogOut, User, Package, Settings, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import SignRegBtn from "./SignRegBtn";
+import { UserProfile } from "@/api/user";
 
-export default function ProfileButton() {
-  const { data: user, isLoading } = useGetCurrentUser();
-  if (isLoading) {
-    return (
-      <div className="flex items-center gap-3 px-3 py-2">
-        <Skeleton className="h-9 w-9 rounded-full" />
-        <div className="hidden md:flex flex-col items-start space-y-2">
-          <Skeleton className="h-4 w-32 rounded" />
-          <Skeleton className="h-3 w-40 rounded" />
-        </div>
-      </div>
-    );
-  }
-  if (!user) {
-    return <SignRegBtn />;
-  }
+export default function ProfileButton({
+  user,
+  logout,
+}: {
+  user: UserProfile;
+  logout: () => void;
+}) {
   const getInitials = () => {
     if (user.name) {
       return user.name
@@ -76,13 +65,16 @@ export default function ProfileButton() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/profile" className="flex items-center gap-3">
+          <Link href="/profile#my-profile" className="flex items-center gap-3">
             <User className="w-4 h-4" />
             My Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/orders" className="flex items-center gap-3">
+          <Link
+            href="/profile#order-history"
+            className="flex items-center gap-3"
+          >
             <Package className="w-4 h-4" />
             My Orders
           </Link>
@@ -94,13 +86,16 @@ export default function ProfileButton() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/settings" className="flex items-center gap-3">
+          <Link href="/profile#settings" className="flex items-center gap-3">
             <Settings className="w-4 h-4" />
             Settings
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive focus:text-destructive flex items-center gap-3">
+        <DropdownMenuItem
+          onClick={logout}
+          className="text-destructive focus:text-destructive flex items-center gap-3"
+        >
           <LogOut className="w-4 h-4" />
           Log out
         </DropdownMenuItem>

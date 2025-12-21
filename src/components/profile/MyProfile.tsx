@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { TbCameraPlus } from "react-icons/tb";
@@ -13,6 +13,7 @@ import {
 import { useGetCurrentUser } from "@/hooks/useLogin";
 import { EditProfile } from "./EditProfile";
 import EditAddress from "./EditAddress";
+import { usePathname, useRouter } from "next/navigation";
 
 const tabs = ["My Profile", "My Address", "Order History", "Settings"] as const;
 
@@ -21,6 +22,36 @@ export default function MyProfile() {
     useState<(typeof tabs)[number]>("My Profile");
   const [edit, setEdit] = useState<string | null>(null);
   const { data: user } = useGetCurrentUser();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const getHashFromTab = (tab: string) =>
+    tab.toLowerCase().replace(/\s+/g, "-");
+
+  const getTabFromHash = (hash: string) =>
+    tabs.find((t) => getHashFromTab(t) === hash) || tabs[0];
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.substring(1);
+      if (hash) {
+        const newTab = getTabFromHash(hash);
+        setActiveTab(newTab);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    handleHashChange(); // Set initial tab based on hash
+
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const handleTabClick = (tab: (typeof tabs)[number]) => {
+    setActiveTab(tab);
+    const hash = getHashFromTab(tab);
+    router.replace(`${pathname}#${hash}`, { scroll: false });
+  };
+
   return (
     <div className="min-h-screen max-w-6xl mx-auto py-5">
       <div className="relative overflow-hidden rounded-3xl bg-white/60 dark:bg-zinc-900 backdrop-blur-2xl border border-white/30 dark:border-zinc-800/50 shadow-2xl">
@@ -74,7 +105,7 @@ export default function MyProfile() {
                   return (
                     <motion.button
                       key={tab}
-                      onClick={() => setActiveTab(tab)}
+                      onClick={() => handleTabClick(tab)}
                       className="relative px-5 py-4 rounded-xl text-sm font-medium transition-all"
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.98 }}
