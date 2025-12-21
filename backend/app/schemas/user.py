@@ -1,6 +1,6 @@
 from pydantic import EmailStr, Field
 from app.schemas.to_camel import BaseConfigModel
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Optional
 
 
@@ -63,17 +63,17 @@ class UserProfileUpdate(BaseConfigModel):
 
 class UserProfileOut(UserProfile):
     id: int = Field(gt=0)
-    created_at: datetime
-    is_admin: bool
-    is_active: bool
-    is_verified: bool
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    is_admin: bool = Field(default=False)
+    is_active: bool = Field(default=True)
+    is_verified: bool = Field(default=False)
     addresses: list[UserAddressOut] = Field(default_factory=list)
 
 
 class UserToken(BaseConfigModel):
-    message: str
-    user: UserProfileOut
-    access_token: str
+    message: str = Field(min_length=1)
+    user: UserProfileOut = Field(...)
+    access_token: str = Field(min_length=1)
 
 
 class UserResetPasswordRequest(BaseConfigModel):
@@ -87,70 +87,70 @@ class UserResetPassword(BaseConfigModel):
 
 
 class UserDeleteMany(BaseConfigModel):
-    user_ids: list[int]
+    user_ids: list[int] = Field(default_factory=list)
 
 
 class UserListFilters(BaseConfigModel):
-    search: Optional[str] = None
-    is_active: Optional[bool] = None
+    search: Optional[str] = Field(default=None)
+    is_active: Optional[bool] = Field(default=None)
 
 
 class PlaceDetails(BaseConfigModel):
-    lat: float
-    lng: float
-    place_id: str
-    formatted_address: str
-    street_number: Optional[str] = None
-    route: Optional[str] = None
-    street: Optional[str] = None
-    neighborhood: Optional[str] = None
-    city: Optional[str] = None
-    district: Optional[str] = None
-    state: Optional[str] = None
-    country_code: Optional[str] = None
-    postal_code: Optional[str] = None
-    best_display_address: str
+    lat: float = Field(...)
+    lng: float = Field(...)
+    place_id: str = Field(...)
+    formatted_address: str = Field(...)
+    street_number: Optional[str] = Field(default=None)
+    route: Optional[str] = Field(default=None)
+    street: Optional[str] = Field(default=None)
+    neighborhood: Optional[str] = Field(default=None)
+    city: Optional[str] = Field(default=None)
+    district: Optional[str] = Field(default=None)
+    state: Optional[str] = Field(default=None)
+    country_code: Optional[str] = Field(default=None)
+    postal_code: Optional[str] = Field(default=None)
+    best_display_address: str = Field(...)
 
 
 class StructuredFormatting(BaseConfigModel):
-    main_text: str
-    secondary_text: str
+    main_text: str = Field(min_length=1)
+    secondary_text: str = Field(min_length=1)
 
 
 class AutocompleteResult(BaseConfigModel):
-    place_id: str
-    description: str
-    structured_formatting: StructuredFormatting
+    place_id: str = Field(...)
+    description: str = Field(min_length=1)
+    structured_formatting: StructuredFormatting = Field(...)
 
 
 class AutocompleteResponse(BaseConfigModel):
-    predictions: list[AutocompleteResult]
+    predictions: list[AutocompleteResult] = Field(default_factory=list)
 
 
 class ReverseGeocodingResult(BaseConfigModel):
-    formatted_address: str
-    place_id: Optional[str] = None
-    lat: float
-    lng: float
-    street_number: Optional[str] = None
-    route: Optional[str] = None
-    sublocality: Optional[str] = None
-    city: Optional[str] = None
-    district: Optional[str] = None
-    state: Optional[str] = None
-    country: Optional[str] = None
-    country_code: Optional[str] = None
-    postal_code: Optional[str] = None
+    formatted_address: str = Field(...)
+    place_id: Optional[str] = Field(default=None)
+    lat: float = Field(...)
+    lng: float = Field(...)
+    street_number: Optional[str] = Field(default=None)
+    route: Optional[str] = Field(default=None)
+    sublocality: Optional[str] = Field(default=None)
+    city: Optional[str] = Field(default=None)
+    district: Optional[str] = Field(default=None)
+    state: Optional[str] = Field(default=None)
+    country: Optional[str] = Field(default=None)
+    country_code: Optional[str] = Field(default=None)
+    postal_code: Optional[str] = Field(default=None)
 
 
 class ReverseGeocodingResponse(BaseConfigModel):
-    results: list[ReverseGeocodingResult]
-    status: str
+    results: list[ReverseGeocodingResult] = Field(default_factory=list)
+    status: str = Field(...)
 
 
 class ContactCaufi(BaseConfigModel):
-    first_name: str
-    last_name: str
-    email: EmailStr
-    subject: str
-    message: str
+    first_name: str = Field(..., min_length=1)
+    last_name: str = Field(..., min_length=1)
+    email: EmailStr = Field(...)
+    subject: str = Field(..., min_length=1)
+    message: str = Field(..., min_length=1)

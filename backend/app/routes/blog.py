@@ -8,7 +8,11 @@ from app.db.dependencies import get_db
 from app.utils.sanitize import sanitize_html
 from sqlalchemy import select
 from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
-from app.utils.r2_service import upload_product_images, R2_PUBLIC_URL,  delete_image_from_r2
+from app.utils.r2_service import (
+    upload_product_images,
+    R2_PUBLIC_URL,
+    delete_image_from_r2,
+)
 
 router = APIRouter(prefix="/api/blog")
 
@@ -28,8 +32,18 @@ async def api_blog_add(
     await db.refresh(new_blog)
     return new_blog
 
-@router.post("/{blog_id}/images", response_model=list[BlogImageOut], status_code=status.HTTP_201_CREATED)
-async def api_blog_add_images(blog_id: int, files: list[UploadFile] = File(...), admin: User = Depends(get_admin_user), db: AsyncSession = Depends(get_db)):
+
+@router.post(
+    "/{blog_id}/images",
+    response_model=list[BlogImageOut],
+    status_code=status.HTTP_201_CREATED,
+)
+async def api_blog_add_images(
+    blog_id: int,
+    files: list[UploadFile] = File(...),
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     blog = await db.get(Blog, blog_id)
     if not blog:
         raise HTTPException(
@@ -52,20 +66,26 @@ async def api_blog_add_images(blog_id: int, files: list[UploadFile] = File(...),
     return blog_images
 
 
-@router.delete("/images/{image_id}",response_model=None ,status_code=status.HTTP_204_NO_CONTENT)    
-async def api_blog_delete_image(image_id: int, admin: User = Depends(get_admin_user), db: AsyncSession = Depends(get_db)):
+@router.delete(
+    "/images/{image_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT
+)
+async def api_blog_delete_image(
+    image_id: int,
+    admin: User = Depends(get_admin_user),
+    db: AsyncSession = Depends(get_db),
+):
     result = await db.execute(select(BlogImageOut).where(BlogImageOut.id == image_id))
     image = result.scalar_one_or_none()
     if not image:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Image not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found"
         )
     key = image.image_url.replace(f"{R2_PUBLIC_URL}/", "")
     delete_image_from_r2(key)
     await db.delete(image)
     await db.commit()
-    
+
+
 @router.patch(
     "/update/{blog_id}", response_model=BlogOut, status_code=status.HTTP_200_OK
 )

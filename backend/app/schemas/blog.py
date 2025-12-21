@@ -1,7 +1,8 @@
 from pydantic import Field
 from app.schemas.to_camel import BaseConfigModel
-from datetime import datetime
-from typing import Optional
+from datetime import datetime, timezone
+from typing import Optional, List
+
 
 class BlogImageOut(BaseConfigModel):
     id: int = Field(gt=0)
@@ -19,8 +20,8 @@ class BlogCreate(BaseConfigModel):
 
 class BlogOut(BlogCreate):
     id: int = Field(gt=0)
-    images: list[BlogImageOut] = Field(default=[])
-    date: datetime
+    images: List[BlogImageOut] = Field(default_factory=list)
+    date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class BlogUpdate(BaseConfigModel):
@@ -29,4 +30,3 @@ class BlogUpdate(BaseConfigModel):
     author: Optional[str] = Field(default=None, min_length=1, max_length=255)
     category: Optional[str] = Field(default=None, min_length=1, max_length=200)
     content: Optional[str] = Field(default=None, min_length=1)
-    images: Optional[list[BlogImageOut]] = Field(default=None)

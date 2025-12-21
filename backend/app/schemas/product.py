@@ -1,6 +1,6 @@
 from app.schemas.to_camel import BaseConfigModel
-from typing import Optional
-from datetime import datetime
+from typing import Optional, List
+from datetime import datetime, timezone
 from pydantic import Field
 from decimal import Decimal
 
@@ -48,42 +48,41 @@ class ProductDataBase(BaseConfigModel):
     manufacturer: str = Field(min_length=1, max_length=255)
     description: str = Field(min_length=1)
     care_guide: str = Field(min_length=1)
-    materials: list[ProductMaterialOut] = Field(default_factory=list)
-    images: Optional[list[ProductImageOut]] = None
-    variants: list[ProductVariantDataOut]
-    slug: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    materials: List[ProductMaterialOut] = Field(default_factory=list)
+    variants: List[ProductVariantDataOut] = Field(default_factory=list)
     is_featured: bool = Field(default=False)
     is_active: bool = Field(default=True)
 
 
 class ProductDataOut(ProductDataBase):
     id: int = Field(gt=0)
-    created_at: datetime
-    updated_at: datetime
+    images: List[ProductImageOut] = Field(default_factory=list)
+    slug: str = Field(min_length=1, max_length=255)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class ProductListResponse(BaseConfigModel):
-    products: list[ProductDataOut]
-    total: int
-    current_page: int
-    category_counts: dict[str, int]
-    total_pages: int
+    products: list[ProductDataOut] = Field(default_factory=list)
+    total: int = Field(default=0)
+    current_page: int = Field(default=1)
+    category_counts: dict[str, int] = Field(default_factory=dict)
+    total_pages: int = Field(default=1)
 
 
 class ProductUpdate(BaseConfigModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    stock_type: Optional[str] = Field(None, min_length=1, max_length=100)
-    shipping_type: Optional[str] = Field(None, min_length=1, max_length=100)
-    motif: Optional[str] = Field(None, min_length=1, max_length=100)
-    category: Optional[str] = Field(None, min_length=1, max_length=255)
-    product_summary: Optional[str] = Field(None, min_length=1)
-    manufacturer: Optional[str] = Field(None, min_length=1, max_length=255)
-    description: Optional[str] = Field(None, min_length=1)
-    care_guide: Optional[str] = Field(None, min_length=1)
-    is_featured: Optional[bool] = Field(None)
-    is_active: Optional[bool] = Field(None)
+    name: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    stock_type: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    shipping_type: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    motif: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    category: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    product_summary: Optional[str] = Field(default=None, min_length=1)
+    manufacturer: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    description: Optional[str] = Field(default=None, min_length=1)
+    care_guide: Optional[str] = Field(default=None, min_length=1)
+    is_featured: Optional[bool] = Field(default=None)
+    is_active: Optional[bool] = Field(default=None)
     materials: Optional[list[ProductMaterialOut]] = Field(default_factory=list)
-    images: Optional[list[ProductImageOut]] = None
 
 
 class CartItemCreate(BaseConfigModel):
@@ -94,13 +93,13 @@ class CartItemCreate(BaseConfigModel):
 class CartItemOut(CartItemCreate):
     id: int = Field(gt=0)
     price: Decimal = Field(gt=0)
-    product: ProductDataOut
-    variant: ProductVariantDataOut
+    product: ProductDataOut = Field(...)
+    variant: ProductVariantDataOut = Field(...)
 
 
 class CartOut(BaseConfigModel):
-    cart_items: list[CartItemOut] = Field(default_factory=list)
-    total_items: int = 0
+    cart_items: List[CartItemOut] = Field(default_factory=list)
+    total_items: int = Field(default=0)
     cart_total: Decimal = Field(default=0)
 
 
@@ -110,22 +109,22 @@ class CartItemUpdate(BaseConfigModel):
 
 
 class ProductDeleteMany(BaseConfigModel):
-    product_ids: list[int]
+    product_ids: List[int] = Field(default_factory=list)
 
 
 class ProductListFilters(BaseConfigModel):
-    search: Optional[str] = None
-    category: Optional[str] = None
-    min_price: Optional[float] = None
-    max_price: Optional[float] = None
-    only_active: bool = True
-    sort: Optional[str] = "newest"
+    search: Optional[str] = Field(default=None)
+    category: Optional[str] = Field(default=None)
+    min_price: Optional[float] = Field(default=None)
+    max_price: Optional[float] = Field(default=None)
+    only_active: bool = Field(default=True)
+    sort: Optional[str] = Field(default="newest")
 
 
 class WishlistOut(BaseConfigModel):
     id: int = Field(gt=0)
-    product: ProductDataOut
-    created_at: datetime
+    product: ProductDataOut = Field(...)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class WishlistCreate(BaseConfigModel):

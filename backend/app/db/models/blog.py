@@ -20,8 +20,9 @@ class Blog(Base):
         "BlogImage",
         back_populates="blog",
         cascade="all, delete-orphan",
-        lazy="selectin"
+        lazy="selectin",
     )
+
 
 class BlogImage(Base):
     __tablename__ = "blog_images"
@@ -29,4 +30,6 @@ class BlogImage(Base):
     image_url: Mapped[str] = mapped_column(String(255), nullable=False)
     position: Mapped[int] = mapped_column(Integer, default=0)
     blog_id: Mapped[int] = mapped_column(Integer, ForeignKey("blog.id"), nullable=False)
-    blog: Mapped["Blog"] = relationship("Blog", back_populates="images", lazy="selectin") 
+    blog: Mapped["Blog"] = relationship(
+        "Blog", back_populates="images", lazy="selectin"
+    )

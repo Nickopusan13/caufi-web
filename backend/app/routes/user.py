@@ -53,6 +53,7 @@ from app.utils.r2_service import (
     upload_product_images,
     delete_image_from_r2,
     extract_r2_key,
+    R2_PUBLIC_URL,
 )
 from app.utils.filters import apply_user_filters
 from app.utils.email_service import send_mail
@@ -217,6 +218,7 @@ async def api_user_login(
 
 @router.post(
     "/upload/images",
+    response_model=UserProfileOut,
     status_code=status.HTTP_201_CREATED,
 )
 async def add_images_to_profile(
@@ -225,18 +227,35 @@ async def add_images_to_profile(
     db: AsyncSession = Depends(get_db),
 ):
     if current_user.profile_image:
-        old_url = current_user.profile_image
-        old_key = extract_r2_key(old_url)
+        old_key = extract_r2_key(current_user.profile_image)
         delete_image_from_r2(old_key)
     uploaded_images = await upload_product_images(
         file,
         folder=f"profiles/{current_user.id}",
         bucket=CLOUDFLARE_BUCKET_NAME_1,
     )
-    new_url = uploaded_images[0]["image_url"]
-    current_user.profile_image = new_url
+    current_user.profile_image = uploaded_images[0]["image_url"]
     await db.commit()
-    return new_url
+    await db.refresh(current_user)
+    return current_user
+
+
+@router.delete(
+    "/delete/images", response_model=None, status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_images_user(
+    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+):
+    user_images = current_user.profile_image
+    if not user_images:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found."
+        )
+    key = user_images.replace(f"{R2_PUBLIC_URL}/", "")
+    delete_image_from_r2(key)
+    current_user.profile_image = None
+    await db.commit()
+    return
 
 
 @router.post("/logout", status_code=status.HTTP_200_OK)
@@ -286,6 +305,15 @@ async def api_get_user_profile(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
         )
     return user
+
+
+@router.delete("/delete/me", status_code=status.HTTP_204_NO_CONTENT)
+async def api_delete_user_me(
+    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+):
+    await db.delete(current_user)
+    await db.commit()
+    return
 
 
 @router.delete(
