@@ -21,7 +21,7 @@ export interface BlogCreate {
   content: string;
 }
 
-export interface BlogOut {
+export interface BlogOut extends BlogCreate {
   id: number;
   images: BlogImageOut[];
   date: string;
@@ -77,7 +77,7 @@ export async function updateBlog(
 export async function getAllBlog(
   page: number = 1,
   limit: number = 12
-): Promise<BlogOut> {
+): Promise<BlogOut[]> {
   try {
     const res = await axios.get(`${API_URL}/api/blog/all`, {
       params: { page, limit },

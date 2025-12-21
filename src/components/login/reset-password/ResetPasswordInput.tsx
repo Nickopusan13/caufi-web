@@ -24,7 +24,6 @@ export default function ResetPasswordPage() {
       toast.error("Invalid reset link");
       return;
     }
-
     if (!newPassword || !confirmPassword) {
       toast.error("Please fill in all fields");
       return;

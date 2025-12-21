@@ -20,6 +20,7 @@ import {
   StarRating,
 } from "./ProductComponent";
 import ProductDescription from "./Description";
+import ToasterProvider from "../ToasterProvider";
 
 const MotionImage = motion(Image);
 
@@ -166,6 +167,7 @@ export default function ProductInfo({ product }: { product: ProductOut }) {
   const canAddToCart = !!variantId && !!selectedVariant && !isOutOfStock;
   return (
     <section className="min-h-screen py-8">
+      <ToasterProvider />
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20">
           <div className="order-2 lg:order-1">

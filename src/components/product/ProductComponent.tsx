@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { FaHeart, FaRegHeart, FaRegStar, FaStar } from "react-icons/fa";
 import { Star as LucideStar } from "lucide-react";
 import { useAddToWishlist, useRemoveFromwishlist } from "@/hooks/useWishlist";
+import ToasterProvider from "../ToasterProvider";
 
 interface LikeButtonProps {
   productId: number;
@@ -30,27 +31,30 @@ export const LikeButton = ({
     }
   };
   return (
-    <motion.button
-      whileHover={{ scale: 1.2 }}
-      whileTap={{ scale: 0.9 }}
-      onClick={handleClick}
-      aria-label={liked ? "Unlike" : "Like"}
-    >
-      <motion.div
-        initial={false}
-        animate={{ scale: liked ? 1.1 : 1 }}
-        transition={{ type: "spring", stiffness: 300, damping: 10 }}
+    <>
+      <ToasterProvider />
+      <motion.button
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={handleClick}
+        aria-label={liked ? "Unlike" : "Like"}
       >
-        {liked ? (
-          <FaHeart size={size} className="text-red-500 drop-shadow-md" />
-        ) : (
-          <FaRegHeart
-            size={size}
-            className="text-gray-600 dark:text-gray-400"
-          />
-        )}
-      </motion.div>
-    </motion.button>
+        <motion.div
+          initial={false}
+          animate={{ scale: liked ? 1.1 : 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 10 }}
+        >
+          {liked ? (
+            <FaHeart size={size} className="text-red-500 drop-shadow-md" />
+          ) : (
+            <FaRegHeart
+              size={size}
+              className="text-gray-600 dark:text-gray-400"
+            />
+          )}
+        </motion.div>
+      </motion.button>
+    </>
   );
 };
 

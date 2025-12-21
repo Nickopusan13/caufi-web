@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Send, Bot } from "lucide-react";
 import { useChatBot } from "@/hooks/useChatBot";
 import type { ChatRequest, ChatResponse } from "@/api/user";
+import ToasterProvider from "../ToasterProvider";
 
 interface Message {
   id: string;
@@ -25,7 +26,6 @@ export default function ChatBot() {
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mutation = useChatBot();
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || mutation.isPending) return;
@@ -66,6 +66,7 @@ export default function ChatBot() {
   };
   return (
     <section className="py-20">
+      <ToasterProvider />
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

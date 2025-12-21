@@ -75,6 +75,9 @@ export function useLogin() {
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data.user);
     },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
   });
 }
 
