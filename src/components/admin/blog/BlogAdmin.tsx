@@ -1,0 +1,193 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Pencil, Trash2, Search, Plus } from "lucide-react";
+
+// Dummy data
+const initialBlogs = [
+  {
+    id: 1,
+    title: "Getting Started with Next.js 15",
+    description: "A comprehensive guide to the latest features in Next.js.",
+  },
+  {
+    id: 2,
+    title: "Building Beautiful UIs with Tailwind & Shadcn",
+    description: "Learn how to create modern interfaces efficiently.",
+  },
+  {
+    id: 3,
+    title: "State Management in 2025: What's Next?",
+    description: "Comparing Zustand, Jotai, and React Context in modern apps.",
+  },
+];
+
+export default function BlogAdmin() {
+  const [blogs, setBlogs] = useState(initialBlogs);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  const filteredBlogs = blogs.filter(
+    (blog) =>
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleDelete = (id: number) => {
+    setBlogs((prev) => prev.filter((b) => b.id !== id));
+    setDeleteId(null);
+  };
+
+  return (
+    <div className="container mx-auto p-6 space-y-8">
+      <Card className="border-none shadow-lg bg-linear-to-br from-zinc-900 to-zinc-950">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <CardTitle className="text-3xl font-bold text-white">
+              Blog Management
+            </CardTitle>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" className="gap-2">
+                <Search className="h-4 w-4" />
+                Export
+              </Button>
+              <Button
+                asChild
+                className="gap-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              >
+                <Link href="/admin/blog/add-blog">
+                  <Plus className="h-4 w-4" />
+                  New Blog
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+      <Card className="border-none shadow-xl bg-zinc-900/80 backdrop-blur-sm">
+        <CardHeader className="pb-0">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search blogs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-400"
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow className="border-zinc-800 hover:bg-zinc-800/50">
+                  <TableHead className="text-zinc-300">Title</TableHead>
+                  <TableHead className="text-zinc-300">Description</TableHead>
+                  <TableHead className="text-right text-zinc-300">
+                    Actions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <AnimatePresence>
+                  {filteredBlogs.map((blog) => (
+                    <motion.tr
+                      key={blog.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors"
+                    >
+                      <TableCell className="font-medium text-white">
+                        {blog.title}
+                      </TableCell>
+                      <TableCell className="text-zinc-400 max-w-md truncate">
+                        {blog.description}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-zinc-700/50 hover:text-blue-400"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-zinc-700/50 hover:text-red-400"
+                            onClick={() => setDeleteId(blog.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              </TableBody>
+            </Table>
+            {filteredBlogs.length === 0 && (
+              <div className="text-center py-12 text-zinc-500">
+                No blogs found matching your search.
+              </div>
+            )}
+          </motion.div>
+        </CardContent>
+      </Card>
+      <Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
+          <DialogHeader>
+            <DialogTitle>Delete Blog Post</DialogTitle>
+            <DialogDescription className="text-zinc-400">
+              Are you sure you want to delete this blog post? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteId(null)}
+              className="border-zinc-700 hover:bg-zinc-800"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => deleteId && handleDelete(deleteId)}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

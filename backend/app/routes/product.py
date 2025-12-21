@@ -110,7 +110,7 @@ async def delete_image(
     await db.delete(image)
     await db.commit()
 
-    return {"meessage": "Delete success"}
+    return
 
 
 @router.get("/get/all", response_model=ProductListResponse)
@@ -256,7 +256,7 @@ async def api_delete_product(
         await db.delete(img)
     await db.delete(product)
     await db.commit()
-    return {"message": "Product deleted successfully"}
+    return
 
 
 @router.patch(

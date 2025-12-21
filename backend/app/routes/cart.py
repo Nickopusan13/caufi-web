@@ -105,9 +105,7 @@ async def api_cart_all(
     return CartOut(cart_items=items, total_items=total_items, cart_total=cart_total)
 
 
-@router.delete(
-    "/delete/{item_id}", response_model=CartItemOut, status_code=status.HTTP_200_OK
-)
+@router.delete("/delete/{item_id}", response_model=None, status_code=status.HTTP_200_OK)
 async def api_delete_cart(
     item_id: int,
     db: AsyncSession = Depends(get_db),
@@ -122,19 +120,7 @@ async def api_delete_cart(
         )
     result = await db.execute(
         select(CartItem)
-        .options(
-            selectinload(CartItem.variant),
-            selectinload(CartItem.variant).selectinload(ProductVariant.product),
-            selectinload(CartItem.variant)
-            .selectinload(ProductVariant.product)
-            .selectinload(Product.images),
-            selectinload(CartItem.variant)
-            .selectinload(ProductVariant.product)
-            .selectinload(Product.materials),
-            selectinload(CartItem.variant)
-            .selectinload(ProductVariant.product)
-            .selectinload(Product.variants),
-        )
+        .options(selectinload(CartItem.variant).selectinload(ProductVariant.product))
         .where(CartItem.id == item_id, CartItem.cart_id == cart.id)
     )
     cart_item = result.scalar_one_or_none()
@@ -144,10 +130,12 @@ async def api_delete_cart(
         )
     await db.delete(cart_item)
     await db.commit()
-    return cart_item
+    return
 
 
-@router.delete("/delete/all", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/delete/all", response_model=None, status_code=status.HTTP_204_NO_CONTENT
+)
 async def api_delete_all_cart(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
@@ -160,6 +148,7 @@ async def api_delete_all_cart(
         )
     await db.execute(delete(CartItem).where(CartItem.cart_id == cart.id))
     await db.commit()
+    return
 
 
 @router.patch("/update", response_model=CartOut)
