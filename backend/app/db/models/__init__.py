@@ -13,6 +13,7 @@ from app.db.models.product import (
     Wishlist,
 )
 from app.db.models.order import Order, OrderItem
+from app.db.models.blog import Blog
 
 __all__ = [
     "User",
@@ -27,4 +28,5 @@ __all__ = [
     "Order",
     "OrderItem",
     "Wishlist",
+    "Blog",
 ]

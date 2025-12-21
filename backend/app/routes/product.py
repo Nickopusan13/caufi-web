@@ -256,7 +256,7 @@ async def api_delete_product(
         await db.delete(img)
     await db.delete(product)
     await db.commit()
-    return
+    return {"message": "Product deleted successfully"}
 
 
 @router.patch(
@@ -272,7 +272,9 @@ async def api_update_product(
 ):
     product = await get_product(db=db, product_id=product_id)
     if not product:
-        raise HTTPException(404, "Product not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found."
+        )
     payload = data.model_dump(exclude_unset=True, exclude={"materials", "images"})
     if "name" in payload and payload["name"] != product.name:
         product.slug = await get_slug(payload["name"], db=db)

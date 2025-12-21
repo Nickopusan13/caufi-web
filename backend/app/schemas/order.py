@@ -28,6 +28,13 @@ class OrderItemOut(OrderItemCreate):
     subtotal: Decimal = Field(gt=0)
 
 
+class MidtransTransactionOut(BaseConfigModel):
+    order_id: str = Field(gt=0)
+    token: str = Field(min_length=1)
+    redirect_url: str = Field(min_length=1)
+    expired_at: datetime
+
+
 class OrderOut(BaseConfigModel):
     id: int = Field(gt=0)
     status: OrderStatus
@@ -38,10 +45,3 @@ class OrderOut(BaseConfigModel):
     address: UserAddressOut
     user: UserProfileOut
     items: List[OrderItemOut] = Field(default_factory=list)
-
-
-class MidtransTransactionOut(BaseConfigModel):
-    order_id: str = Field(gt=0)
-    token: str = Field(min_length=1)
-    redirect_url: str = Field(min_length=1)
-    expired_at: datetime
