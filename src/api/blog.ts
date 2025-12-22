@@ -147,3 +147,18 @@ export async function addBlogImage(
     throw new Error(error.message);
   }
 }
+
+export async function deleteBlogImage(imageId: number) {
+  try {
+    const res = await axios.delete(`${API_URL}/api/blog/images/${imageId}`, {
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.detail);
+    }
+    throw new Error(error.message);
+  }
+}

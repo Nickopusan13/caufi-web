@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import { useState } from "react";
 import { BlogCreate } from "@/api/blog";
 import { useAddBlog, useUpdateBlog } from "@/hooks/useBlog";
 import { toast } from "react-hot-toast";
@@ -17,7 +17,6 @@ export default function AddBlog() {
     category: "",
     content: "",
   });
-
   const [blogId, setBlogId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,7 +40,6 @@ export default function AddBlog() {
         });
         toast.success("Blog updated successfully!");
       } else {
-        // Create new blog
         const createdBlog = await addMutation.mutateAsync(formData);
         setBlogId(createdBlog.id); // Assuming your API returns the created blog with id
         toast.success("Blog created successfully!");
@@ -63,9 +61,7 @@ export default function AddBlog() {
       className="max-w-4xl mx-auto p-6"
     >
       <h1 className="text-3xl font-bold mb-8">Create New Blog</h1>
-
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
         <div>
           <label className="block text-sm font-medium mb-2">Title *</label>
           <input
@@ -79,8 +75,6 @@ export default function AddBlog() {
             required
           />
         </div>
-
-        {/* Description */}
         <div>
           <label className="block text-sm font-medium mb-2">Description</label>
           <textarea
@@ -93,8 +87,6 @@ export default function AddBlog() {
             rows={4}
           />
         </div>
-
-        {/* Author & Category */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium mb-2">Author</label>

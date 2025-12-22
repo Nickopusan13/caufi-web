@@ -21,7 +21,6 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 
-// NAVBAR
 export const recommendations = [
   { label: "Trending Now", icon: <FaFire /> },
   { label: "Must Have", icon: <FaStar /> },
@@ -39,7 +38,6 @@ export const recommendations = [
   { label: "Top Rated", icon: <FaThumbsUp /> },
 ];
 
-// FOOTER
 export const footerSections = [
   {
     title: "Shop",

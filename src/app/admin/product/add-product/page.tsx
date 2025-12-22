@@ -1,15 +1,15 @@
-import BlogAdmin from "@/components/admin/blog/BlogAdmin";
+import ProductAdminAdd from "@/components/admin/product/add-product/ProductAdminAdd";
 import AdminSidebar from "@/components/admin/Navbar/AdminSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-export default function AdminBlogPage() {
+export default function AddProductPage() {
   return (
     <div data-lenis-prevent className="flex h-screen">
       <SidebarProvider>
         <AdminSidebar />
-        <main className="flex-1 overflow-auto scrollbar-thin">
+        <main className="flex-1 overflow-auto scrollbar-thin p-2">
           <SidebarTrigger />
-          <BlogAdmin />
+          <ProductAdminAdd />
         </main>
       </SidebarProvider>
     </div>

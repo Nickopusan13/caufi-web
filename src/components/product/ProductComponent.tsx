@@ -1,4 +1,3 @@
-// components/ProductComponent.tsx
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -203,7 +202,7 @@ interface ProductSizeProps {
   sizes: string[];
   selectedSize: string | null;
   onSelectSize: (size: string) => void;
-  disabledSizes?: string[]; // optional: sizes that are out of stock
+  disabledSizes?: string[];
 }
 
 export const ProductSize = ({

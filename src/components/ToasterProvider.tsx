@@ -5,7 +5,12 @@ export default function ToasterProvider() {
     <Toaster
       position="top-center"
       reverseOrder={true}
-      toastOptions={{ duration: 1500 }}
+      toastOptions={{
+        duration: 1500,
+        style: {
+          animation: "slide-in 0.2s ease-out",
+        },
+      }}
     />
   );
 }

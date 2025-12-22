@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,9 +21,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Pencil, Trash2, Search, Plus } from "lucide-react";
+import { Pencil, Trash2, Search } from "lucide-react";
 import { useDeleteBlog, useGetAllBlog } from "@/hooks/useBlog";
 import ToasterProvider from "@/components/ToasterProvider";
+import CardHeaderAdmin from "../CardHeaderAdmin";
 
 export default function BlogAdmin() {
   const { data: dataBlog = [], isLoading } = useGetAllBlog({
@@ -45,30 +45,11 @@ export default function BlogAdmin() {
   return (
     <div className="container mx-auto p-6 space-y-8">
       <ToasterProvider />
-      <Card className="border-none shadow-lg bg-linear-to-br from-zinc-900 to-zinc-950">
-        <CardHeader className="pb-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="text-3xl font-bold text-white">
-              Blog Management
-            </CardTitle>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" className="gap-2">
-                <Search className="h-4 w-4" />
-                Export
-              </Button>
-              <Button
-                asChild
-                className="gap-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-              >
-                <Link href="/admin/blog/add-blog">
-                  <Plus className="h-4 w-4" />
-                  New Blog
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-      </Card>
+      <CardHeaderAdmin
+        headTitle="Blog Management"
+        href="/admin/blog/add-blog"
+        hrefTitle="New Blog"
+      />
       <Card className="border-none shadow-xl bg-zinc-900/80 backdrop-blur-sm">
         <CardHeader className="pb-0">
           <div className="relative">
