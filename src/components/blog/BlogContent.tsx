@@ -12,51 +12,70 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useParams } from "next/navigation";
+import { useGetByBlogIdentifier } from "@/hooks/useBlog";
 
-interface BlogContentProps {
-  title: string;
-  description?: string;
-  author: string;
-  date: string;
-  category: string;
-  cover: string;
-  readingTime: string;
-  children: React.ReactNode;
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.7, ease: "easeOut" },
+  },
+};
+
+function calculateReadingTime(content: string) {
+  const words = content.trim().split(/\s+/).length;
+  const minutes = Math.ceil(words / 200);
+  return `${minutes} min read`;
 }
 
-export default function BlogContent({
-  title,
-  author,
-  date,
-  category,
-  readingTime,
-  children,
-}: BlogContentProps) {
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+export default function BlogContent() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const { data: post, isLoading } = useGetByBlogIdentifier(slug, !!slug);
+
+  if (!slug) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-2xl text-gray-500">Invalid blog ID.</p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-2xl text-gray-500">Loading blog post...</p>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-2xl text-gray-500">Blog post not found.</p>
+      </div>
+    );
+  }
+
+  const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.7, ease: "easeOut" },
-    },
-  };
+  const readingTime = calculateReadingTime(post.content);
 
   return (
     <motion.article
@@ -71,11 +90,11 @@ export default function BlogContent({
         >
           <div className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            <span>{author}</span>
+            <span>{post.author}</span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            <time dateTime={date}>{formattedDate}</time>
+            <time dateTime={post.date}>{formattedDate}</time>
           </div>
           <div className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
@@ -83,7 +102,7 @@ export default function BlogContent({
           </div>
           <div className="flex items-center gap-2">
             <Tag className="h-5 w-5" />
-            <span>{category}</span>
+            <span>{post.category}</span>
           </div>
         </motion.div>
         <motion.div variants={itemVariants} className="mb-10">
@@ -102,7 +121,7 @@ export default function BlogContent({
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>{title}</BreadcrumbPage>
+                <BreadcrumbPage>{post.title}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -118,9 +137,8 @@ export default function BlogContent({
                      prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-10 prose-img:w-full prose-img:object-cover
                      prose-ul:list-disc prose-ol:list-decimal prose-li:ml-6 prose-li:text-gray-700 dark:prose-li:text-gray-300
                      prose-strong:font-semibold prose-strong:text-gray-900 dark:prose-strong:text-white"
-        >
-          {children}
-        </motion.div>
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        ></motion.div>
         <motion.div
           variants={itemVariants}
           className="mt-20 pt-10 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-6"

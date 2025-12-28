@@ -3,7 +3,11 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { BlogCreate } from "@/api/blog";
-import { useAddBlog, useUpdateBlog, useGetByBlogId } from "@/hooks/useBlog";
+import {
+  useAddBlog,
+  useUpdateBlog,
+  useGetByBlogIdentifier,
+} from "@/hooks/useBlog";
 import { toast } from "react-hot-toast";
 import BlogContent from "./BlogContent";
 import LoadingPage from "@/components/LoadingPage";
@@ -14,7 +18,10 @@ export default function AddBlog({ id }: { id?: number }) {
   const updateMutation = useUpdateBlog();
   const hasCreatedDraft = useRef(false);
   const isEdit = typeof id === "number";
-  const { data: blogData, isLoading: isFetching } = useGetByBlogId(id!, isEdit);
+  const { data: blogData, isLoading: isFetching } = useGetByBlogIdentifier(
+    id!,
+    isEdit
+  );
   const [formData, setFormData] = useState<BlogCreate>({
     title: "",
     description: "",

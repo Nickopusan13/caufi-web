@@ -128,14 +128,33 @@ async def api_blog_delete(
     await db.commit()
 
 
-@router.get("/get/{blog_id}", response_model=BlogOut, status_code=status.HTTP_200_OK)
-async def api_blog_get(blog_id: int, db: AsyncSession = Depends(get_db)):
-    result = await db.get(Blog, blog_id)
-    if not result:
+@router.get(
+    "/get/{identifier}",
+    response_model=BlogOut,
+    status_code=status.HTTP_200_OK,
+)
+async def api_blog_get(
+    identifier: str,
+    db: AsyncSession = Depends(get_db),
+):
+    query = select(Blog)
+
+    if identifier.isdigit():
+        query = query.where(Blog.id == int(identifier))
+    else:
+        query = query.where(Blog.slug == identifier)
+
+    result = await db.execute(query)
+    blog = result.scalar_one_or_none()
+
+    if not blog:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Blog post not found."
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Blog post not found.",
         )
-    return result
+
+    return blog
+
 
 
 @router.get("/all", response_model=list[BlogOut], status_code=status.HTTP_200_OK)

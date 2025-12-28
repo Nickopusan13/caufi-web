@@ -24,10 +24,13 @@ export function useGetAllBlog({
   });
 }
 
-export function useGetByBlogId(blogId: number, enabled: boolean) {
+export function useGetByBlogIdentifier(
+  identifier: string | number,
+  enabled: boolean
+) {
   return useQuery({
-    queryKey: ["blog", blogId],
-    queryFn: () => getOneBlog(blogId),
+    queryKey: ["blog", identifier],
+    queryFn: () => getOneBlog(identifier),
     enabled,
   });
 }

@@ -92,15 +92,17 @@ export async function getAllBlog(
   }
 }
 
-export async function getOneBlog(blogId: number): Promise<BlogOut> {
+export async function getOneBlog(
+  identifier: string | number
+): Promise<BlogOut> {
   try {
-    const res = await axios.get(`${API_URL}/api/blog/get/${blogId}`, {
+    const res = await axios.get(`${API_URL}/api/blog/get/${identifier}`, {
       withCredentials: false,
     });
     return res.data;
   } catch (err) {
     const error = err as AxiosError<ApiErrorResponse>;
-    if (error.response && error.response.data) {
+    if (error.response?.data?.detail) {
       throw new Error(error.response.data.detail);
     }
     throw new Error(error.message);
