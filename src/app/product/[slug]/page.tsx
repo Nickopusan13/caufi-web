@@ -1,4 +1,4 @@
-import { getProductBySlug } from "@/api/product";
+import { getProductByIdentifier } from "@/api/product";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import ProductInfo from "@/components/product/ProductInfo";
@@ -12,7 +12,7 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   let product;
   try {
-    product = await getProductBySlug(slug);
+    product = await getProductByIdentifier(slug);
   } catch (error) {
     console.log("Product not found:", slug, error);
     notFound();

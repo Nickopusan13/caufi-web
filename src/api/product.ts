@@ -88,6 +88,23 @@ export interface ProductFilters {
   sort?: string;
 }
 
+export async function getProductByIdentifier(
+  identifier: string | number
+): Promise<ProductOut> {
+  try {
+    const res = await axios.get<ProductOut>(
+      `${API_URL}/api/product/get/${identifier}`
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response?.data?.detail) {
+      throw new Error(error.response.data.detail);
+    }
+    throw new Error(error.message);
+  }
+}
+
 export async function fetchProductData(
   filters: ProductFilters = {}
 ): Promise<ProductListResponse> {
