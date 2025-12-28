@@ -25,12 +25,14 @@ import { Pencil, Trash2, Search } from "lucide-react";
 import { useDeleteBlog, useGetAllBlog } from "@/hooks/useBlog";
 import ToasterProvider from "@/components/ToasterProvider";
 import CardHeaderAdmin from "../CardHeaderAdmin";
+import { useRouter } from "next/navigation";
 
 export default function BlogAdmin() {
   const { data: dataBlog = [], isLoading } = useGetAllBlog({
     limit: 24,
     page: 1,
   });
+  const router = useRouter();
   const removeMutation = useDeleteBlog();
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -42,6 +44,9 @@ export default function BlogAdmin() {
       blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       blog.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const handleEdit = (id: number) => {
+    router.push(`/admin/blog/edit-blog/${id}`);
+  };
   return (
     <div className="container mx-auto p-6 space-y-8">
       <ToasterProvider />
@@ -105,6 +110,7 @@ export default function BlogAdmin() {
                             <Button
                               variant="ghost"
                               size="icon"
+                              onClick={() => handleEdit(blog.id)}
                               className="hover:bg-zinc-700/50 hover:text-blue-400"
                             >
                               <Pencil className="h-4 w-4" />

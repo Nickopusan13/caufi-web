@@ -24,10 +24,11 @@ export function useGetAllBlog({
   });
 }
 
-export function useGetByBlogId(blogId: number) {
+export function useGetByBlogId(blogId: number, enabled: boolean) {
   return useQuery({
     queryKey: ["blog", blogId],
     queryFn: () => getOneBlog(blogId),
+    enabled,
   });
 }
 

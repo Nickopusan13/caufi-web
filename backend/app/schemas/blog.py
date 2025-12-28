@@ -7,20 +7,20 @@ from typing import Optional, List
 class BlogImageOut(BaseConfigModel):
     id: int = Field(gt=0)
     image_url: str = Field(min_length=1, max_length=255)
-    position: Optional[int] = Field(default=0)
 
 
 class BlogCreate(BaseConfigModel):
     title: str = Field(min_length=1, max_length=200)
-    description: str = Field(min_length=1)
-    author: str = Field(min_length=1, max_length=255)
-    category: str = Field(min_length=1, max_length=200)
-    content: str = Field(min_length=1)
+    description: str = Field(min_length=0)
+    author: str = Field(min_length=0, max_length=255)
+    category: str = Field(min_length=0, max_length=200)
+    content: str = Field(min_length=0)
 
 
 class BlogOut(BlogCreate):
     id: int = Field(gt=0)
     images: List[BlogImageOut] = Field(default_factory=list)
+    slug: str = Field(min_length=1, max_length=255)
     date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 

@@ -13,10 +13,8 @@ export interface CartItemCreate {
   quantity: number;
 }
 
-export interface CartItemOut {
+export interface CartItemOut extends CartItemCreate {
   id: number;
-  variantId: number;
-  quantity: number;
   price: number;
   product: ProductOut;
   variant: ProductVariant;

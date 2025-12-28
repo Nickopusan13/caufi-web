@@ -21,7 +21,7 @@ import {
 import { RiH1, RiH2, RiH3 } from "react-icons/ri";
 import { AiOutlineHighlight } from "react-icons/ai";
 import React, { useEffect, useRef, useState, memo } from "react";
-import { EditorButton } from "./EditorButton"; // ← use the modern version we created earlier
+import { EditorButton } from "./EditorButton";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";

@@ -10,7 +10,6 @@ interface ApiErrorResponse {
 export interface BlogImageOut {
   id: number;
   imageUrl: number;
-  position?: number;
 }
 
 export interface BlogCreate {
@@ -24,6 +23,7 @@ export interface BlogCreate {
 export interface BlogOut extends BlogCreate {
   id: number;
   images: BlogImageOut[];
+  slug: string;
   date: string;
 }
 
@@ -128,7 +128,7 @@ export async function addBlogImage(
 ): Promise<BlogImageOut[]> {
   try {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("files", file);
     const res = await axios.post(
       `${API_URL}/api/blog/${blogId}/images`,
       formData,

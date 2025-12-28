@@ -12,7 +12,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Variants } from "framer-motion";
-import { blogPosts, type BlogSlug } from "@/lib/blogData";
+import { useGetAllBlog } from "@/hooks/useBlog";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -42,22 +42,46 @@ const cardVariants: Variants = {
   },
 };
 
+function calculateReadingTime(content: string) {
+  const words = content.trim().split(/\s+/).length;
+  const minutes = Math.ceil(words / 200);
+  return `${minutes} min read`;
+}
+
 export default function Blog() {
-  const postsArray = Object.entries(blogPosts) as [
-    BlogSlug,
-    (typeof blogPosts)[BlogSlug]
-  ][];
-  const featuredPost = postsArray[0]?.[1];
-  const featuredSlug = postsArray[0]?.[0];
-  const recentPosts = postsArray.slice(1).map(([, post]) => post);
-  const recentSlugs = postsArray.slice(1).map(([slug]) => slug);
-  if (postsArray.length === 0) {
+  const { data: dataBlog = [], isLoading } = useGetAllBlog({
+    limit: 24,
+    page: 1,
+  });
+
+  const postsWithExtras = dataBlog.map((post) => ({
+    ...post,
+    readingTime: calculateReadingTime(post.content),
+    cover: post.images[0]?.imageUrl
+      ? String(post.images[0].imageUrl)
+      : undefined,
+  }));
+
+  const featuredPost = postsWithExtras[0];
+  const featuredSlug = postsWithExtras[0]?.slug;
+  const recentPosts = postsWithExtras.slice(1);
+
+  if (postsWithExtras.length === 0 && !isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-2xl text-gray-500">No blog posts yet. Stay tuned!</p>
       </div>
     );
   }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-2xl text-gray-500">Loading blog posts...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen py-12 px-4">
       <motion.div
@@ -148,65 +172,62 @@ export default function Blog() {
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {recentPosts.length > 0 ? (
-            recentPosts.map((post, index) => {
-              const slug = recentSlugs[index];
-              return (
-                <motion.article
-                  key={slug}
-                  variants={itemVariants}
-                  whileHover="hover"
-                  className="group"
-                >
-                  <Link href={`/blog/${slug}`}>
-                    <motion.div
-                      variants={cardVariants}
-                      className="bg-white dark:bg-gray-800/90 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm border border-gray-200 dark:border-gray-700 cursor-pointer h-full flex flex-col transition-all"
-                    >
-                      <div className="relative h-64 overflow-hidden">
-                        {post.cover ? (
-                          <Image
-                            src={post.cover}
-                            alt={post.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 bg-linear-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                            <ShoppingBag className="h-20 w-20 text-white opacity-80" />
-                          </div>
-                        )}
-                        <div className="absolute top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {post.category}
+            recentPosts.map((post) => (
+              <motion.article
+                key={post.slug}
+                variants={itemVariants}
+                whileHover="hover"
+                className="group"
+              >
+                <Link href={`/blog/${post.slug}`}>
+                  <motion.div
+                    variants={cardVariants}
+                    className="bg-white dark:bg-gray-800/90 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm border border-gray-200 dark:border-gray-700 cursor-pointer h-full flex flex-col transition-all"
+                  >
+                    <div className="relative h-64 overflow-hidden">
+                      {post.cover ? (
+                        <Image
+                          src={String(post.cover)}
+                          alt={post.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-linear-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                          <ShoppingBag className="h-20 w-20 text-white opacity-80" />
+                        </div>
+                      )}
+                      <div className="absolute top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {post.category}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-6 flex-1 flex flex-col">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
+                        {post.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 flex-1 line-clamp-3">
+                        {post.description}
+                      </p>
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                          <time className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" />
+                            {post.date}
+                          </time>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-4 w-4" />
+                            {post.readingTime}
                           </span>
                         </div>
+                        <ArrowRight className="h-5 w-5 text-purple-600 dark:text-purple-400 group-hover:translate-x-2 transition-transform" />
                       </div>
-                      <div className="p-6 flex-1 flex flex-col">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-300 mb-4 flex-1 line-clamp-3">
-                          {post.description}
-                        </p>
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
-                          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                            <time className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              {post.date}
-                            </time>
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-4 w-4" />
-                              {post.readingTime}
-                            </span>
-                          </div>
-                          <ArrowRight className="h-5 w-5 text-purple-600 dark:text-purple-400 group-hover:translate-x-2 transition-transform" />
-                        </div>
-                      </div>
-                    </motion.div>
-                  </Link>
-                </motion.article>
-              );
-            })
+                    </div>
+                  </motion.div>
+                </Link>
+              </motion.article>
+            ))
           ) : (
             <div className="col-span-full text-center py-12 text-gray-500">
               More stories coming soon!

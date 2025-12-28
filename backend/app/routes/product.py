@@ -15,7 +15,7 @@ from app.security.jwt import get_admin_user
 from app.db.session import AsyncSession
 from app.db.dependencies import get_db
 from app.db.models import Product
-from app.utils.slug import get_slug, get_sku
+from app.utils.slug import get_product_slug, get_sku
 from app.crud.product import get_product
 from sqlalchemy import select, func
 from app.utils.filters import apply_product_filters, get_base_product_query
@@ -40,7 +40,7 @@ async def api_product_add(
     db: AsyncSession = Depends(get_db),
 ):
     product_dict = data.model_dump(exclude={"materials", "images", "variants"})
-    product_dict["slug"] = await get_slug(product_dict["name"], db=db)
+    product_dict["slug"] = await get_product_slug(product_dict["name"], db=db)
     product = Product(**product_dict)
     product.variants = []
     for v in data.variants or []:
@@ -277,7 +277,7 @@ async def api_update_product(
         )
     payload = data.model_dump(exclude_unset=True, exclude={"materials", "images"})
     if "name" in payload and payload["name"] != product.name:
-        product.slug = await get_slug(payload["name"], db=db)
+        product.slug = await get_product_slug(payload["name"], db=db)
     for field, value in payload.items():
         setattr(product, field, value)
     if data.materials is not None:

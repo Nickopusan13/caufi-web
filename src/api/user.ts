@@ -19,14 +19,8 @@ export interface UserLogin {
   password: string;
 }
 
-export interface UserAddressOut {
+export interface UserAddressOut extends UserAddress {
   id: number;
-  recipientName: string;
-  fullAddress: string;
-  addressLabel: string;
-  phoneNumber: string;
-  notesCourier: string;
-  isSelected: boolean;
 }
 
 export interface UserAddress {
@@ -47,16 +41,8 @@ export interface UserAddressUpdate {
   isSelected?: boolean;
 }
 
-export interface UserProfileOut {
+export interface UserProfileOut extends UserProfile {
   id: number;
-  name: string;
-  userName: string;
-  email: string;
-  phoneNumber?: string;
-  birthday: string;
-  profileImage: string;
-  gender?: string;
-  addresses: UserAddressOut[];
   createdAt: string;
   isAdmin: boolean;
   isActive: boolean;

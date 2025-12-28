@@ -27,6 +27,6 @@ export const config = {
     "/cart/:path*",
     "/order/:path*",
     "/wishlist/:path*",
-    "/admin/:path*",
+    // "/admin/:path*",
   ],
 };

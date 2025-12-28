@@ -12,7 +12,7 @@ export default memo(function BasicInformation({
   formData: {
     name: string;
     productSummary: string;
-    manufacturerName: string;
+    manufacturer: string;
   };
   handleChange: (key: string, value: string) => void;
 }) {
@@ -50,7 +50,7 @@ export default memo(function BasicInformation({
               <Label htmlFor="manufacturer-name">Manufacturer Name:</Label>
               <Input
                 required
-                value={formData.manufacturerName}
+                value={formData.manufacturer}
                 autoComplete="off"
                 onChange={(e) =>
                   handleChange("manufacturerName", e.target.value)

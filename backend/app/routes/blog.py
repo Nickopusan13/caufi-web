@@ -13,19 +13,20 @@ from app.utils.r2_service import (
     R2_PUBLIC_URL,
     delete_image_from_r2,
 )
+from app.utils.slug import get_blog_slug
 
 router = APIRouter(prefix="/api/blog")
-
 
 @router.post("/add", response_model=BlogOut, status_code=status.HTTP_201_CREATED)
 async def api_blog_add(
     data: BlogCreate,
     db: AsyncSession = Depends(get_db),
-    admin: User = Depends(get_admin_user),
+    # admin: User = Depends(get_admin_user),
 ):
     sanitize_content = sanitize_html(data.content)
     payload = data.model_dump()
     payload["content"] = sanitize_content
+    payload["slug"] = await get_blog_slug(payload["title"], db=db)
     new_blog = Blog(**payload)
     db.add(new_blog)
     await db.commit()
@@ -41,7 +42,7 @@ async def api_blog_add(
 async def api_blog_add_images(
     blog_id: int,
     files: list[UploadFile] = File(...),
-    admin: User = Depends(get_admin_user),
+    # admin: User = Depends(get_admin_user),
     db: AsyncSession = Depends(get_db),
 ):
     blog = await db.get(Blog, blog_id)
@@ -74,7 +75,7 @@ async def api_blog_delete_image(
     admin: User = Depends(get_admin_user),
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(BlogImageOut).where(BlogImageOut.id == image_id))
+    result = await db.execute(select(BlogImage).where(BlogImage.id == image_id))
     image = result.scalar_one_or_none()
     if not image:
         raise HTTPException(
@@ -93,7 +94,7 @@ async def api_blog_update(
     blog_id: int,
     data: BlogUpdate,
     db: AsyncSession = Depends(get_db),
-    admin: User = Depends(get_admin_user),
+    # admin: User = Depends(get_admin_user),
 ):
     result = await db.get(Blog, blog_id)
     if not result:
@@ -125,7 +126,6 @@ async def api_blog_delete(
         )
     await db.delete(result)
     await db.commit()
-    return {"message": "Blog post deleted successfully"}
 
 
 @router.get("/get/{blog_id}", response_model=BlogOut, status_code=status.HTTP_200_OK)
