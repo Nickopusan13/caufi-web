@@ -130,6 +130,10 @@ export function useGetCurrentUser() {
   return useQuery<UserProfile>({
     queryKey: ["currentUser"],
     queryFn: getCurrentUser,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: false,
   });
 }
 

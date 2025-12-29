@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; // Add this for redirection
 import { Badge } from "@/components/ui/badge";
 import {
   HoverCard,
@@ -17,6 +18,7 @@ import {
   useRemoveFromwishlist,
 } from "@/hooks/useWishlist";
 import type { WishlistOut } from "@/api/wishlist";
+import { useAuth } from "@/lib/useAuth";
 
 interface ProductItemProps {
   cloths: ProductOut[];
@@ -25,18 +27,25 @@ interface ProductItemProps {
 const MotionLink = motion.create(Link);
 
 export default function ProductItem({ cloths }: ProductItemProps) {
-  const { data: wishlist = [], isLoading: isWishlistLoading } = useGetWishlist({
-    limit: 100,
-    page: 1,
-  });
-  const addMutation = useAddToWishlist();
-  const removeMutation = useRemoveFromwishlist();
-
-  const wishlistIds = new Set(
-    wishlist.map((item: WishlistOut) => item.product.id)
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { data: wishlist = [], isLoading: isWishlistLoading } = useGetWishlist(
+    { limit: 100, page: 1 },
+    { queryKey: ["userWishlist", 1, 100], enabled: isAuthenticated }
   );
 
+  const addMutation = useAddToWishlist();
+  const removeMutation = useRemoveFromwishlist();
+  const wishlistIds = isAuthenticated
+    ? new Set(wishlist.map((item: WishlistOut) => item.product.id))
+    : new Set();
+
   const handleToggleWishlist = (productId: number, isWishlisted: boolean) => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+
     if (isWishlisted) {
       removeMutation.mutate(productId);
     } else {
@@ -124,32 +133,47 @@ export default function ProductItem({ cloths }: ProductItemProps) {
                     </div>
                   )}
                   {!isWishlistLoading && (
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        handleToggleWishlist(product.id, isWishlisted);
-                      }}
-                      className="p-2.5 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-full shadow-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center justify-center"
-                      aria-label={
-                        isWishlisted
-                          ? "Remove from wishlist"
-                          : "Add to wishlist"
-                      }
-                      disabled={
-                        addMutation.isPending || removeMutation.isPending
-                      }
-                    >
-                      <Heart
-                        className={`h-5 w-5 ${
-                          isWishlisted
-                            ? "text-red-500 fill-red-500"
-                            : "text-red-500"
-                        }`}
-                      />
-                    </motion.button>
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleToggleWishlist(product.id, isWishlisted);
+                          }}
+                          className={`p-2.5 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-full shadow-lg transition-colors flex items-center justify-center ${
+                            !isAuthenticated
+                              ? "cursor-not-allowed opacity-50"
+                              : "hover:bg-red-100 dark:hover:bg-red-900/50"
+                          }`}
+                          aria-label={
+                            isWishlisted
+                              ? "Remove from wishlist"
+                              : "Add to wishlist"
+                          }
+                          disabled={
+                            !isAuthenticated ||
+                            addMutation.isPending ||
+                            removeMutation.isPending
+                          }
+                        >
+                          <Heart
+                            className={`h-5 w-5 ${
+                              isWishlisted
+                                ? "text-red-500 fill-red-500"
+                                : "text-red-500"
+                            }`}
+                          />
+                        </motion.button>
+                      </HoverCardTrigger>
+                      {!isAuthenticated && (
+                        <HoverCardContent className="text-xs font-medium">
+                          Log in to add to wishlist
+                        </HoverCardContent>
+                      )}
+                    </HoverCard>
                   )}
                 </div>
               </div>

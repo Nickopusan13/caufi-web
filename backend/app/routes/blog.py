@@ -104,6 +104,8 @@ async def api_blog_update(
     payload = data.model_dump(exclude_unset=True)
     if "content" in payload:
         payload["content"] = sanitize_html(payload["content"])
+    if "title" in payload and payload["title"] != result.title:
+        payload["slug"] = await get_blog_slug(payload["title"], db=db)
     for field, value in payload.items():
         setattr(result, field, value)
     await db.commit()

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import type { WishlistCreate } from "@/api/wishlist";
 import {
   addToWishlist,
@@ -8,16 +8,19 @@ import {
 } from "@/api/wishlist";
 import toast from "react-hot-toast";
 
-export function useGetWishlist({
-  page,
-  limit,
-}: {
-  page: number;
-  limit: number;
-}) {
-  return useQuery({
+export function useGetWishlist(
+  { page, limit }: { page: number; limit: number },
+  options?: UseQueryOptions<
+    WishlistOut[],
+    Error,
+    WishlistOut[],
+    readonly unknown[]
+  >
+) {
+  return useQuery<WishlistOut[], Error, WishlistOut[], readonly unknown[]>({
     queryKey: ["userWishlist", page, limit],
     queryFn: () => fetchUserWishlist(page, limit),
+    ...options,
   });
 }
 

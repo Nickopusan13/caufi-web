@@ -1,4 +1,3 @@
-// lib/order-status.ts  ← create this file
 import type { OrderOut } from "@/api/order";
 
 export const ORDER_STATUS_LABEL: Record<
