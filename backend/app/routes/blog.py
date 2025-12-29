@@ -42,7 +42,7 @@ async def api_blog_add(
 async def api_blog_add_images(
     blog_id: int,
     files: list[UploadFile] = File(...),
-    # admin: User = Depends(get_admin_user),
+    admin: User = Depends(get_admin_user),
     db: AsyncSession = Depends(get_db),
 ):
     blog = await db.get(Blog, blog_id)
@@ -94,7 +94,7 @@ async def api_blog_update(
     blog_id: int,
     data: BlogUpdate,
     db: AsyncSession = Depends(get_db),
-    # admin: User = Depends(get_admin_user),
+    admin: User = Depends(get_admin_user),
 ):
     result = await db.get(Blog, blog_id)
     if not result:

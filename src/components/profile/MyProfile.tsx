@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { TbCameraPlus } from "react-icons/tb";
@@ -10,7 +10,7 @@ import {
   ProfileInfo,
   Settings,
 } from "./information/AccountInfo";
-import { useGetCurrentUser } from "@/hooks/useLogin";
+import { useGetCurrentUser, useAddImageProfile } from "@/hooks/useLogin";
 import { EditProfile } from "./EditProfile";
 import EditAddress from "./EditAddress";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,6 +18,9 @@ import { usePathname, useRouter } from "next/navigation";
 const tabs = ["My Profile", "My Address", "Order History", "Settings"] as const;
 
 export default function MyProfile() {
+  const { mutateAsync: uploadImage, isPending: isUploading } =
+    useAddImageProfile();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] =
     useState<(typeof tabs)[number]>("My Profile");
   const [edit, setEdit] = useState<string | null>(null);
@@ -28,10 +31,10 @@ export default function MyProfile() {
   const getHashFromTab = (tab: string) =>
     tab.toLowerCase().replace(/\s+/g, "-");
 
-  const getTabFromHash = (hash: string) =>
-    tabs.find((t) => getHashFromTab(t) === hash) || tabs[0];
-
   useEffect(() => {
+    const getTabFromHash = (hash: string) =>
+      tabs.find((t) => getHashFromTab(t) === hash) || tabs[0];
+
     const handleHashChange = () => {
       const hash = window.location.hash.substring(1);
       if (hash) {
@@ -39,10 +42,8 @@ export default function MyProfile() {
         setActiveTab(newTab);
       }
     };
-
     window.addEventListener("hashchange", handleHashChange);
-    handleHashChange(); // Set initial tab based on hash
-
+    handleHashChange();
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
@@ -62,17 +63,39 @@ export default function MyProfile() {
               <div className="relative group">
                 <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden ring-4 ring-white dark:ring-zinc-800 shadow-2xl">
                   <Image
-                    src="/assets/avatar.webp"
-                    alt="Nicko"
+                    src={user?.profileImage || "/assets/avatar.webp"} // use user's avatar
+                    alt={user?.name || "Avatar"}
                     width={200}
                     height={200}
-                    loading="eager"
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <div className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
-                  <TbCameraPlus className="w-12 h-12 text-white" />
+                <div
+                  className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm cursor-pointer"
+                  onClick={() => !isUploading && fileInputRef.current?.click()}
+                >
+                  {isUploading ? (
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-white border-solid"></div>
+                  ) : (
+                    <TbCameraPlus className="w-12 h-12 text-white" />
+                  )}
                 </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={async (e) => {
+                    if (!e.target.files?.[0]) return;
+                    const file = e.target.files[0];
+                    try {
+                      await uploadImage({ file });
+                      router.refresh(); // refresh user data to show new avatar
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  }}
+                />
               </div>
               <div className="text-center lg:text-left">
                 <h1 className="text-3xl lg:text-4xl font-bold text-black dark:text-white">

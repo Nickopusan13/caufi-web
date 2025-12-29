@@ -16,6 +16,7 @@ import {
   mapsReverseGeocoding,
   createVerifyEmail,
   fetchContactCaufi,
+  addUploadImages,
 } from "@/api/user";
 import toast from "react-hot-toast";
 import type {
@@ -74,6 +75,18 @@ export function useLogin() {
     mutationFn: fetchUserLogin,
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data.user);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useAddImageProfile() {
+  return useMutation<UserProfileOut, Error, { file: File }>({
+    mutationFn: ({ file }) => addUploadImages(file),
+    onSuccess: () => {
+      toast.success("Add Done!!");
     },
     onError: (error: Error) => {
       toast.error(error.message);

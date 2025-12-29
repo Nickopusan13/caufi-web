@@ -136,10 +136,8 @@ export default memo(function RichText({
 
   return (
     <div className="space-y-4">
-      {/* Modern Toolbar */}
       <div className="sticky top-0 z-10 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 pb-2 pt-1">
         <div className="flex flex-wrap gap-2 items-center px-1">
-          {/* Undo / Redo group */}
           <div className="flex items-center gap-1 bg-zinc-100/80 dark:bg-zinc-800/60 px-2 py-1 rounded-lg">
             <EditorButton
               onClick={() => editor.chain().focus().undo().run()}
@@ -154,11 +152,7 @@ export default memo(function RichText({
               desc="Redo (Ctrl+Y)"
             />
           </div>
-
-          {/* Divider */}
           <div className="hidden sm:block h-6 w-px bg-zinc-300 dark:bg-zinc-700 mx-1" />
-
-          {/* Headings */}
           <div className="flex items-center gap-1">
             <EditorButton
               isActive={editor.isActive("heading", { level: 1 })}
@@ -185,8 +179,6 @@ export default memo(function RichText({
               desc="Heading 3"
             />
           </div>
-
-          {/* Text formatting */}
           <div className="flex items-center gap-1">
             <EditorButton
               isActive={editor.isActive("bold")}
@@ -213,8 +205,6 @@ export default memo(function RichText({
               desc="Strikethrough"
             />
           </div>
-
-          {/* Alignment */}
           <div className="flex items-center gap-1">
             <EditorButton
               isActive={editor.isActive({ textAlign: "left" })}
@@ -245,8 +235,6 @@ export default memo(function RichText({
               desc="Align justify"
             />
           </div>
-
-          {/* Lists + Image */}
           <div className="flex items-center gap-1">
             <EditorButton
               isActive={editor.isActive("orderedList")}
@@ -273,8 +261,6 @@ export default memo(function RichText({
               disabled={isUploading}
             />
           </div>
-
-          {/* Highlight + Link */}
           <div className="flex items-center gap-1">
             <EditorButton
               isActive={editor.isActive("highlight", { color: "#ffc078" })}
@@ -296,8 +282,6 @@ export default memo(function RichText({
           </div>
         </div>
       </div>
-
-      {/* Hidden file input */}
       <input
         type="file"
         accept="image/*"
@@ -305,8 +289,6 @@ export default memo(function RichText({
         onChange={handleImageUpload}
         className="hidden"
       />
-
-      {/* Editor Content */}
       <div className="relative">
         <EditorContent editor={editor} className="prose-headings:font-bold" />
       </div>

@@ -207,6 +207,27 @@ export async function createUserAddress(
   }
 }
 
+export async function addUploadImages(file: File): Promise<UserProfileOut> {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await axios.post(
+      `${API_URL}/api/user/upload/images`,
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiErrorResponse>;
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.detail);
+    }
+    throw new Error(error.message);
+  }
+}
+
 export async function fetchUserLogin(data: UserLogin) {
   try {
     const res = await axios.post(`${API_URL}/api/user/login`, data, {
