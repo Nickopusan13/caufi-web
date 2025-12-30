@@ -40,6 +40,7 @@ const navigationMenus = [
   { title: "About", href: "/about" },
   { title: "Blog", href: "/blog" },
   { title: "Contact", href: "/contact" },
+  { title: "Support", href: "/support" },
 ];
 
 export default function MenuBar() {
@@ -52,7 +53,6 @@ export default function MenuBar() {
             pathname === menu.href || pathname.startsWith(`${menu.href}/`);
           return (
             <NavigationMenuItem key={menu.title}>
-              {/* Use NavigationMenuLink for simple links, Trigger only when has dropdown */}
               {menu.items ? (
                 <NavigationMenuTrigger
                   className={clsx(

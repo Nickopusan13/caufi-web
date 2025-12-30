@@ -260,13 +260,17 @@ async def delete_images_user(
 
 @router.post("/logout", status_code=status.HTTP_200_OK)
 async def api_user_logout(response: Response):
-    response.delete_cookie(
+    response.set_cookie(
         key="access_token",
-        path="/",
+        value="",
         httponly=True,
         secure=True,
         samesite="none",
+        max_age=0,
+        expires=0,
+        path="/",
         domain=".nickopusan.dev",
+        partitioned=True,
     )
     return {"message": "Logout successful"}
 
