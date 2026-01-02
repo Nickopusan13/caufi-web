@@ -518,7 +518,7 @@ export const Settings = () => {
             <SettingsItem
               icon={MdOutlineDeleteForever}
               title="Delete Account"
-              description="Permanently delete your account"
+              description="Permanently delete account"
               onClick={() => openDialog("delete")}
               iconColor="text-red-600 dark:text-red-400"
               iconBg="bg-red-100 dark:bg-red-950/40"

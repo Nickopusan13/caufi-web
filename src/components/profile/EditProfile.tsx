@@ -55,7 +55,7 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
     mutation.mutate(
       {
         name: name.trim(),
-        phoneNumber: phoneNumber.trim(),
+        phoneNumber: phoneNumber.trim() || undefined,
         gender,
         birthday: birthday ? birthday.toISOString().split("T")[0] : undefined,
       },
@@ -93,7 +93,7 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <DialogTitle className="text-3xl font-bold bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:to-zinc-300 bg-clip-text text-transparent">
+              <DialogTitle className="text-2xl lg:text-3xl font-bold bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:to-zinc-300 bg-clip-text text-transparent">
                 Edit Profile
               </DialogTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -101,44 +101,44 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
               </p>
             </motion.div>
           </DialogHeader>
-          <div className="px-5 space-y-7 mt-6">
+          <div className="px-5 space-y-5 lg:space-y-7 mt-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="max-w-md mx-auto space-y-2"
             >
-              <Label className="text-base font-semibold">Full Name *</Label>
+              <Label className="text-sm font-semibold">Full Name *</Label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
-                className="h-14 text-lg text-center rounded-2xl font-medium"
+                className="h-10 lg:h-14 text-sm text-center rounded-2xl font-medium"
               />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="space-y-5"
+              className="space-y-3 lg:space-y-5"
             >
-              <Label className="text-base font-semibold block text-center">
+              <Label className="text-sm font-semibold block text-center">
                 Gender
               </Label>
               <RadioGroup value={gender} onValueChange={handleGenderChange}>
-                <div className="flex justify-center gap-10">
+                <div className="flex justify-center gap-5">
                   {(["male", "female", "other"] as const).map((g, idx) => (
                     <motion.div
                       key={g}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.5 + idx * 0.1 }}
-                      className="flex items-center space-x-3"
+                      className="flex items-center space-x-2"
                     >
                       <RadioGroupItem value={g} id={g} />
                       <Label
                         htmlFor={g}
-                        className="cursor-pointer text-lg capitalize"
+                        className="cursor-pointer text-sm capitalize"
                       >
                         {g}
                       </Label>
@@ -153,12 +153,12 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
               transition={{ delay: 0.6 }}
               className="max-w-md mx-auto space-y-2"
             >
-              <Label className="text-base font-semibold">Phone Number *</Label>
+              <Label className="text-sm font-semibold">Phone Number *</Label>
               <Input
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="0873 6229 164"
-                className="h-14 text-center text-lg font-medium rounded-2xl"
+                className="h-10 lg:h-14 text-center text-sm font-medium rounded-2xl"
               />
             </motion.div>
             <motion.div
@@ -167,13 +167,13 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
               transition={{ delay: 0.7 }}
               className="max-w-md mx-auto"
             >
-              <Label className="text-base font-semibold">Date of Birth</Label>
+              <Label className="text-sm font-semibold">Date of Birth</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full h-14 justify-start text-left font-normal mt-3 rounded-2xl text-base",
+                      "w-full h-10 lg:h-14 justify-start text-left font-normal mt-3 rounded-2xl text-sm",
                       !birthday && "text-muted-foreground"
                     )}
                   >
@@ -205,7 +205,7 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
               <Button
                 type="submit"
                 disabled={mutation.isPending || !isDirty}
-                className="flex-1 h-14 text-lg font-bold rounded-2xl bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:scale-105 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 h-10 lg:h-14 text-sm font-bold rounded-2xl bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:scale-105 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {mutation.isPending ? "Saving..." : "Save Changes"}
               </Button>
@@ -213,7 +213,7 @@ export const EditProfile = ({ onClose }: { onClose: () => void }) => {
                 type="button"
                 variant="outline"
                 onClick={handleClose}
-                className="flex-1 h-14 text-lg font-medium rounded-2xl border-2"
+                className="flex-1 h-10 lg:h-14 text-sm font-medium rounded-2xl border-2"
               >
                 Cancel
               </Button>

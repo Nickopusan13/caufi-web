@@ -57,13 +57,13 @@ export default function MyProfile() {
     <div className="min-h-screen max-w-6xl mx-auto py-5">
       <div className="relative overflow-hidden rounded-3xl bg-white/60 dark:bg-zinc-900 backdrop-blur-2xl border border-white/30 dark:border-zinc-800/50 shadow-2xl">
         <div className="absolute inset-0 bg-linear-to-br from-blue-400/5 via-purple-500/5 to-pink-500/5 dark:from-blue-500/10 dark:via-purple-600/10 dark:to-pink-600/10 pointer-events-none" />
-        <div className="relative p-8 lg:p-12">
+        <div className="relative p-3 lg:p-12">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 mb-10">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3 sm:gap-6">
               <div className="relative group">
                 <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden ring-4 ring-white dark:ring-zinc-800 shadow-2xl">
                   <Image
-                    src={user?.profileImage || "/assets/avatar.webp"} // use user's avatar
+                    src={user?.profileImage || "/assets/avatar.webp"}
                     alt={user?.name || "Avatar"}
                     width={200}
                     height={200}
@@ -75,7 +75,7 @@ export default function MyProfile() {
                   onClick={() => !isUploading && fileInputRef.current?.click()}
                 >
                   {isUploading ? (
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-white border-solid"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-white border-solid" />
                   ) : (
                     <TbCameraPlus className="w-12 h-12 text-white" />
                   )}
@@ -90,23 +90,23 @@ export default function MyProfile() {
                     const file = e.target.files[0];
                     try {
                       await uploadImage({ file });
-                      router.refresh(); // refresh user data to show new avatar
+                      router.refresh();
                     } catch (err) {
                       console.error(err);
                     }
                   }}
                 />
               </div>
-              <div className="text-center lg:text-left">
-                <h1 className="text-3xl lg:text-4xl font-bold text-black dark:text-white">
+              <div className="lg:text-left">
+                <h1 className="text-lg sm:text-3xl lg:text-4xl font-bold text-black dark:text-white">
                   {user?.name}
                 </h1>
-                <p className="text-lg text-zinc-500 dark:text-zinc-400 mt-1">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                   @{user?.userName}
                 </p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex w-full justify-center items-center lg:justify-end lg:w-auto lg:flex-row gap-3">
               {["Edit Profile", "Add Address"].map((label) => (
                 <motion.button
                   key={label}
@@ -174,12 +174,16 @@ export default function MyProfile() {
               {activeTab === "Settings" && <Settings />}
             </motion.div>
           </AnimatePresence>
-          {edit === "Edit Profile" && (
-            <EditProfile onClose={() => setEdit(null)} />
-          )}
-          {edit === "Add Address" && (
-            <EditAddress onClose={() => setEdit(null)} />
-          )}
+          <AnimatePresence>
+            {edit === "Edit Profile" && (
+              <EditProfile onClose={() => setEdit(null)} />
+            )}
+          </AnimatePresence>
+          <AnimatePresence mode="wait">
+            {edit === "Add Address" && (
+              <EditAddress onClose={() => setEdit(null)} />
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

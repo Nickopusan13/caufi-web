@@ -57,7 +57,7 @@ export const InformationItem = ({
         )}
         <p
           className={cn(
-            "text-lg font-semibold truncate",
+            "text-sm sm:text-lg font-semibold truncate",
             displayText === "—"
               ? "text-zinc-400 dark:text-zinc-600"
               : "text-zinc-900 dark:text-zinc-100"

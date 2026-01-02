@@ -158,7 +158,7 @@ export const SettingsItem = ({
               {title}
             </p>
           )}
-          <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+          <p className="text-sm sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 truncate">
             {description}
           </p>
         </div>
