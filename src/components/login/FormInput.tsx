@@ -87,13 +87,13 @@ export const FormInput = ({
 
 export const FormSocial = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-md">
+    <div className="grid grid-cols-3 gap-2 lg:gap-4 w-full max-w-md">
       <motion.button
         type="button"
         whileHover={{ y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={userGoogleLogin}
-        className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex py-3 items-center justify-center gap-3 transition-all duration-300 hover:bg-white/20 hover:border-cyan-400/50"
+        className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex py-3 px-2 items-center justify-center gap-3 transition-all duration-300 hover:bg-white/20 hover:border-cyan-400/50"
       >
         <FcGoogle size={26} />
         <span className="text-white/90 text-sm font-medium">Google</span>
@@ -103,7 +103,7 @@ export const FormSocial = () => {
         type="button"
         whileHover={{ y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 py-3 flex items-center justify-center gap-3 transition-all duration-300 hover:bg-blue-500/10 hover:border-blue-400/50"
+        className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 py-3 px-2 flex items-center justify-center gap-3 transition-all duration-300 hover:bg-blue-500/10 hover:border-blue-400/50"
       >
         <FaFacebook size={26} color="#1877F2" />
         <span className="text-white/90 text-sm font-medium">Facebook</span>
@@ -113,7 +113,7 @@ export const FormSocial = () => {
         type="button"
         whileHover={{ y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 py-3 flex items-center justify-center gap-3 transition-all duration-300 hover:bg-black/30 hover:border-white/40"
+        className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 py-3 px-2 flex items-center justify-center gap-3 transition-all duration-300 hover:bg-black/30 hover:border-white/40"
       >
         <FaApple size={28} className="text-white" />
         <span className="text-white/90 text-sm font-medium">Apple</span>

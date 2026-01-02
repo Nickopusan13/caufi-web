@@ -62,9 +62,9 @@ export default function Login({ onToggle }: { onToggle: () => void }) {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative z-10 w-full max-w-lg"
+          className="relative z-10 w-full"
         >
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10">
+          <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 py-8 px-4 lg:p-10">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -74,10 +74,10 @@ export default function Login({ onToggle }: { onToggle: () => void }) {
               <h1 className="text-white/80 text-sm tracking-widest font-light">
                 WELCOME BACK
               </h1>
-              <h2 className="text-4xl font-bold text-white mt-2">
+              <h2 className="text-2xl lg:text-4xl font-bold text-white mt-2">
                 Login to Account
               </h2>
-              <p className="text-white/60 mt-2 text-sm">
+              <p className="text-white/60 mt-2 text-sm hidden lg:block">
                 Access your dashboard and continue where you left off
               </p>
             </motion.div>

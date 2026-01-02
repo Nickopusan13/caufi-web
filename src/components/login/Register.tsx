@@ -42,9 +42,9 @@ export default function Register({ onToggle }: { onToggle: () => void }) {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-lg"
+        className="relative z-10 w-full"
       >
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10">
+        <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 py-8 px-4 lg:p-10">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -54,7 +54,7 @@ export default function Register({ onToggle }: { onToggle: () => void }) {
             <h1 className="text-white/80 text-sm tracking-widest font-light">
               {`LET'S GET STARTED`}
             </h1>
-            <h2 className="text-4xl font-bold text-white mt-2">
+            <h2 className="text-2xl lg:text-4xl font-bold text-white mt-2">
               Create Account
             </h2>
             <p className="text-white/60 mt-2 text-sm">
@@ -83,7 +83,7 @@ export default function Register({ onToggle }: { onToggle: () => void }) {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+              className="grid grid-cols-2 gap-2 lg:gap-5"
             >
               <FormInput
                 labels="Password"
@@ -97,7 +97,7 @@ export default function Register({ onToggle }: { onToggle: () => void }) {
                 className="bg-white/10 border-white/20 text-white placeholder-cyan-200/50 focus:border-cyan-400"
               />
               <FormInput
-                labels="Confirm Password"
+                labels="Confirm"
                 id="confirm-password"
                 type="password"
                 icon={<MdLock className="text-cyan-300" />}
@@ -129,7 +129,7 @@ export default function Register({ onToggle }: { onToggle: () => void }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="pt-6"
+              className="pt-0 lg:pt-6"
             >
               <motion.button
                 type="submit"

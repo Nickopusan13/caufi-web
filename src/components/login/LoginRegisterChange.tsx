@@ -9,7 +9,7 @@ export default function LoginRegisterChange() {
   const [isLogin, setIsLogin] = useState(true);
   const toggleForm = () => setIsLogin((prev) => !prev);
   return (
-    <div className="relative w-full max-w-2xl mx-auto flex items-center justify-center">
+    <div className="relative w-full max-w-2xl mx-auto flex items-center justify-center mt-5">
       <AnimatePresence mode="wait" initial={false}>
         {isLogin ? (
           <motion.div
@@ -23,7 +23,7 @@ export default function LoginRegisterChange() {
               damping: 35,
               duration: 0.3,
             }}
-            className="absolute inset-0 flex items-center justify-center"
+            className="lg:absolute inset-0 flex items-center justify-center overflow-hidden"
           >
             <Login onToggle={toggleForm} />
           </motion.div>
@@ -39,7 +39,7 @@ export default function LoginRegisterChange() {
               damping: 35,
               duration: 0.3,
             }}
-            className="absolute inset-0 flex items-center justify-center"
+            className="lg:absolute inset-0 flex items-center justify-center"
           >
             <Register onToggle={toggleForm} />
           </motion.div>

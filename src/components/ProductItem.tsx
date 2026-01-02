@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Add this for redirection
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import {
   HoverCard,
