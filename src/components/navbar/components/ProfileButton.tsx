@@ -44,7 +44,7 @@ export default function ProfileButton({
               {getInitials()}
             </AvatarFallback>
           </Avatar>
-          <div className="hidden md:flex flex-col items-start">
+          <div className="flex flex-col items-start">
             <span className="text-sm font-medium text-foreground">
               {user.name ? user.name.split(" ")[0] : "User"}
             </span>

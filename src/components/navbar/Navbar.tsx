@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Input } from "../ui/input";
-import MenuBar from "./components/MenuBar";
+import MenuBar, { MenuBarMobile } from "./components/MenuBar";
 import ModeToggle from "./components/ModeToggle";
 import { FaSearch } from "react-icons/fa";
 import { useLenis } from "lenis/react";
@@ -12,6 +12,9 @@ import ProfileButton from "./components/ProfileButton";
 import SignRegBtn from "./components/SignRegBtn";
 import { useGetCurrentUser, useUserLogout } from "@/hooks/useLogin";
 import { Skeleton } from "../ui/skeleton";
+import { TiThMenuOutline } from "react-icons/ti";
+import { MdClose } from "react-icons/md";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Navbar() {
   const { data: user, isLoading } = useGetCurrentUser();
@@ -24,6 +27,7 @@ export default function Navbar() {
       setHide(false);
     }
   });
+  const [openMenuBar, setOpenMenuBar] = useState<boolean>(false);
   return (
     <header
       className={cn(
@@ -33,14 +37,14 @@ export default function Navbar() {
       )}
     >
       <div className="absolute inset-0 bg-background backdrop-blur-xl" />
-      <nav className="relative flex items-center justify-around py-5 max-w-7xl mx-auto w-full">
-        <div className="flex items-center gap-8 flex-1 justify-center">
+      <nav className="relative flex items-center justify-around py-5 max-w-7xl mx-auto w-full px-2 lg:px-0">
+        <div className="flex items-center gap-8 md:flex-1 justify-center">
           <Link href="/" className="flex items-center">
             <h1 className="text-3xl font-black tracking-tighter bg-linear-to-r from-black to-black/70 dark:from-white dark:to-white/70 bg-clip-text text-transparent drop-shadow-lg">
               CAUFI.
             </h1>
           </Link>
-          <div className="relative max-w-lg w-full">
+          <div className="relative max-w-lg w-full hidden md:block">
             <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
             <Input
               type="search"
@@ -51,7 +55,7 @@ export default function Navbar() {
                transition-all duration-300 hover:bg-background/80"
             />
           </div>
-          <div className="hidden md:flex">
+          <div className="hidden lg:block">
             <MenuBar />
           </div>
         </div>
@@ -63,9 +67,41 @@ export default function Navbar() {
           ) : (
             <SignRegBtn />
           )}
-          <ModeToggle />
+          <div className="lg:block hidden">
+            <ModeToggle />
+          </div>
+          <div className="lg:hidden">
+            <AnimatePresence mode="wait">
+              {openMenuBar ? (
+                <motion.span
+                  key="close"
+                  initial={{ opacity: 0, rotate: 90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: -90 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setOpenMenuBar(false)}
+                  className="cursor-pointer inline-block"
+                >
+                  <MdClose className="w-6 h-6" />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="menu"
+                  initial={{ opacity: 0, rotate: -90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: 90 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setOpenMenuBar(true)}
+                  className="cursor-pointer inline-block"
+                >
+                  <TiThMenuOutline className="w-6 h-6" />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </nav>
+      <AnimatePresence>{openMenuBar && <MenuBarMobile />}</AnimatePresence>
     </header>
   );
 }

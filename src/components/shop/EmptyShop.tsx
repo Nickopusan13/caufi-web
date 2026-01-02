@@ -5,12 +5,12 @@ import { IoBagHandleOutline } from "react-icons/io5";
 
 export default function EmptyShop() {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
+    <div className="flex flex-col items-center justify-center py-10 lg:py-20 text-center">
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="mb-6"
+        className="mb-3 lg:mb-6"
       >
         <IoBagHandleOutline className="w-24 h-24 text-gray-400" />
       </motion.div>

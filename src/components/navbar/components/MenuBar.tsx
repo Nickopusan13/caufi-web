@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 import {
   NavigationMenu,
@@ -12,6 +12,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { useState } from "react";
 
 const navigationMenus = [
   { title: "Home", href: "/" },
@@ -115,3 +116,94 @@ export default function MenuBar() {
     </NavigationMenu>
   );
 }
+
+export const MenuBarMobile = () => {
+  const pathname = usePathname();
+  const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+  const toggleSubmenu = (title: string) => {
+    setOpenSubmenus((prev) => ({ ...prev, [title]: !prev[title] }));
+  };
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className="absolute left-0 right-0 top-full bg-background border-b shadow-lg overflow-hidden"
+    >
+      <ul className="flex flex-col p-4">
+        {navigationMenus.map((menu) => {
+          const isActive =
+            pathname === menu.href || pathname.startsWith(`${menu.href}/`);
+          return (
+            <li key={menu.title}>
+              {menu.items ? (
+                <>
+                  <button
+                    onClick={() => toggleSubmenu(menu.title)}
+                    className={clsx(
+                      "w-full text-left py-2 px-4 text-sm font-medium rounded-md transition-colors",
+                      isActive ? "text-foreground" : "text-muted-foreground",
+                      "hover:text-foreground hover:bg-accent/50"
+                    )}
+                  >
+                    {menu.title}
+                    <span className="ml-2">
+                      {openSubmenus[menu.title] ? "-" : "+"}
+                    </span>
+                  </button>
+                  <AnimatePresence>
+                    {openSubmenus[menu.title] && (
+                      <motion.ul
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="pl-4 mt-2 space-y-2"
+                      >
+                        {menu.items.map((item) => {
+                          const isSubActive =
+                            pathname === item.href ||
+                            pathname.startsWith(`${item.href}/`);
+                          return (
+                            <li key={item.href}>
+                              <Link
+                                href={item.href}
+                                className={clsx(
+                                  "block py-2 px-4 text-sm rounded-md transition-colors",
+                                  isSubActive
+                                    ? "text-foreground bg-accent/70"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                                )}
+                              >
+                                {item.title}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </motion.ul>
+                    )}
+                  </AnimatePresence>
+                </>
+              ) : (
+                <Link
+                  href={menu.href}
+                  className={clsx(
+                    "block py-2 px-4 text-sm font-medium rounded-md transition-colors",
+                    isActive
+                      ? "text-foreground bg-accent/70"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  )}
+                >
+                  {menu.title}
+                </Link>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </motion.div>
+  );
+};

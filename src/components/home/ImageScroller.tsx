@@ -54,16 +54,21 @@ export default function ImageScroller() {
                 transition={{ duration: 1.2, ease: "easeOut" }}
                 className="max-w-5xl space-y-6 flex flex-col items-center justify-center"
               >
-                <h1 className="text-5xl md:text-6xl font-bold tracking-tighter text-white drop-shadow-2xl">
+                <h1 className="text-3xl lg:text-6xl font-bold tracking-tighter text-white drop-shadow-2xl">
                   {slide.title}
                 </h1>
-                <p className="text-lg md:text-2xl text-white/90 font-light max-w-3xl leading-relaxed drop-shadow-lg">
+                <p className="text-lg lg:text-2xl text-white/90 font-light max-w-3xl leading-relaxed drop-shadow-lg">
                   {slide.subtitle}
                 </p>
                 <motion.button
-                  whileHover={{ scale: 1.08 }}
+                  whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="mt-12 group relative overflow-hidden rounded-full bg-white px-10 py-5 text-lg font-semibold text-black shadow-2xl transition-all duration-300 hover:shadow-white/30"
+                  transition={{
+                    ease: "easeIn",
+                    stiffness: 300,
+                    type: "spring",
+                  }}
+                  className="mt-12 group relative overflow-hidden rounded-full bg-white py-3 px-7 lg:px-10 lg:py-5 text-lg font-semibold text-black shadow-2xl"
                 >
                   <span className="relative z-10">Shop the Collection</span>
                   <motion.div

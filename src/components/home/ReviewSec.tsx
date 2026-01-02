@@ -49,7 +49,7 @@ export default function ReviewSection() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight">
+          <h2 className="text-3xl md:text-6xl font-black tracking-tight">
             What everyone is saying about{" "}
             <span className="font-irish-grover text-purple-600 dark:text-purple-400 underline decoration-wavy">
               CAUFI
@@ -76,12 +76,12 @@ export default function ReviewSection() {
                 ease: "linear",
               },
             }}
-            className="flex gap-8"
+            className="flex gap-4 lg:gap-8"
           >
             {reviews.map((review, i) => (
               <div
                 key={i}
-                className="flex-none w-80 md:w-96 p-8 rounded-3xl bg-white/60 dark:bg-black/40 backdrop-blur-xl border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 cursor-default"
+                className="flex-none w-60 lg:w-96 p-8 rounded-3xl bg-white/60 dark:bg-black/40 backdrop-blur-xl border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 cursor-default"
               >
                 <div className="flex items-center gap-4 mb-6">
                   <div className="relative w-14 h-14 rounded-full overflow-hidden ring-4 ring-purple-500/30">
@@ -117,7 +117,7 @@ export default function ReviewSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-center mt-12 text-lg font-medium text-gray-700 dark:text-gray-300"
+          className="text-center mt-6 lg:mt-12 text-sm lg:text-lg font-medium text-gray-700 dark:text-gray-300"
         >
           Join 12,847+ happy customers
         </motion.p>

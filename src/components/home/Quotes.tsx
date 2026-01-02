@@ -99,10 +99,10 @@ export default function Quotes() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ delay: 1.4 }}
-            className="mt-16 flex flex-col sm:flex-row items-center lg:items-start gap-8 text-sm font-medium tracking-widest"
+            className="lg:mt-16 mt-8 flex flex-col sm:flex-row items-center lg:items-start md:gap-8 gap-4 text-sm font-medium tracking-widest"
           >
             <div>CAUFI.</div>
-            <div className="hidden sm:block w-40 h-px bg-zinc-400 dark:bg-zinc-600" />
+            <div className="hidden sm:block w-full h-px bg-zinc-400 dark:bg-zinc-600" />
             <div className="text-zinc-500 dark:text-zinc-400">DEVELOPER</div>
           </motion.div>
           <motion.div

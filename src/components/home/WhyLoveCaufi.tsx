@@ -42,7 +42,7 @@ export default function WhyLoveCaufi() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight">
+          <h2 className="text-xl lg:text-4xl md:text-6xl font-black tracking-tight">
             You’ll{" "}
             <span className="relative">
               love
@@ -57,7 +57,7 @@ export default function WhyLoveCaufi() {
             Here’s why thousands already do.
           </p>
         </motion.div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
           {reasons.map((item, i) => (
             <motion.div
               key={i}
@@ -65,7 +65,7 @@ export default function WhyLoveCaufi() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group relative p-8 rounded-3xl bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-white/40 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3"
+              className="group relative p-4 lg:p-8 rounded-3xl bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-white/40 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3"
             >
               <div className="mb-6 relative">
                 <div className="absolute inset-0 bg-purple-500/20 blur-2xl scale-0 group-hover:scale-150 transition-transform duration-700" />
@@ -91,7 +91,7 @@ export default function WhyLoveCaufi() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-center mt-16"
+          className="text-center mt-8 lg:mt-16"
         >
           <p className="text-lg font-medium text-gray-700 dark:text-gray-200">
             Ready to fall in love?{" "}

@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="bg-white/50 dark:bg-zinc-900 py-24">
+      <main className="bg-white/50 dark:bg-zinc-900 py-20 lg:py-24">
         <ImageScroller />
         <MenSection />
         <WomanSec />

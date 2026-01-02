@@ -164,7 +164,7 @@ export default function ShopPage() {
           </aside>
           <div className="flex-1">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">
+              <h1 className="text-lg lg:text-3xl font-bold">
                 {currentCategory
                   ? categories.find((c) => c.value === currentCategory)?.name
                   : "All Products"}
@@ -243,7 +243,7 @@ export default function ShopPage() {
               </div>
             </div>
             {isLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3">
                 {[...Array(6)].map((_, i) => (
                   <div
                     key={i}
@@ -255,7 +255,7 @@ export default function ShopPage() {
               <EmptyShop />
             ) : (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 justify-center px-0">
                   <ProductItem cloths={products} />
                 </div>
                 {totalPages > 1 && (

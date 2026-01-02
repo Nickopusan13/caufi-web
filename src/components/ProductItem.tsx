@@ -10,7 +10,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Heart, Zap } from "lucide-react";
+import { Heart } from "lucide-react";
 import type { ProductOut } from "@/api/product";
 import {
   useGetWishlist,
@@ -95,7 +95,7 @@ export default function ProductItem({ cloths }: ProductItemProps) {
           <MotionLink
             href={`/product/${product.slug}`}
             key={idx}
-            className="group relative flex-none w-64 lg:w-72"
+            className="group relative flex-none w-47 md:w-55 lg:w-72"
             whileHover={{ y: -8 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
@@ -126,12 +126,6 @@ export default function ProductItem({ cloths }: ProductItemProps) {
                   )}
                 </AnimatePresence>
                 <div className="absolute top-4 right-2 z-10 flex flex-col gap-2 items-center">
-                  {idx < 3 && (
-                    <div className="flex items-center gap-1 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg">
-                      <Zap className="h-4 w-4 text-yellow-500" />
-                      <span className="text-xs font-bold">New</span>
-                    </div>
-                  )}
                   {!isWishlistLoading && (
                     <HoverCard>
                       <HoverCardTrigger asChild>
@@ -205,7 +199,7 @@ export default function ProductItem({ cloths }: ProductItemProps) {
                   </div>
                 </div>
                 {colors.length > 0 && (
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 lg:flex-wrap">
                     <span className="text-xs text-zinc-500">Colors:</span>
                     <div className="flex gap-1.5">
                       {colors.slice(0, 4).map((color, i) => (

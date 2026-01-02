@@ -24,7 +24,7 @@ export default function Footer() {
   };
   return (
     <footer className="bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 overflow-hidden">
-      <div className="bg-linear-to-br from-purple-600 via-pink-600 to-rose-600 py-10 px-6">
+      <div className="bg-linear-to-br from-purple-600 via-pink-600 to-rose-600 py-5 lg:py-10 px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -39,10 +39,10 @@ export default function Footer() {
             <FaRocket className="w-6 h-6 text-white" />
             <span className="text-white font-bold">Exclusive Drops Only</span>
           </motion.div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
+          <h2 className="text-2xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
             Don’t Miss the Next Drop
           </h2>
-          <p className="text-white/90 text-lg mb-10 max-w-2xl mx-auto">
+          <p className="text-white/90 text-sm md:text-lg mb-10 max-w-2xl mx-auto">
             Be the first to know about limited releases, restocks, and secret
             sales.
           </p>
@@ -83,14 +83,14 @@ export default function Footer() {
             variants={item}
             className="col-span-2 md:col-span-3 lg:col-span-1"
           >
-            <h1 className="text-5xl font-black bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+            <h1 className="text-3xl text-center lg:text-left md:text-5xl font-black bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3 lg:mb-6">
               CAUFI.
             </h1>
-            <p className="text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed">
+            <p className="text-zinc-600 dark:text-zinc-400 mb-4 lg:mb-8 leading-relaxed text-center lg:text-left">
               Premium streetwear curated for those who lead, not follow. Limited
               drops. Zero compromises.
             </p>
-            <div className="flex gap-5">
+            <div className="flex gap-5 justify-center">
               {socials.map((social, i) => {
                 const Icon = social.icon;
                 return (
@@ -111,7 +111,7 @@ export default function Footer() {
           </motion.div>
           {footerSections.map((section, i) => (
             <motion.div key={i} variants={item}>
-              <h3 className="font-bold text-lg mb-6 text-zinc-900 dark:text-white">
+              <h3 className="font-bold text-lg mb-3 lg:mb-6 text-zinc-900 dark:text-white">
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -121,7 +121,7 @@ export default function Footer() {
                       href="#"
                       className="text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 flex items-center gap-2 text-sm font-medium"
                     >
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="hidden lg:block opacity-0 group-hover:opacity-100 transition-opacity">
                         →
                       </span>
                       {link}
@@ -138,7 +138,7 @@ export default function Footer() {
                   <h3 className="font-bold text-lg mb-5 text-zinc-900 dark:text-white">
                     {store.title}
                   </h3>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-6 gap-2">
                     {store.icon?.map((icon, idx) => (
                       <motion.div
                         key={idx}
