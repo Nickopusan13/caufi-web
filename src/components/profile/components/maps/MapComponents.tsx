@@ -58,10 +58,7 @@ export function CurrentLocationButton() {
   return (
     <button
       onClick={goToCurrentLocation}
-      className="absolute z-1000 bottom-20 right-4 
-                 bg-white dark:bg-zinc-800 p-3 rounded-full 
-                 shadow-2xl border border-zinc-300 dark:border-zinc-600
-                 hover:scale-110 active:scale-95 transition-all"
+      className="absolute z-1000 bottom-20 right-4 bg-white dark:bg-zinc-800 p-3 rounded-full shadow-2xl border border-zinc-300 dark:border-zinc-600 hover:scale-110 active:scale-95 transition-all"
       aria-label="My location"
     >
       <FaMapLocationDot className="w-6 h-6 text-blue-600" />

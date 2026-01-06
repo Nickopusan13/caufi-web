@@ -49,19 +49,15 @@ export const OpenMap = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="p-0 overflow-hidden rounded-3xl border-0 shadow-2xl
-                   max-w-none w-[95vw] h-[90vh] max-h-screen
-                   bg-white dark:bg-zinc-950
-                   outline-none"
+        className="p-0 overflow-hidden rounded-3xl border-0 shadow-2xl max-w-none w-[95vw] h-[90vh] max-h-screen bg-white dark:bg-zinc-950 outline-none"
         style={{ maxWidth: "1400px" }}
         onOpenAutoFocus={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
       >
-        {/* Header + Current Address */}
         <div className="absolute top-0 left-0 right-0 z-50 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
-          <div className="flex items-center justify-between px-5 py-4">
+          <div className="flex items-center justify-between px-3 lg:px-5 py-2 lg:py-4">
             <div>
-              <DialogTitle className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <DialogTitle className="text-lg lg:text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Set Delivery Location
               </DialogTitle>
               <p className="text-sm text-muted-foreground mt-1">
@@ -72,20 +68,20 @@ export const OpenMap = ({
               onClick={onClose}
               className="p-3 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all active:scale-95"
             >
-              <IoClose className="w-7 h-7" />
+              <IoClose className="w-5 h-5 lg:w-7 lg:h-7" />
             </button>
           </div>
-          <div className="px-5 pb-4">
-            <p className="text-base font-medium text-zinc-800 dark:text-zinc-200 line-clamp-2">
+          <div className="hidden lg:block px-3 lg:px-5 pb-2 lg:pb-4">
+            <p className="text-sm lg:text-base font-medium text-zinc-800 dark:text-zinc-200 line-clamp-2">
               {isLoading
                 ? "Fetching address..."
                 : address || "Move the pin to see address"}
             </p>
           </div>
         </div>
-        <div className="flex flex-col h-full pt-32 lg:pt-36 lg:flex-row">
+        <div className="flex flex-col h-full pt-22 lg:pt-36 lg:flex-row">
           <div className="w-full lg:w-96 lg:max-w-md bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 lg:h-full overflow-y-auto">
-            <div className="p-5 lg:p-6 space-y-4">
+            <div className="pt-0 pb-3 px-3 lg:py-6 lg:px-6 space-y-4">
               <InputSearch
                 onClose={onClose}
                 address={address}

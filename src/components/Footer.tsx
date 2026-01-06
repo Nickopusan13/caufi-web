@@ -63,7 +63,13 @@ export default function Footer() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-10 py-5 bg-white text-purple-600 font-black rounded-2xl shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-3"
+              transition={{
+                ease: "easeInOut",
+                type: "spring",
+                damping: 30,
+                stiffness: 300,
+              }}
+              className="px-10 py-5 bg-white text-purple-600 font-black rounded-2xl shadow-2xl hover:shadow-purple-500/30 flex items-center justify-center gap-3"
             >
               Join the List
               <FaChevronRight className="w-5 h-5" />
@@ -138,12 +144,12 @@ export default function Footer() {
                   <h3 className="font-bold text-lg mb-5 text-zinc-900 dark:text-white">
                     {store.title}
                   </h3>
-                  <div className="grid grid-cols-6 gap-2">
+                  <div className="grid grid-cols-6 lg:grid-cols-3 gap-2">
                     {store.icon?.map((icon, idx) => (
                       <motion.div
                         key={idx}
                         whileHover={{ scale: 1.15, y: -4 }}
-                        className="bg-white dark:bg-zinc-900/80 rounded-2xl w-full p-1 shadow-lg hover:shadow-2xl transition-all duration-300 border border-zinc-200 dark:border-zinc-800"
+                        className="bg-white dark:bg-zinc-900/80 rounded-2xl w-full p-1 shadow-lg border border-zinc-200 dark:border-zinc-800"
                       >
                         <div className="relative w-full aspect-3/2">
                           <Image
