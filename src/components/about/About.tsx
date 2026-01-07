@@ -33,25 +33,25 @@ export default function About() {
   ];
 
   return (
-    <div>
-      <section className="relative overflow-hidden bg-linear-to-br dark:from-purple-900 dark:via-indigo-950 dark:to-black py-20 from-purple-500 via-indigo-600 to-white">
+    <>
+      <section className="relative overflow-hidden bg-linear-to-br dark:from-purple-900 dark:via-indigo-950 dark:to-black py-13 lg:py-20 from-purple-500 via-indigo-600 to-white">
         <div className="absolute inset-0 bg-black opacity-50" />
         <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent" />
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
         </div>
-        <div className="relative container mx-auto px-6 max-w-6xl">
+        <div className="relative container mx-auto px-3 lg:px-6 max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="text-center text-white"
           >
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-linear-to-r from-white via-purple-200 to-pink-200">
+            <h1 className="text-3xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-linear-to-r from-white via-purple-200 to-pink-200">
               About Us
             </h1>
-            <p className="text-xl md:text-2xl font-light max-w-4xl mx-auto opacity-90 leading-relaxed">
+            <p className="text-lg md:text-2xl font-light max-w-4xl mx-auto opacity-90 leading-relaxed">
               {`We're passionate about bringing you${" "}`}
               <span className="font-semibold text-purple-300">
                 {`exceptional products`}
@@ -65,7 +65,7 @@ export default function About() {
           </motion.div>
         </div>
       </section>
-      <section className="py-20 px-6">
+      <section className="py-12 px-3 lg:py-20 lg:px-6">
         <div className="container mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -75,23 +75,23 @@ export default function About() {
             className="grid md:grid-cols-2 gap-12 items-center"
           >
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+              <h2 className="text-3xl text-center md:text-left lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
                 Our Story
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              <p className="text-base lg:text-lg text-gray-600 leading-relaxed mb-3 text-justify lg:mb-6">
                 Founded in 2023, we started with a simple mission: to make
                 premium, well-designed products accessible to everyone.
               </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <p className="text-base lg:text-lg text-justify text-gray-600 leading-relaxed">
                 {`Today, we've grown into a trusted online destination serving
                 thousands of happy customers worldwide. We believe great
                 products shouldn't come with unnecessary markups — quality and
                 affordability can go hand in hand.`}
               </p>
             </div>
-            <div className="bg-linear-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-950 rounded-3xl p-12 shadow-2xl">
+            <div className="bg-linear-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-950 rounded-3xl p-6 lg:p-12 shadow-2xl">
               <div className="text-center">
-                <div className="text-6xl font-bold text-indigo-600 dark:text-indigo-200 mb-2">
+                <div className="text-4xl lg:text-6xl font-bold text-indigo-600 dark:text-indigo-200 mb-0 lg:mb-2">
                   10K+
                 </div>
                 <p className="text-xl text-gray-700 dark:text-gray-400">
@@ -102,23 +102,23 @@ export default function About() {
           </motion.div>
         </div>
       </section>
-      <section className="py-20">
+      <section className="py-10 lg:py-20">
         <div className="container mx-auto px-6 max-w-6xl">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-8 lg:mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-200 mb-4">
+            <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-gray-200 mb-4">
               Why Choose Us
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base lg:text-xl text-gray-600 max-w-2xl mx-auto">
               We stand behind every product we sell with unwavering commitment
             </p>
           </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -143,7 +143,7 @@ export default function About() {
           </div>
         </div>
       </section>
-      <section className="py-20 px-6">
+      <section className="py-5 lg:py-20 px-3 lg:px-6">
         <div className="container mx-auto max-w-4xl text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -152,15 +152,16 @@ export default function About() {
             transition={{ duration: 0.8 }}
             className="bg-linear-to-br dark:from-purple-900 dark:via-indigo-950 dark:to-black py-10 from-purple-500 via-indigo-600 to-white rounded-3xl text-white shadow-2xl"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-2xl md:text-4xl font-bold mb-6">
               Join Thousands of Satisfied Customers
             </h2>
-            <p className="text-xl opacity-90">
-              Experience the difference quality and care can make.
+            <p className="text-base lg:text-xl opacity-90">
+              Experience the difference quality and care can make in your
+              everyday life.
             </p>
           </motion.div>
         </div>
       </section>
-    </div>
+    </>
   );
 }

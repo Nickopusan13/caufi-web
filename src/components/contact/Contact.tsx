@@ -89,15 +89,15 @@ export default function Contact() {
     >
       <ToasterProvider />
       <motion.div
-        className="text-center mb-20"
+        className="text-center mb-10 lg:mb-20"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
-        <h1 className="text-5xl md:text-6xl font-bold dark:text-white mb-4 bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-purple-600">
+        <h1 className="text-3xl md:text-6xl font-bold dark:text-white mb-4 bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-purple-600">
           Get in Touch
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        <p className="text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           {`We'd love to hear from you. Send us a message and we'll respond as
             soon as possible.`}
         </p>
@@ -107,16 +107,16 @@ export default function Contact() {
           variants={itemVariants}
           className="bg-white dark:bg-gray-800/90 rounded-3xl shadow-2xl backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-8 lg:p-10"
         >
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+          <h2 className="text-xl text-center lg:text-left lg:text-3xl font-bold text-gray-900 dark:text-white mb-6 lg:mb-8">
             Send us a message
           </h2>
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <form className="space-y-3 lg:space-y-6" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-2 gap-3 lg:gap-6">
               {["firstName", "lastName"].map((field) => (
                 <div key={field}>
                   <label
                     htmlFor={field}
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 lg:mb-2"
                   >
                     {field === "firstName" ? "First Name" : "Last Name"}
                   </label>
@@ -125,11 +125,11 @@ export default function Contact() {
                     <input
                       type="text"
                       id={field}
-                      name={field} // Important for handleChange
-                      value={formData[field as keyof ContactCaufi]} // Dynamic access
+                      name={field}
+                      value={formData[field as keyof ContactCaufi]}
                       onChange={handleChange}
                       required
-                      className="pl-11 w-full px-4 py-3.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                      className="pl-11 text-sm lg:text-base w-full px-4 py-3.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
                       placeholder={field === "firstName" ? "John" : "Doe"}
                     />
                   </div>
@@ -152,7 +152,7 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="pl-11 w-full px-4 py-3.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                  className="pl-11 text-sm lg:text-base w-full px-4 py-3.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
                   placeholder="john@example.com"
                 />
               </div>
@@ -171,7 +171,7 @@ export default function Contact() {
                 value={formData.subject}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                className="w-full text-sm lg:text-base px-4 py-3.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
                 placeholder="How can we help you today?"
               />
             </div>
@@ -191,7 +191,7 @@ export default function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  className="pl-11 w-full px-4 py-3.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none placeholder-gray-400"
+                  className="pl-11 text-sm lg:text-base w-full px-4 py-3.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none placeholder-gray-400"
                   placeholder="Tell us more about your inquiry..."
                 />
               </div>
@@ -218,16 +218,16 @@ export default function Contact() {
             )}
           </form>
         </motion.div>
-        <div className="space-y-8">
+        <div className="space-y-4 lg:space-y-8">
           <motion.div variants={itemVariants}>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+            <h2 className="text-2xl text-center lg:text-left lg:text-3xl font-bold text-gray-900 dark:text-white mb-4 lg:mb-8">
               Contact Information
             </h2>
           </motion.div>
           <motion.div
             variants={cardVariants}
             whileHover="hover"
-            className="bg-white dark:bg-gray-800/90 rounded-3xl shadow-xl backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-8 flex items-start gap-6 group"
+            className="bg-white dark:bg-gray-800/90 rounded-3xl shadow-xl backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-4 lg:p-8 flex items-start gap-3 lg:gap-6 group"
           >
             <motion.div
               variants={iconFloat}
@@ -237,10 +237,10 @@ export default function Contact() {
               <FaMapPin className="h-8 w-8 text-blue-600 dark:text-blue-400" />
             </motion.div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-base lg:text-xl font-semibold text-gray-900 dark:text-white">
                 Address
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mt-2 leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 leading-relaxed">
                 123 Business Street
                 <br />
                 Suite 100
@@ -252,7 +252,7 @@ export default function Contact() {
           <motion.div
             variants={cardVariants}
             whileHover="hover"
-            className="bg-white dark:bg-gray-800/90 rounded-3xl shadow-xl backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-8 flex items-start gap-6 group"
+            className="bg-white dark:bg-gray-800/90 rounded-3xl shadow-xl backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-4 lg:p-8 flex items-start gap-6 group"
           >
             <motion.div
               variants={iconFloat}
@@ -262,12 +262,12 @@ export default function Contact() {
               <FaPhoneAlt className="h-8 w-8 text-green-600 dark:text-green-400" />
             </motion.div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-base lg:text-xl font-semibold text-gray-900 dark:text-white">
                 Phone
               </h3>
               <Link
                 href="tel:+6285156229898"
-                className="text-blue-600 dark:text-blue-400 hover:underline mt-2 block font-medium"
+                className="text-blue-600 text-sm lg:text-base dark:text-blue-400 hover:underline mt-2 block font-medium"
               >
                 +62 851-5622-9898
               </Link>
@@ -279,7 +279,7 @@ export default function Contact() {
           <motion.div
             variants={cardVariants}
             whileHover="hover"
-            className="bg-white dark:bg-gray-800/90 rounded-3xl shadow-xl backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-8 flex items-start gap-6 group"
+            className="bg-white dark:bg-gray-800/90 rounded-3xl shadow-xl backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-4 lg:p-8 flex items-start gap-6 group"
           >
             <motion.div
               variants={iconFloat}
@@ -289,12 +289,12 @@ export default function Contact() {
               <FaMailBulk className="h-8 w-8 text-purple-600 dark:text-purple-400" />
             </motion.div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-base lg:text-xl font-semibold text-gray-900 dark:text-white">
                 Email
               </h3>
               <Link
                 href="mailto:nickowork13@gmail.com?subject=Website%20Contact%20Inquiry"
-                className="text-blue-600 dark:text-blue-400 hover:underline mt-2 block font-medium text-lg"
+                className="text-blue-600 text-sm dark:text-blue-400 hover:underline mt-2 block font-medium lg:text-lg"
               >
                 nickowork13@gmail.com
               </Link>
