@@ -41,21 +41,31 @@ export const recommendations = [
 export const footerSections = [
   {
     title: "Shop",
-    links: ["Men", "Woman", "Promotions", "Collections", "New Arrival"],
+    links: [
+      { label: "Men", href: "/shop?category=Men&page=1" },
+      { label: "Woman", href: "/shop?category=Woman&page=1" },
+      { label: "Bag", href: "/shop?category=Bag&page=1" },
+      { label: "Shoes", href: "/shop?category=Shoes&page=1" },
+      { label: "New Arrival", href: "/shop?category=New Arrival&page=1" },
+    ],
   },
   {
     title: "Support",
     links: [
-      "FAQ",
-      "Shipping & Returns",
-      "Track Order",
-      "Customer Reviews",
-      "Size Guide",
+      { label: "FAQ", href: "/faq" },
+      { label: "Shipping & Returns", href: "/shipping-returns" },
+      { label: "Track Order", href: "/track-order" },
+      { label: "Customer Reviews", href: "/reviews" },
+      { label: "Size Guide", href: "/size-guide" },
     ],
   },
   {
     title: "Legal",
-    links: ["Privacy Policy", "Terms & Conditions", "Payment Security"],
+    links: [
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms & Conditions", href: "/terms" },
+      { label: "Payment Security", href: "/payment-security" },
+    ],
   },
 ];
 

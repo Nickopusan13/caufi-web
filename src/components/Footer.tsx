@@ -124,13 +124,13 @@ export default function Footer() {
                 {section.links.map((link, idx) => (
                   <motion.li key={idx} whileHover={{ x: 8 }} className="group">
                     <a
-                      href="#"
+                      href={link.href}
                       className="text-zinc-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 flex items-center gap-2 text-sm font-medium"
                     >
                       <span className="hidden lg:block opacity-0 group-hover:opacity-100 transition-opacity">
                         →
                       </span>
-                      {link}
+                      {link.label}
                     </a>
                   </motion.li>
                 ))}

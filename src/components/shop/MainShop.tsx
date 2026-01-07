@@ -255,7 +255,7 @@ export default function ShopPage() {
               <EmptyShop />
             ) : (
               <>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 justify-center px-0">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center px-0">
                   <ProductItem cloths={products} />
                 </div>
                 {totalPages > 1 && (
