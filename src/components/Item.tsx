@@ -52,7 +52,7 @@ export const footerSections = [
   {
     title: "Support",
     links: [
-      { label: "FAQ", href: "/faq" },
+      { label: "FAQ", href: "/support" },
       { label: "Shipping & Returns", href: "/shipping-returns" },
       { label: "Track Order", href: "/track-order" },
       { label: "Customer Reviews", href: "/reviews" },

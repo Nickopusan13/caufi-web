@@ -9,7 +9,7 @@ export default function SizeGuidePage() {
   return (
     <>
       <Navbar />
-      <main className="bg-white/50 dark:bg-zinc-900 py-40">
+      <main className="bg-white/50 dark:bg-zinc-900 py-25 lg:py-40">
         <Sizeguide />
       </main>
       <Footer />

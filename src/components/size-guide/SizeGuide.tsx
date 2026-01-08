@@ -20,7 +20,7 @@ export const contentVariants: Variants = {
     filter: "blur(0px)",
     transition: {
       duration: 0.45,
-      ease: [0.22, 1, 0.36, 1], // premium cubic-bezier
+      ease: [0.22, 1, 0.36, 1],
     },
   },
   exit: {

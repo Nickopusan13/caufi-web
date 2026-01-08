@@ -77,8 +77,10 @@ const menClothSizes = [
 export default function SizeClothes() {
   return (
     <>
-      <h2 className="text-xl font-bold mb-2">Clothes Size Guide</h2>
-      <p className="mb-4">
+      <h2 className="text-xl text-center lg:text-left font-bold mb-2">
+        Clothes Size Guide
+      </h2>
+      <p className="text-justify mb-4 lg:text-base text-sm">
         Measurements are in inches. This is a general guide; please check
         product details for exact fits.
       </p>
