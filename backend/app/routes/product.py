@@ -157,7 +157,8 @@ async def api_product_all(
         "current_page": page,
         "total_pages": (total + limit - 1) // limit,
     }
-    await redis_client.setex(cache_key, 43200, json.dumps(response))
+    json_data = jsonable_encoder(response)
+    await redis_client.setex(cache_key, 43200, json.dumps(json_data))
     return response
 
 
