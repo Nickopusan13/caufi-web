@@ -5,35 +5,25 @@ from contextlib import asynccontextmanager
 from app.db.init_db import create_table
 from starlette.middleware.sessions import SessionMiddleware
 from app.routes import user, chatbot, product, cart, order, wishlist, blog
-from sqladmin import Admin, ModelView
-from app.db.session import engine
-from app.db.models.user import User
-from app.db.models.product import Product
+from app.core.redis import redis_client
 import os
 
 load_dotenv()
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_table()
+    try:
+        pong = await redis_client.ping()
+        print("Redis connected:", pong)
+    except Exception as e:
+        print("Redis connection failed:", e)
     yield
+    await redis_client.close()
+    await redis_client.connection_pool.disconnect()
 
 
 app = FastAPI(title="Caufi Web Backend", lifespan=lifespan)
-admin = Admin(app, engine)
-
-
-class UserAdmin(ModelView, model=User):
-    column_list = [User.id, User.name]
-
-
-class ProductAdmin(ModelView, model=Product):
-    column_list = [Product.id, Product.name]
-
-
-admin.add_view(UserAdmin)
-admin.add_view(ProductAdmin)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=os.getenv("ALLOWED_ORIGINS").split(","),
