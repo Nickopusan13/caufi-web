@@ -6,9 +6,12 @@ from app.db.init_db import create_table
 from starlette.middleware.sessions import SessionMiddleware
 from app.routes import user, chatbot, product, cart, order, wishlist, blog
 from app.core.redis import redis_client
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 import os
 
 load_dotenv()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,6 +21,7 @@ async def lifespan(app: FastAPI):
         print("Redis connected:", pong)
     except Exception as e:
         print("Redis connection failed:", e)
+    FastAPICache.init(RedisBackend(redis_client))
     yield
     await redis_client.close()
     await redis_client.connection_pool.disconnect()

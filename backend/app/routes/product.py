@@ -25,9 +25,8 @@ from app.utils.r2_service import (
     R2_PUBLIC_URL,
 )
 from app.security.r2_config import CLOUDFLARE_BUCKET_NAME_1
-from app.core.redis import redis_client
-from fastapi.encoders import jsonable_encoder
-import json
+from fastapi_cache.decorator import cache
+from fastapi_cache import FastAPICache
 
 router = APIRouter(prefix="/api/product")
 
@@ -55,6 +54,8 @@ async def api_product_add(
     db.add(product)
     await db.commit()
     await db.refresh(product)
+    await FastAPICache.clear(namespace="products:all")
+    await FastAPICache.clear(namespace="products:featured")
     return product
 
 
@@ -93,6 +94,8 @@ async def add_images_to_product(
     await db.commit()
     for img in new_images:
         await db.refresh(img)
+    await FastAPICache.clear(namespace="products:all")
+    await FastAPICache.clear(namespace="products:featured")
     return new_images
 
 
@@ -112,23 +115,20 @@ async def delete_image(
     delete_image_from_r2(key)
     await db.delete(image)
     await db.commit()
-
+    await FastAPICache.clear(namespace="products:all")
+    await FastAPICache.clear(namespace="products:featured")
+    await FastAPICache.clear(namespace="products:single")
     return
 
 
 @router.get("/get/all", response_model=ProductListResponse)
+@cache(expire=43200, namespace="products:all",     key_builder=lambda *args, **kwargs: f"products:all:{kwargs.get('request').url.query if kwargs.get('request') else 'default'}")
 async def api_product_all(
     f: ProductListFilters = Depends(),
     page: int = Query(1, ge=1),
     limit: int = Query(24, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
-    filters = f.model_dump(exclude_none=True)
-    filters_key = "&".join([f"{k}={filters[k]}" for k in sorted(filters)])
-    cache_key = f"products:all:{filters_key}:page={page}:limit={limit}"
-    cached = await redis_client.get(cache_key)
-    if cached:
-        return json.loads(cached)
     filtered_query = get_base_product_query()
     filtered_query = apply_product_filters(filtered_query, f)
     filtered_sub = filtered_query.subquery()
@@ -157,8 +157,6 @@ async def api_product_all(
         "current_page": page,
         "total_pages": (total + limit - 1) // limit,
     }
-    json_data = jsonable_encoder(response)
-    await redis_client.setex(cache_key, 43200, json.dumps(json_data))
     return response
 
 
@@ -167,13 +165,10 @@ async def api_product_all(
     response_model=List[ProductDataOut],
     status_code=status.HTTP_200_OK,
 )
+@cache(expire=43200, namespace="products:featured", key_builder=lambda func, *args, **kwargs: str(kwargs))
 async def api_product_featured(
     limit: int = Query(12, ge=1, le=24), db: AsyncSession = Depends(get_db)
 ):
-    cache_key = f"products:featured:limit={limit}"
-    cached = await redis_client.get(cache_key)
-    if cached:
-        return json.loads(cached)
     result = await db.execute(
         get_base_product_query()
         .where(Product.is_active.is_(True), Product.is_featured.is_(True))
@@ -189,10 +184,7 @@ async def api_product_featured(
             .limit(limit)
         )
         product = fallback.scalars().all()
-    products_data = [ProductDataOut.model_validate(p).model_dump() for p in product]
-    json_data = jsonable_encoder(products_data)
-    await redis_client.setex(cache_key, 43200, json.dumps(json_data))
-    return json_data
+    return product
 
 
 @router.get(
@@ -200,11 +192,8 @@ async def api_product_featured(
     response_model=ProductDataOut,
     status_code=status.HTTP_200_OK,
 )
+@cache(expire=42300, namespace="products:single")
 async def api_product_detail(identifier: str, db: AsyncSession = Depends(get_db)):
-    cache_key = f"products:identifier={identifier}"
-    cached = await redis_client.get(cache_key)
-    if cached:
-        return json.loads(cached)
     query = get_base_product_query()
     if identifier.isdigit():
         query = query.where(Product.id == int(identifier))
@@ -216,10 +205,7 @@ async def api_product_detail(identifier: str, db: AsyncSession = Depends(get_db)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
         )
-    products_data = ProductDataOut.model_validate(product).model_dump()
-    json_data = jsonable_encoder(products_data)
-    await redis_client.setex(cache_key, 43200, json.dumps(json_data))
-    return json_data
+    return product
 
 
 @router.delete(
@@ -255,6 +241,10 @@ async def api_delete_all_product(
     for product in products:
         await db.delete(product)
     await db.commit()
+    await FastAPICache.clear(namespace="products:all")
+    await FastAPICache.clear(namespace="products:featured")
+    for product in products:
+        await FastAPICache.clear(namespace="products:single")
     return
 
 
@@ -283,6 +273,9 @@ async def api_delete_product(
         await db.delete(img)
     await db.delete(product)
     await db.commit()
+    await FastAPICache.clear(namespace="products:all")
+    await FastAPICache.clear(namespace="products:featured")
+    await FastAPICache.clear(namespace="products:single")
     return
 
 
@@ -317,4 +310,7 @@ async def api_update_product(
             product.images.append(ProductImage(**i.model_dump()))
     await db.commit()
     await db.refresh(product)
+    await FastAPICache.clear(namespace="products:all")
+    await FastAPICache.clear(namespace="products:featured")
+    await FastAPICache.clear(namespace="products:single")
     return product

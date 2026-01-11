@@ -14,14 +14,17 @@ from app.utils.r2_service import (
     delete_image_from_r2,
 )
 from app.utils.slug import get_blog_slug
+from fastapi_cache.decorator import cache
+from fastapi_cache import FastAPICache
 
 router = APIRouter(prefix="/api/blog")
+
 
 @router.post("/add", response_model=BlogOut, status_code=status.HTTP_201_CREATED)
 async def api_blog_add(
     data: BlogCreate,
     db: AsyncSession = Depends(get_db),
-    # admin: User = Depends(get_admin_user),
+    admin: User = Depends(get_admin_user),
 ):
     sanitize_content = sanitize_html(data.content)
     payload = data.model_dump()
@@ -31,6 +34,7 @@ async def api_blog_add(
     db.add(new_blog)
     await db.commit()
     await db.refresh(new_blog)
+    await FastAPICache.clear(namespace="blog:all")
     return new_blog
 
 
@@ -64,6 +68,7 @@ async def api_blog_add_images(
     await db.commit()
     for img in blog_images:
         await db.refresh(img)
+    await FastAPICache.clear(namespace="blog:all")
     return blog_images
 
 
@@ -85,6 +90,8 @@ async def api_blog_delete_image(
     delete_image_from_r2(key)
     await db.delete(image)
     await db.commit()
+    await FastAPICache.clear(namespace="blog:all")
+    await FastAPICache.clear(namespace="blog:single")
 
 
 @router.patch(
@@ -97,6 +104,7 @@ async def api_blog_update(
     admin: User = Depends(get_admin_user),
 ):
     result = await db.get(Blog, blog_id)
+    old_slug = result.slug
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Blog post not found."
@@ -110,6 +118,8 @@ async def api_blog_update(
         setattr(result, field, value)
     await db.commit()
     await db.refresh(result)
+    await FastAPICache.clear(namespace="blog:all")
+    await FastAPICache.clear(namespace="blog:single")
     return result
 
 
@@ -122,12 +132,15 @@ async def api_blog_delete(
     admin: User = Depends(get_admin_user),
 ):
     result = await db.get(Blog, blog_id)
+    old_slug = result.slug
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Blog post not found."
         )
     await db.delete(result)
     await db.commit()
+    await FastAPICache.clear(namespace="blog:all")
+    await FastAPICache.clear(namespace="blog:single")
 
 
 @router.get(
@@ -135,12 +148,15 @@ async def api_blog_delete(
     response_model=BlogOut,
     status_code=status.HTTP_200_OK,
 )
+@cache(
+    expire=43200,
+    namespace="blog:single",
+)
 async def api_blog_get(
     identifier: str,
     db: AsyncSession = Depends(get_db),
 ):
     query = select(Blog)
-
     if identifier.isdigit():
         query = query.where(Blog.id == int(identifier))
     else:
@@ -148,18 +164,22 @@ async def api_blog_get(
 
     result = await db.execute(query)
     blog = result.scalar_one_or_none()
-
     if not blog:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Blog post not found.",
         )
-
     return blog
 
 
-
 @router.get("/all", response_model=list[BlogOut], status_code=status.HTTP_200_OK)
+@cache(
+    expire=43200,
+    namespace="blog:all",
+    key_builder=lambda func,
+    *args,
+    **kwargs: f"blog:all:limit={kwargs.get('limit')}:page={kwargs.get('page')}",
+)
 async def api_blog_get_all(
     limit: int = Query(12, ge=1, le=24),
     page: int = Query(1, ge=1),

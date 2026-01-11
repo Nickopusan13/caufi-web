@@ -60,6 +60,8 @@ from app.utils.email_service import send_mail
 from app.utils.geocode import get_place_details, autocomplete_place, reverse_geocoding
 from app.security.oauth import oauth
 from app.utils.generate_username import generate_username
+from fastapi_cache.decorator import cache
+from fastapi_cache import FastAPICache
 from sqlalchemy import select, delete, func, update
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
@@ -550,15 +552,18 @@ async def api_get_current_user(current_user: User = Depends(get_current_user)):
 
 
 @router.get("/geocode", response_model=PlaceDetails, status_code=status.HTTP_200_OK)
+@cache(expire=172800, namespace="geo")
 async def geocode(place_id: str):
     return await get_place_details(place_id)
 
 
 @router.get("/places/autocomplete", response_model=AutocompleteResponse)
+@cache(expire=21600, namespace="places:autocomplete")
 async def places_autocomplete(input: str = Query(..., min_length=1)):
     return await autocomplete_place(input)
 
 
 @router.get("/reverse-geocode")
+@cache(expire=86400, namespace="reverse-geocode")
 async def get_address_from_coords(lat: float, lng: float):
     return await reverse_geocoding(lat, lng)

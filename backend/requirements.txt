@@ -21,6 +21,7 @@ dotenv==0.9.9
 ecdsa==0.19.1
 email-validator==2.3.0
 fastapi==0.124.0
+fastapi-cache2==0.2.2
 google-api-core==2.28.1
 google-api-python-client==2.187.0
 google-auth==2.41.1

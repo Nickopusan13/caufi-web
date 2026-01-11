@@ -26,7 +26,10 @@ async def get_product_slug(
         slug = f"{base_slug}-{counter}"
         counter += 1
 
-async def get_blog_slug(name: str, db: AsyncSession, blog_id: Optional[int] = None) -> str:
+
+async def get_blog_slug(
+    name: str, db: AsyncSession, blog_id: Optional[int] = None
+) -> str:
     base_slug = slugify(name, lowercase=True, separator="-")
     if not base_slug:
         base_slug = "blog"
@@ -42,6 +45,7 @@ async def get_blog_slug(name: str, db: AsyncSession, blog_id: Optional[int] = No
             return slug
         slug = f"{base_slug}-{counter}"
         counter += 1
+
 
 def get_sku():
     return uuid.uuid4().hex[:12].upper()
