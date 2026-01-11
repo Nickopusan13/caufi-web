@@ -18,7 +18,7 @@ export default function LoadingPage() {
     return () => animation.stop();
   }, [progress]);
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-zinc-900">
+    <div className="flex items-center justify-center min-h-screen bg-transparent">
       <motion.div
         className="flex flex-col items-center space-y-4"
         initial={{ opacity: 0, scale: 0.9 }}

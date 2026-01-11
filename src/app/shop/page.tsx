@@ -6,12 +6,14 @@ import { Suspense } from "react";
 
 export default function ShopPage() {
   return (
-    <Suspense fallback={<LoadingPage />}>
+    <>
       <Navbar />
       <main className="bg-white/50 dark:bg-zinc-900 py-24 lg:py-40">
-        <MainShop />
+        <Suspense fallback={<LoadingPage />}>
+          <MainShop />
+        </Suspense>
       </main>
       <Footer />
-    </Suspense>
+    </>
   );
 }

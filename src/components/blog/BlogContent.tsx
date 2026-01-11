@@ -12,8 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useParams } from "next/navigation";
-import { useGetByBlogIdentifier } from "@/hooks/useBlog";
+import { BlogOut } from "@/api/blog";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -41,35 +40,7 @@ function calculateReadingTime(content: string) {
   return `${minutes} min read`;
 }
 
-export default function BlogContent() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const { data: post, isLoading } = useGetByBlogIdentifier(slug, !!slug);
-
-  if (!slug) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-2xl text-gray-500">Invalid blog ID.</p>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-2xl text-gray-500">Loading blog post...</p>
-      </div>
-    );
-  }
-
-  if (!post) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-2xl text-gray-500">Blog post not found.</p>
-      </div>
-    );
-  }
-
+export default function BlogContent({ post }: { post: BlogOut }) {
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
