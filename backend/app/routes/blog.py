@@ -104,7 +104,6 @@ async def api_blog_update(
     admin: User = Depends(get_admin_user),
 ):
     result = await db.get(Blog, blog_id)
-    old_slug = result.slug
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Blog post not found."
@@ -132,7 +131,6 @@ async def api_blog_delete(
     admin: User = Depends(get_admin_user),
 ):
     result = await db.get(Blog, blog_id)
-    old_slug = result.slug
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Blog post not found."

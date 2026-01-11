@@ -61,7 +61,6 @@ from app.utils.geocode import get_place_details, autocomplete_place, reverse_geo
 from app.security.oauth import oauth
 from app.utils.generate_username import generate_username
 from fastapi_cache.decorator import cache
-from fastapi_cache import FastAPICache
 from sqlalchemy import select, delete, func, update
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone

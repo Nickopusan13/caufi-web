@@ -122,7 +122,12 @@ async def delete_image(
 
 
 @router.get("/get/all", response_model=ProductListResponse)
-@cache(expire=43200, namespace="products:all",     key_builder=lambda *args, **kwargs: f"products:all:{kwargs.get('request').url.query if kwargs.get('request') else 'default'}")
+@cache(
+    expire=43200,
+    namespace="products:all",
+    key_builder=lambda *args,
+    **kwargs: f"products:all:{kwargs.get('request').url.query if kwargs.get('request') else 'default'}",
+)
 async def api_product_all(
     f: ProductListFilters = Depends(),
     page: int = Query(1, ge=1),
@@ -165,7 +170,11 @@ async def api_product_all(
     response_model=List[ProductDataOut],
     status_code=status.HTTP_200_OK,
 )
-@cache(expire=43200, namespace="products:featured", key_builder=lambda func, *args, **kwargs: str(kwargs))
+@cache(
+    expire=43200,
+    namespace="products:featured",
+    key_builder=lambda func, *args, **kwargs: str(kwargs),
+)
 async def api_product_featured(
     limit: int = Query(12, ge=1, le=24), db: AsyncSession = Depends(get_db)
 ):
