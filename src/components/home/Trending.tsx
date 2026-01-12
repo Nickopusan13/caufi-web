@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
+import { useState, useEffect } from "react";
 
 const trendingImages = [
   "/assets/pic1.webp",
@@ -17,7 +18,7 @@ const trendingImages = [
   "/assets/pic1.webp",
 ];
 
-export default function Trending() {
+function Trending() {
   const scrollRef = useRef<HTMLDivElement>(null);
   return (
     <section className="w-full py-16 px-4 overflow-hidden bg-transparent">
@@ -25,9 +26,7 @@ export default function Trending() {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="text-center text-4xl md:text-5xl font-black tracking-tighter mb-12
-                   bg-linear-to-r from-black via-purple-700 to-black dark:from-white dark:via-purple-400 dark:to-white
-                   bg-clip-text text-transparent"
+        className="text-center text-4xl md:text-5xl font-black tracking-tighter mb-12 bg-linear-to-r from-black via-purple-700 to-black dark:from-white dark:via-purple-400 dark:to-white bg-clip-text text-transparent"
       >
         TRENDING NOW
       </motion.h2>
@@ -77,24 +76,15 @@ export default function Trending() {
           </motion.div>
         ))}
       </div>
-      <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          height: 6px;
-        }
-        .scrollbar-hide::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .scrollbar-hide::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 3px;
-        }
-        .scrollbar-hide::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.5);
-        }
-        .dark .scrollbar-hide::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.2);
-        }
-      `}</style>
     </section>
   );
+}
+
+export default function TrendingWrapper() {
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <div className="w-full h-[520px] bg-black" />;
+
+  return <Trending />;
 }

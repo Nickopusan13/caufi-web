@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Variants } from "framer-motion";
 import { useGetAllBlog } from "@/hooks/useBlog";
+import LoadingPage from "../LoadingPage";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -64,11 +65,7 @@ export default function Blog() {
     );
   }
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-2xl text-gray-500">Loading blog posts...</p>
-      </div>
-    );
+    return <LoadingPage />;
   }
   return (
     <div className="min-h-screen px-2 lg:px-4">

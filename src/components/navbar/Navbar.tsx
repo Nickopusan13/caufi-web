@@ -6,7 +6,7 @@ import MenuBar, { MenuBarMobile } from "./components/MenuBar";
 import ModeToggle from "./components/ModeToggle";
 import { FaSearch } from "react-icons/fa";
 import { useLenis } from "lenis/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import ProfileButton from "./components/ProfileButton";
 import SignRegBtn from "./components/SignRegBtn";
@@ -20,6 +20,7 @@ export default function Navbar() {
   const { data: user, isLoading } = useGetCurrentUser();
   const { mutate: logout } = useUserLogout();
   const [hide, setHide] = useState(false);
+  const [mounted, setMounted] = useState(false);
   useLenis(({ scroll, direction }) => {
     if (direction === 1 && scroll > 100) {
       setHide(true);
@@ -28,6 +29,9 @@ export default function Navbar() {
     }
   });
   const [openMenuBar, setOpenMenuBar] = useState<boolean>(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <header />;
   return (
     <header
       className={cn(

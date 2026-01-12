@@ -1,12 +1,18 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 import { FaMoon, FaSun } from "react-icons/fa6";
 import { motion } from "framer-motion";
 
 export default function ModeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
-  if (!resolvedTheme) return null;
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  if (!mounted) {
+    return <div className="w-12 h-12" />;
+  }
   const isDark = resolvedTheme === "dark";
   return (
     <motion.button

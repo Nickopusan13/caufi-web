@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+import { useState, useEffect } from "react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
@@ -23,7 +24,7 @@ const slides = [
   },
 ];
 
-export default function ImageScroller() {
+function ImageScroller() {
   return (
     <Swiper
       loop={true}
@@ -81,23 +82,18 @@ export default function ImageScroller() {
                 </motion.button>
               </motion.div>
             </div>
-            <style jsx global>{`
-              .swiper-pagination-bullet {
-                background: rgba(255, 255, 255, 0.4);
-                opacity: 1;
-                width: 12px;
-                height: 12px;
-                transition: all 0.4s ease;
-              }
-              .swiper-pagination-bullet-active {
-                background: white;
-                transform: scale(1.4);
-                box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-              }
-            `}</style>
           </div>
         </SwiperSlide>
       ))}
     </Swiper>
   );
+}
+
+export default function ImageScrollerWrapper() {
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <div className="h-screen w-full bg-black" />;
+
+  return <ImageScroller />;
 }
