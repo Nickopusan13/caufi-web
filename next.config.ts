@@ -1,17 +1,7 @@
 import type { NextConfig } from "next";
-import nextMDX from "@next/mdx";
-
-const withMDX = nextMDX({
-  extension: /\.mdx?$/,
-  options: {
-    remarkPlugins: [],
-    rehypePlugins: [],
-  },
-});
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   images: {
     remotePatterns: [
       {
@@ -25,4 +15,4 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
 };
 
-export default withMDX(nextConfig);
+export default nextConfig;

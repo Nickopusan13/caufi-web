@@ -1,5 +1,6 @@
-// lib/auth-context.tsx
-import { createContext, useContext } from "react";
+"use client"; // Must be a client component
+
+import { createContext, useContext, ReactNode } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -7,10 +8,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({ isAuthenticated: false });
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = !!localStorage.getItem("token");
+export const AuthProvider = ({
+  children,
+  isLoggedIn,
+}: {
+  children: ReactNode;
+  isLoggedIn: boolean;
+}) => {
   return (
-    <AuthContext.Provider value={{ isAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated: isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

@@ -6,6 +6,8 @@ import { Lenis } from "lenis/react";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import "leaflet/dist/leaflet.css";
 import ToasterProvider from "@/components/ToasterProvider";
+import { cookies } from "next/headers";
+import { AuthProvider } from "@/lib/useAuth";
 
 export const metadata: Metadata = {
   title: "Caufi",
@@ -40,11 +42,14 @@ const kalamFont = Kalam({
   display: "swap",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token");
+  const isLoggedIn = !!token;
   return (
     <html lang="en" suppressHydrationWarning className="scrollbar-thin">
       <head />
@@ -60,7 +65,7 @@ export default function RootLayout({
           >
             <Lenis root>
               <ToasterProvider />
-              {children}
+              <AuthProvider isLoggedIn={isLoggedIn}>{children}</AuthProvider>
             </Lenis>
           </ThemeProvider>
         </ReactQueryProvider>

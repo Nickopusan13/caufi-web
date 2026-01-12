@@ -118,11 +118,13 @@ export default function ProductInfo({ product }: { product: ProductOut }) {
   }, [selectedColor, product.variants, availableSizes]);
   useEffect(() => {
     if (availableColors.length > 0 && !selectedColor) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedColor(availableColors[0].name);
     }
   }, [availableColors, selectedSize, selectedColor]);
   useEffect(() => {
     if (!selectedColor) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedSize(null);
       return;
     }

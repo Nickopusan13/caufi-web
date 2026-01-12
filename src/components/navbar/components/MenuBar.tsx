@@ -35,7 +35,11 @@ const navigationMenus = [
         href: "/shop?category=Women&page=1",
         description: "Most loved",
       },
-      { title: "Sale", href: "/products/sale", description: "Up to 70% off" },
+      {
+        title: "Bags",
+        href: "/shop?category=Bag&page=1",
+        description: "The best",
+      },
     ],
   },
   { title: "About", href: "/about" },
