@@ -5,7 +5,6 @@ import "./globals.css";
 import { Lenis } from "lenis/react";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import "leaflet/dist/leaflet.css";
-import ToasterProvider from "@/components/ToasterProvider";
 import { cookies } from "next/headers";
 import { AuthProvider } from "@/lib/useAuth";
 
@@ -64,7 +63,6 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <Lenis root>
-              <ToasterProvider />
               <AuthProvider isLoggedIn={isLoggedIn}>{children}</AuthProvider>
             </Lenis>
           </ThemeProvider>

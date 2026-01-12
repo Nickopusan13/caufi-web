@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { FaHeart, FaRegHeart, FaRegStar, FaStar } from "react-icons/fa";
 import { Star as LucideStar } from "lucide-react";
 import { useAddToWishlist, useRemoveFromwishlist } from "@/hooks/useWishlist";
-import ToasterProvider from "../ToasterProvider";
 
 interface LikeButtonProps {
   productId: number;
@@ -31,7 +30,6 @@ export const LikeButton = ({
   };
   return (
     <>
-      <ToasterProvider />
       <motion.button
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.9 }}

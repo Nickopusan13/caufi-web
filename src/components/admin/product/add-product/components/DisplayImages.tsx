@@ -25,7 +25,7 @@ type DisplayImagesProps = {
   images: ProductImage[];
   setImages: React.Dispatch<React.SetStateAction<ProductImage[]>>;
   maxImages?: number;
-  productId?: number | null; // Optional: needed if deleting requires product context
+  productId?: number | null;
 };
 
 export default memo(function DisplayImages({
@@ -37,7 +37,6 @@ export default memo(function DisplayImages({
     useDeleteProductImage();
 
   const handleDelete = async (image: ProductImage) => {
-    // Case 1: Local file (newly uploaded, not yet saved to server)
     if (image.file) {
       URL.revokeObjectURL(image.imageUrl);
       setImages((prev) =>
@@ -46,8 +45,6 @@ export default memo(function DisplayImages({
       toast.success("Local image removed");
       return;
     }
-
-    // Case 2: Existing server image (has id)
     if (image.id != null) {
       try {
         await deleteImage(image.id, {
@@ -66,8 +63,6 @@ export default memo(function DisplayImages({
       }
       return;
     }
-
-    // Fallback warning
     console.warn("Image has no id and is not local:", image);
     toast.error("Unable to delete this image");
   };
@@ -93,14 +88,13 @@ export default memo(function DisplayImages({
 
       const newImages: ProductImage[] = filesToAdd.map((file) => ({
         imageUrl: URL.createObjectURL(file),
-        file, // Keep the File object for later upload
+        file,
       }));
 
       setImages((prev) => [...prev, ...newImages]);
     },
   });
 
-  // Cleanup object URLs when component unmounts or images change
   useEffect(() => {
     return () => {
       images.forEach((img) => {

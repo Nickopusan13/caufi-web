@@ -37,8 +37,8 @@ import { useRouter } from "next/navigation";
 export function useRegister(onToggle: () => void) {
   return useMutation<UserProfileOut, Error, UserRegister>({
     mutationFn: fetchUserRegister,
-    onError: (error: Error) => {
-      toast.error(error.message || "Registration failed");
+    onError: () => {
+      toast.error("Registration failed");
     },
     onSuccess: () => {
       toast.success("Registration Success, Please Login");
@@ -60,12 +60,6 @@ export function useVerifyEmail(token: string | null) {
 export function useCreateAddress() {
   return useMutation<UserAddressOut, Error, UserAddress>({
     mutationFn: createUserAddress,
-    onError: (error: Error) => {
-      toast.error(error.message || "Registration failed");
-    },
-    onSuccess: () => {
-      toast.success("Address Created!!!");
-    },
   });
 }
 
@@ -76,21 +70,12 @@ export function useLogin() {
     onSuccess: (data) => {
       queryClient.setQueryData(["user"], data.user);
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
   });
 }
 
 export function useAddImageProfile() {
   return useMutation<UserProfileOut, Error, { file: File }>({
     mutationFn: ({ file }) => addUploadImages(file),
-    onSuccess: () => {
-      toast.success("Add Done!!");
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
   });
 }
 
@@ -98,10 +83,10 @@ export function useContactCaufi() {
   return useMutation<{ message: string }, Error, ContactCaufi>({
     mutationFn: fetchContactCaufi,
     onSuccess: () => {
-      toast.success("Email send!!");
+      toast.success("Email send");
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Error sending email");
     },
   });
 }
@@ -112,8 +97,8 @@ export function useForgotPasswordRequest() {
     onSuccess: () => {
       toast.success("Password reset link sent! Check your email.");
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error("Error, please try again.");
     },
   });
 }
@@ -123,11 +108,7 @@ export function useResetPassword() {
   return useMutation({
     mutationFn: fetchUserResetPassword,
     onSuccess: () => {
-      toast.success("Done Reset Password!!");
       router.push("/login");
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
     },
   });
 }
@@ -155,11 +136,7 @@ export function useUserLogout() {
   return useMutation({
     mutationFn: userLogout,
     onSuccess: () => {
-      toast.success("Logout Done!!");
       router.push("/login");
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
     },
   });
 }
@@ -169,11 +146,7 @@ export function useUpdateUserProfile() {
   return useMutation({
     mutationFn: updateUserProfile,
     onSuccess: (updatedUser) => {
-      toast.success("Update Done!!");
       queryClient.setQueryData(["currentUser"], updatedUser);
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
     },
   });
 }
@@ -189,11 +162,7 @@ export function useUpdateUserAddress() {
       data: UserAddressUpdate;
     }) => updateUserAddress(addressId, data),
     onSuccess: () => {
-      toast.success("Address updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to update address");
     },
   });
 }
@@ -218,7 +187,7 @@ export function useReverseGeocoding(lat: number | null, lng: number | null) {
   const enabled = lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng);
   return useQuery<ReverseGeocodingResponse>({
     queryKey: ["reverseGeocoding", lat, lng],
-    queryFn: () => mapsReverseGeocoding(lat!, lng!), // non-null assertion safe because of `enabled`
+    queryFn: () => mapsReverseGeocoding(lat!, lng!),
     enabled,
   });
 }

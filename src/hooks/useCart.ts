@@ -6,7 +6,6 @@ import {
   deleteUserCart,
   addUserCart,
 } from "@/api/cart";
-import toast from "react-hot-toast";
 
 export function useGetCart() {
   return useQuery<CartOut>({
@@ -20,11 +19,7 @@ export function useUpdateUserCart() {
   return useMutation({
     mutationFn: updateUserCart,
     onSuccess: (updateCart) => {
-      toast.success("Update Done!!");
       queryClient.setQueryData(["userCart"], updateCart);
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
     },
   });
 }
@@ -34,11 +29,7 @@ export function useDeleteCart() {
   return useMutation({
     mutationFn: deleteUserCart,
     onSuccess: () => {
-      toast.success("Item removed!");
       queryClient.invalidateQueries({ queryKey: ["userCart"] });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
     },
   });
 }
@@ -46,11 +37,5 @@ export function useDeleteCart() {
 export function useAddToCart() {
   return useMutation<CartOut, Error, CartItemCreate>({
     mutationFn: addUserCart,
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-    onSuccess: () => {
-      toast.success("Added Product To Cart");
-    },
   });
 }

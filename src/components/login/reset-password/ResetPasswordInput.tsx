@@ -7,7 +7,6 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useResetPassword } from "@/hooks/useLogin";
-import ToasterProvider from "@/components/ToasterProvider";
 
 export default function ResetPasswordPage() {
   const mutation = useResetPassword();
@@ -57,7 +56,6 @@ export default function ResetPasswordPage() {
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-cyan-900 to-purple-900 p-4 overflow-hidden">
-      <ToasterProvider />
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{ x: [0, 100, 0], y: [0, -100, 0] }}

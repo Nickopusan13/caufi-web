@@ -31,8 +31,7 @@ export default function Login({ onToggle }: { onToggle: () => void }) {
         password,
       },
       {
-        onSuccess: (user) => {
-          toast.success(`Welcome back, ${user.user.name.split(" ")[0]}!`);
+        onSuccess: () => {
           router.push("/profile");
         },
       }

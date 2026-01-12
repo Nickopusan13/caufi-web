@@ -19,7 +19,6 @@ import { format } from "date-fns";
 import { FilterButton } from "../OrderEdit";
 import Link from "next/link";
 import Image from "next/image";
-import ToasterProvider from "@/components/ToasterProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { LuLanguages } from "react-icons/lu";
@@ -479,7 +478,6 @@ export const Settings = () => {
   const { mutate: logout, isPending } = useUserLogout();
   return (
     <>
-      <ToasterProvider />
       <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
         <h1 className="text-2xl font-bold text-center lg:text-start">
           Settings

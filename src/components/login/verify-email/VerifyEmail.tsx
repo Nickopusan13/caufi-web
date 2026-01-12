@@ -11,7 +11,6 @@ import {
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
-import ToasterProvider from "@/components/ToasterProvider";
 import { useVerifyEmail } from "@/hooks/useLogin";
 
 export default function VerifyEmail() {
@@ -21,7 +20,6 @@ export default function VerifyEmail() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-cyan-900 to-purple-900 p-4 overflow-hidden">
-        <ToasterProvider />
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <motion.div
             animate={{ x: [0, 100, 0], y: [0, -100, 0] }}
@@ -51,7 +49,6 @@ export default function VerifyEmail() {
     toast.error(message);
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-purple-900 to-pink-900">
-        <ToasterProvider />
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <motion.div
             animate={{ x: [0, 100, 0], y: [0, -100, 0] }}
@@ -87,7 +84,6 @@ export default function VerifyEmail() {
   const email = searchParams.get("email") || "your email";
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-cyan-900 to-purple-900 p-4 overflow-hidden">
-      <ToasterProvider />
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
           animate={{ x: [0, 100, 0], y: [0, -100, 0] }}
