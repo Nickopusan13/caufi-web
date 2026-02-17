@@ -8,10 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User, Package, Settings, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { UserProfile } from "@/api/user";
+import Image from "next/image";
 
 export default function ProfileButton({
   user,
@@ -35,15 +35,18 @@ export default function ProfileButton({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="relative flex items-center gap-3 rounded-full px-3 py-2 hover:bg-accent/70 transition-colors">
-          <Avatar className="h-9 w-9 ring-2 ring-background ring-offset-2 ring-offset-background">
-            <AvatarImage
-              src={user.profileImage || undefined}
-              alt={user.name || user.email}
-            />
-            <AvatarFallback className="bg-linear-to-br from-purple-500 to-pink-500 text-white font-semibold">
-              {getInitials()}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative h-9 w-9 ring-2 ring-background ring-offset-2 ring-offset-background rounded-full overflow-hidden">
+            {user?.profileImage ? (
+              <Image
+                src={user.profileImage}
+                alt={user.name || user.email}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <span>{getInitials()}</span>
+            )}
+          </div>
           <div className="flex flex-col items-start">
             <span className="text-sm font-medium text-foreground">
               {user.name ? user.name.split(" ")[0] : "User"}

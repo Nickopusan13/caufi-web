@@ -8,7 +8,6 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Settings, Users, LayoutDashboard, Search } from "lucide-react"; // Added Search icon
 import AdminModeToggle from "./AdminModeToggle";
 
@@ -103,7 +102,6 @@ export default function AdminSidebar() {
               </motion.button>
             </Button>
           </motion.div>
-          {/* Add more navigation items as needed */}
         </motion.nav>
       </SidebarContent>
       <SidebarFooter>
@@ -113,10 +111,6 @@ export default function AdminSidebar() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="flex items-center gap-2 p-4 border-t"
         >
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-            <AvatarFallback>AD</AvatarFallback>
-          </Avatar>
           <div className="flex flex-col">
             <span className="text-sm font-medium">Admin User</span>
             <span className="text-xs text-muted-foreground">

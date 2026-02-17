@@ -1,167 +1,239 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { IoStorefrontSharp } from "react-icons/io5";
-import { BiSolidPackage, BiSolidTruck, BiSolidShield } from "react-icons/bi";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrambleTextPlugin, ScrollTrigger, SplitText } from "gsap/all";
+import { useRef } from "react";
+import Image from "next/image";
+
+gsap.registerPlugin(SplitText, ScrambleTextPlugin, ScrollTrigger);
 
 export default function About() {
-  const features = [
-    {
-      icon: <IoStorefrontSharp className="w-8 h-8" />,
-      title: "Premium Quality",
-      description:
-        "We carefully curate every product to ensure the highest standards of quality and craftsmanship.",
-    },
-    {
-      icon: <BiSolidPackage className="w-8 h-8" />,
-      title: "Fast & Secure Packaging",
-      description:
-        "Every order is packed with care and shipped securely to arrive in perfect condition.",
-    },
-    {
-      icon: <BiSolidTruck className="w-8 h-8" />,
-      title: "Worldwide Shipping",
-      description:
-        "We deliver to over 100 countries with reliable partners and tracking on every order.",
-    },
-    {
-      icon: <BiSolidShield className="w-8 h-8" />,
-      title: "Buyer Protection",
-      description:
-        "Shop with confidence knowing your purchase is protected with our satisfaction guarantee.",
-    },
-  ];
+  const title = useRef(null);
+  const caufi = useRef(null);
+  const firstSection = useRef(null);
+  const firstSectionWords = useRef(null);
+  const firstImage = useRef(null);
+  const secondSection = useRef(null);
+  const secondSectionWords = useRef(null);
+  const secondImage = useRef(null);
+  useGSAP(() => {
+    const titleSplit = new SplitText(title.current, { type: "chars" });
+    const tlFirst = gsap.timeline({
+      delay: 0.2,
+      scrollTrigger: {
+        trigger: firstSection.current,
+        start: "top 70%",
+      },
+    });
+    const tlSecond = gsap.timeline({
+      delay: 0.2,
+      scrollTrigger: {
+        trigger: secondSection.current,
+        start: "top 70%",
+      },
+    });
+    gsap.from(titleSplit.chars, {
+      yPercent: 100,
+      stagger: 0.015,
+      ease: "power3.out",
+      duration: 1.1,
+    });
+    gsap.to(caufi.current, {
+      duration: 2,
+      scrambleText: {
+        text: "CAUFI.",
+        revealDelay: 0.1,
+      },
+    });
+    tlFirst
+      .from(firstSectionWords.current, {
+        yPercent: 20,
+        stagger: 0.012,
+        ease: "power2.inOut",
+        duration: 1.2,
+        opacity: 0,
+      })
+      .from(firstImage.current, {
+        x: -200,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+    tlSecond
+      .from(secondSectionWords.current, {
+        yPercent: 20,
+        stagger: 0.012,
+        ease: "power2.inOut",
+        duration: 1.2,
+        opacity: 0,
+      })
+      .from(secondImage.current, {
+        x: 200,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+  }, []);
 
   return (
-    <>
-      <section className="relative overflow-hidden bg-linear-to-br dark:from-purple-900 dark:via-indigo-950 dark:to-black py-13 lg:py-20 from-purple-500 via-indigo-600 to-white">
-        <div className="absolute inset-0 bg-black opacity-50" />
-        <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent" />
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
+    <div className="w-full overflow-hidden">
+      <div className="flex flex-col w-full justify-center items-center gap-10 lg:gap-15 min-h-dvh">
+        <h1 ref={caufi} className="text-7xl lg:text-8xl font-bold" />
+        <p
+          ref={title}
+          className="flex flex-col items-center justify-center text-lg lg:text-4xl text-center leading-tight"
+        >
+          <div className="overflow-hidden">Behind Daydream is a team</div>
+          <div className="overflow-hidden">dedicated to rethinking how we</div>
+          <div className="overflow-hidden">experience music</div>
+        </p>
+      </div>
+
+      <div
+        ref={firstSection}
+        className="flex flex-col lg:flex-row mx-10 lg:mx-20 lg:my-20 gap-12 min-h-dvh "
+      >
+        <div
+          ref={firstSectionWords}
+          className="lg:w-1/2 w-full flex flex-col text-justify text-base lg:text-2xl leading-relaxed items-center justify-center"
+        >
+          <p className="text-justify">
+            From the first sketches to the final build, we focus on
+            craftsmanship and quality. Every material, every button, and every
+            feature is carefully considered to create a seamless listening
+            experience.
+          </p>
+          <br />
+          <p>
+            We believe in making tech that lasts, both in function and
+            feeling—because great music deserves a great way to be heard.
+          </p>
         </div>
-        <div className="relative container mx-auto px-3 lg:px-6 max-w-6xl">
+
+        <div
+          ref={firstImage}
+          className="lg:w-1/2 w-full h-96 relative flex lg:items-center justify-center lg:justify-end"
+        >
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="text-center text-white"
+            whileHover={{ rotate: 10 }}
+            className="absolute w-64 h-96 sm:w-80 sm:h-[480px] lg:w-96 lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl -rotate-5 lg:-rotate-10 z-20"
           >
-            <h1 className="text-3xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-linear-to-r from-white via-purple-200 to-pink-200">
-              About Us
-            </h1>
-            <p className="text-lg md:text-2xl font-light max-w-4xl mx-auto opacity-90 leading-relaxed">
-              {`We're passionate about bringing you${" "}`}
-              <span className="font-semibold text-purple-300">
-                {`exceptional products`}
-              </span>{" "}
-              that elevate your everyday life — designed with precision,
-              delivered with care.
-            </p>
-            <div className="mt-10 flex justify-center">
-              <div className="h-1 w-32 bg-linear-to-r from-purple-500 to-pink-500 rounded-full blur-xl opacity-50"></div>
-            </div>
+            <Image
+              src="/assets/model.webp"
+              alt="Model"
+              fill
+              className="object-cover"
+              priority
+              sizes="(max-width: 639px) 256px, (max-width: 1023px) 320px, 384px"
+            />
           </motion.div>
+          <div className="absolute -rotate-10 lg:-rotate-15 w-64 h-96 rounded-2xl z-10 bg-zinc-200 dark:bg-white lg:w-96 lg:h-[600px]" />
+          <div className="absolute -rotate-15 lg:-rotate-20 w-64 h-96 rounded-2xl z-10 bg-zinc-200 dark:bg-white lg:w-96 lg:h-[600px]" />
         </div>
-      </section>
-      <section className="py-12 px-3 lg:py-20 lg:px-6">
-        <div className="container mx-auto max-w-5xl">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="grid md:grid-cols-2 gap-12 items-center"
-          >
-            <div>
-              <h2 className="text-3xl text-center md:text-left lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-                Our Story
-              </h2>
-              <p className="text-base lg:text-lg text-gray-600 leading-relaxed mb-3 text-justify lg:mb-6">
-                Founded in 2023, we started with a simple mission: to make
-                premium, well-designed products accessible to everyone.
-              </p>
-              <p className="text-base lg:text-lg text-justify text-gray-600 leading-relaxed">
-                {`Today, we've grown into a trusted online destination serving
-                thousands of happy customers worldwide. We believe great
-                products shouldn't come with unnecessary markups — quality and
-                affordability can go hand in hand.`}
-              </p>
-            </div>
-            <div className="bg-linear-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-950 rounded-3xl p-6 lg:p-12 shadow-2xl">
-              <div className="text-center">
-                <div className="text-4xl lg:text-6xl font-bold text-indigo-600 dark:text-indigo-200 mb-0 lg:mb-2">
-                  10K+
-                </div>
-                <p className="text-xl text-gray-700 dark:text-gray-400">
-                  Happy Customers
-                </p>
-              </div>
-            </div>
-          </motion.div>
+      </div>
+
+      <div
+        ref={secondSection}
+        className="flex flex-col lg:flex-row mx-10 lg:mx-20 my-20 gap-12 min-h-dvh"
+      >
+        <div
+          ref={secondSectionWords}
+          className="w-full lg:w-1/2 flex flex-col text-justify text-base lg:text-2xl leading-relaxed items-center justify-center px-4 lg:px-0 order-1 lg:order-2"
+        >
+          <p className="text-justify">
+            From the first sketches to the final build, we focus on
+            craftsmanship and quality. Every material, every button, and every
+            feature is carefully considered to create a seamless listening
+            experience.
+          </p>
+          <br />
+          <p>
+            We believe in making tech that lasts, both in function and
+            feeling—because great music deserves a great way to be heard.
+          </p>
         </div>
-      </section>
-      <section className="py-10 lg:py-20">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8 lg:mb-16"
-          >
-            <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-gray-200 mb-4">
-              Why Choose Us
-            </h2>
-            <p className="text-base lg:text-xl text-gray-600 max-w-2xl mx-auto">
-              We stand behind every product we sell with unwavering commitment
-            </p>
-          </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.1 }}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white dark:bg-zinc-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-indigo-500 to-purple-500 rounded-full text-white mb-6">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-500 mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-200">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
+        <div
+          ref={secondImage}
+          className="w-full h-96 lg:w-1/2 relative flex justify-center lg:justify-start lg:items-center order-2 lg:order-1"
+        >
+          <div className="relative w-64 h-96 sm:w-80 sm:h-[480px] lg:w-96 lg:h-[600px] mx-auto lg:mx-0">
+            <div className="absolute inset-0 -rotate-10 lg:-rotate-15 rounded-2xl z-10 bg-zinc-200 dark:bg-white" />
+            <div className="absolute inset-0 -rotate-15 lg:-rotate-20 rounded-2xl z-10 bg-zinc-200 dark:bg-white" />
+            <motion.div
+              whileHover={{ rotate: 10, scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl -rotate-5 lg:-rotate-10 z-20"
+            >
+              <Image
+                src="/assets/model.webp"
+                alt="Model"
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 639px) 90vw, (max-width: 1023px) 75vw, 384px"
+              />
+            </motion.div>
           </div>
         </div>
-      </section>
-      <section className="py-5 lg:py-20 px-3 lg:px-6">
-        <div className="container mx-auto max-w-4xl text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="bg-linear-to-br dark:from-purple-900 dark:via-indigo-950 dark:to-black py-10 from-purple-500 via-indigo-600 to-white rounded-3xl text-white shadow-2xl"
-          >
-            <h2 className="text-2xl md:text-4xl font-bold mb-6">
-              Join Thousands of Satisfied Customers
-            </h2>
-            <p className="text-base lg:text-xl opacity-90">
-              Experience the difference quality and care can make in your
-              everyday life.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-    </>
+      </div>
+      <LastSection />
+    </div>
   );
 }
+
+const LastSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  useGSAP(() => {
+    if (!contentRef.current) return;
+    gsap.set(contentRef.current, { opacity: 0 });
+    gsap.to(contentRef.current, {
+      opacity: 1,
+      duration: 1,
+      ease: "none",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 50%",
+        end: "bottom bottom",
+        scrub: 1.2,
+      },
+    });
+  }, []);
+
+  return (
+    <div
+      ref={sectionRef}
+      className="min-h-dvh flex flex-col items-center justify-center"
+    >
+      <div
+        ref={contentRef}
+        className="flex flex-col gap-5 lg:gap-10 justify-center items-center text-center lg:px-0 px-5 max-w-7xl"
+      >
+        <h2 className="font-bold text-lg lg:text-6xl leading-normal lg:leading-tight">
+          {`Passionate about music and design? We're building something special.
+          Come be a part of it.`}
+        </h2>
+        <p className="text-sm lg:text-2xl">
+          Daydream is an equal opportunity employer. We welcome all backgrounds,
+          valuing diversity in music, ideas, and people.
+        </p>
+      </div>
+
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95, y: -10 }}
+        transition={{
+          ease: "easeInOut",
+          type: "spring",
+          damping: 30,
+          stiffness: 300,
+        }}
+        className="bg-zinc-200 dark:bg-zinc-800 py-5 px-20 rounded-4xl mt-20 cursor-pointer"
+      >
+        <span className="text-lg lg:text-3xl">SHOP HERE</span>
+      </motion.button>
+    </div>
+  );
+};
