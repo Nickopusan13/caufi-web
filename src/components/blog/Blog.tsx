@@ -59,7 +59,7 @@ export default function Blog() {
   const recentPosts = postsWithExtras.slice(1);
   if (postsWithExtras.length === 0 && !isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-dvh flex items-center justify-center">
         <p className="text-2xl text-gray-500">No blog posts yet. Stay tuned!</p>
       </div>
     );
@@ -68,7 +68,7 @@ export default function Blog() {
     return <LoadingPage />;
   }
   return (
-    <div className="min-h-screen px-2 lg:px-4">
+    <div className="min-h-screen px-2 lg:px-4 py-30 lg:py-40">
       <motion.div
         className="max-w-7xl mx-auto"
         variants={containerVariants}
@@ -126,7 +126,7 @@ export default function Blog() {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
-                          }
+                          },
                         )}
                       </div>
                       <div className="flex items-center gap-2">
@@ -197,7 +197,7 @@ export default function Blog() {
                                 year: "numeric",
                                 month: "long",
                                 day: "numeric",
-                              }
+                              },
                             )}
                           </time>
                           <span className="flex items-center gap-1">

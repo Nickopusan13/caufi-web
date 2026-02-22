@@ -114,7 +114,7 @@ export default function About() {
 
         <div
           ref={firstImage}
-          className="lg:w-1/2 w-full h-96 relative flex lg:items-center justify-center lg:justify-end"
+          className="lg:w-1/2 w-full h-96 lg:h-auto relative flex lg:items-center justify-center lg:justify-end"
         >
           <motion.div
             whileHover={{ rotate: 10 }}
@@ -156,7 +156,7 @@ export default function About() {
         </div>
         <div
           ref={secondImage}
-          className="w-full h-96 lg:w-1/2 relative flex justify-center lg:justify-start lg:items-center order-2 lg:order-1"
+          className="w-full h-96 lg:h-auto lg:w-1/2 relative flex justify-center lg:justify-start lg:items-center order-2 lg:order-1"
         >
           <div className="relative w-64 h-96 sm:w-80 sm:h-[480px] lg:w-96 lg:h-[600px] mx-auto lg:mx-0">
             <div className="absolute inset-0 -rotate-10 lg:-rotate-15 rounded-2xl z-10 bg-zinc-200 dark:bg-white" />
